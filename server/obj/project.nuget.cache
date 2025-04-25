@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "csUfy0tQYkw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\yangx\\OneDrive\\Desktop\\Feat-Monke\\server\\server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\yangx\\.nuget\\packages\\microsoft.data.sqlite\\9.0.4\\microsoft.data.sqlite.9.0.4.nupkg.sha512",
+    "C:\\Users\\yangx\\.nuget\\packages\\microsoft.data.sqlite.core\\9.0.4\\microsoft.data.sqlite.core.9.0.4.nupkg.sha512",
+    "C:\\Users\\yangx\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.10\\sqlitepclraw.bundle_e_sqlite3.2.1.10.nupkg.sha512",
+    "C:\\Users\\yangx\\.nuget\\packages\\sqlitepclraw.core\\2.1.10\\sqlitepclraw.core.2.1.10.nupkg.sha512",
+    "C:\\Users\\yangx\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.10\\sqlitepclraw.lib.e_sqlite3.2.1.10.nupkg.sha512",
+    "C:\\Users\\yangx\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.10\\sqlitepclraw.provider.e_sqlite3.2.1.10.nupkg.sha512",
+    "C:\\Users\\yangx\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512"
+  ],
+  "logs": []
+}
