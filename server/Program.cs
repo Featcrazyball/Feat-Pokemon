@@ -1,20 +1,48 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 
 namespace Server
 {
     class Server
     {
         static async Task Main() {
+            // Initialise Database
+            using SqliteConnection db = new("Data Source=database.db");
+            db.Open();
+
+            // Server Setup
+            Socket server;
+            try            
+            {
+                server = await ServerSetup();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error setting up server: {ex.Message}");
+                return;
+            }
+
+            // Client Loop
+            while (true) {
+                var client = await server.AcceptAsync();
+                var customer = Task.Run(() => HandleClient(client));
+            } 
+        }
+
+        // Server Setup
+        public static async Task<Socket> ServerSetup()
+        {
             IPHostEntry ipEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
             IPAddress ip = ipEntry.AddressList[1];
             Console.WriteLine(ip.ToString());
 
-            IPEndPoint iPEndPoint = new(ip, 8080);
+            IPEndPoint iPEndPoint = new(ip, 8000);
 
-            using Socket server = new (
+            Socket server = new (
                 iPEndPoint.AddressFamily,
                 SocketType.Stream,
                 ProtocolType.Tcp
@@ -22,17 +50,12 @@ namespace Server
 
             server.Bind(iPEndPoint);
             server.Listen(30); // I can have up to 30 people
-            Console.WriteLine("Server Running on Port: 8080");
+            Console.WriteLine("Server Running on Port: 8000");
 
-            var handler = await server.AcceptAsync();
-
-            // Client Stuff
-            while (true) {
-                var client = await server.AcceptAsync();
-                var customer = Task.Run(() => HandleClient(client));
-            } 
+            return server;
         }
 
+        // Actual Game Loop
         static async Task HandleClient(Socket client)
         {
             try
@@ -61,6 +84,10 @@ namespace Server
                             break;
                         } 
                     } else if (messageString != null) {
+                        // Dont remove, if remove and someone say hello, weird things happen
+                        if (messageString == "Hello") {
+                            Console.WriteLine($"Message from client: Hello");
+                        }
                         Console.WriteLine($"Message from client: {messageString}");
                         var response = "Message Received";
                         var responseByte = Encoding.UTF8.GetBytes(response);
@@ -82,7 +109,6 @@ namespace Server
                 catch (Exception err)
                 {
                     Console.WriteLine($"Error Cutting Off Connection: {err.Message}");
-                    throw;
                 }
             }
         }

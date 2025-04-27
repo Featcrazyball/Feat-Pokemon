@@ -9,10 +9,9 @@ namespace Client
     {
         public static async Task Main() 
         {
-            IPHostEntry ipEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
-            IPAddress ip = ipEntry.AddressList[1];
-            IPEndPoint iPEndPoint = new(ip, 8080);
-            
+            IPAddress ip = IPAddress.Parse("39.109.136.104");
+            IPEndPoint iPEndPoint = new(ip, 8000);
+
             using Socket client = new(
                 iPEndPoint.AddressFamily,
                 SocketType.Stream,
@@ -22,7 +21,6 @@ namespace Client
             await client.ConnectAsync(iPEndPoint);
 
             while (true) {
-                Console.WriteLine("Why are you gay?");
                 var message = Console.ReadLine();
 
                 var messageBytes = Encoding.UTF8.GetBytes(message ?? string.Empty);

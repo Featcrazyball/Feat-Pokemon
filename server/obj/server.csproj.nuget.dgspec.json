@@ -47,6 +47,14 @@
             "Microsoft.Data.Sqlite": {
               "target": "Package",
               "version": "[9.0.4, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
+            "System.Data.SQLite": {
+              "target": "Package",
+              "version": "[1.0.119, )"
             }
           },
           "imports": [
