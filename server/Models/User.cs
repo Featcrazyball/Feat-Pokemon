@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
 
 namespace Models
 {
@@ -12,20 +13,22 @@ namespace Models
         public int Wins { get; set; }
         public int Losses { get; set; }
         public int Coins { get; set; }
+        public bool FeatVersion { get; set; }
 
         // Parameterless constructor for EF Core
         private User() { }
 
         // Instance constructor
-        public User(string Id, string Username, string Password, string Email, int Wins, int Losses, int Coins)
+        public User(string Id, string Username, string Password, string Email)
         {
             this.Id = Guid.NewGuid().ToString("N").Substring(0, 15);
             this.Username = Username;
             this.Password = Password;
             this.Email = Email;
-            this.Wins = Wins;
-            this.Losses = Losses;
-            this.Coins = Coins;
+            Wins = 0;
+            Losses = 0;
+            Coins = 0;
+            FeatVersion = false;
         }
 
         public double CalculateWinLossRatio()
