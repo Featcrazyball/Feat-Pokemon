@@ -21,7 +21,13 @@ namespace PokemonPocket
         public string? OwnerId {get;set;}
         public int StatPoints {get;set;}
         public int? StatsEarned {get;set;}
-        public int IV {get;set;}
+
+        public int HpIV {get;set;}
+        public int AttackIV {get;set;}
+        public int SpecialAttackIV {get;set;}
+        public int DefenseIV {get;set;}
+        public int SpecialDefenseIV {get;set;}
+        public int SpeedIV {get;set;}
 
         // For Assignment
         public float SkillDamage { get;set; }
@@ -30,7 +36,12 @@ namespace PokemonPocket
         public PokemonMaster() { } //For EF Core
         public PokemonMaster(string Name, string Type, float Health, float Attack, float Defense, float SpecialAttack, float SpecialDefense, float Speed, string OwnerId, int SkillDamage, string Skill) {
             Id = Guid.NewGuid().ToString("N")[..15]; 
-            IV = Random.Shared.Next(1, 31);
+            HpIV = Random.Shared.Next(1, 31);
+            AttackIV = Random.Shared.Next(1, 31);
+            SpecialAttackIV = Random.Shared.Next(1, 31);
+            DefenseIV = Random.Shared.Next(1, 31);
+            SpecialDefenseIV = Random.Shared.Next(1, 31);
+            SpeedIV = Random.Shared.Next(1, 31);
             StatPoints = Random.Shared.Next(1, 10);
             Level = 1;
             Experience = 0;
@@ -52,18 +63,31 @@ namespace PokemonPocket
             return SkillDamage;
         }
 
-        public void LevelUp()
+        public void LevelUp(int times)
         {
-            if (Experience > Level * 1000) {
+            for (int i = 0; i < times; i++)
+            {
+                if (Experience > Level * 1000 && Level < 100) {
+                    // Stat Upgrades
                     Level += 1;
                     Experience = 0;
-                    Health += (Health + IV) / 50 + Level + 10;
-                    Attack += (Attack + IV) / 8 + 1; 
-                    SpecialAttack += (SpecialAttack + IV) / 8 + 1; 
-                    Defense += (Defense + IV) / 8 + 1; 
-                    SpecialDefense += (SpecialDefense + IV) / 8 + 1; 
-                    Speed += (Speed + IV) / 8 + 1;
-                    if (StatsEarned < 251) {StatPoints += 3; StatsEarned += 3;}
+                    Health += (Health + HpIV) / 50 + Level + 10;
+                    Attack += (Attack + AttackIV) / 8 + 1; 
+                    SpecialAttack += (SpecialAttack + SpecialAttackIV) / 8 + 1; 
+                    Defense += (Defense + DefenseIV) / 8 + 1; 
+                    SpecialDefense += (SpecialDefense + SpecialDefenseIV) / 8 + 1; 
+                    Speed += (Speed + SpeedIV) / 8 + 1;
+
+                    // Make sure there is a max of 250 stat points earned
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (StatsEarned < 251) {StatPoints += 1; StatsEarned += 1;}
+                    }
+                    Console.WriteLine($"Your {Name} has leveled up to level {Level}!\nYou have {StatPoints} Stat Points left.");
+
+                    // Max Level Check
+                    if (Level >= 100) { Console.WriteLine($"Your {Name} has reached a max level of 100!"); break;}
+                }
             }
         }
 
@@ -104,7 +128,7 @@ namespace PokemonPocket
                     Speed = 60;
                     StatPoints = 10;
 
-                    for (int i = 0; i < Level; i++) { LevelUp(); }
+                    LevelUp(Level); 
                     return $"{nickname} has evolved from a Bulbasaur to Ivysaur";
 
                 case "Ivysaur" when Level >= 32:
@@ -119,7 +143,7 @@ namespace PokemonPocket
                     Speed = 80;
                     StatPoints = 10;
 
-                    for (int i = 0; i < Level; i++) { LevelUp(); }
+                    LevelUp(Level);
                     return $"{nickname} has evolved from a Ivysaur to Venusaur";
 
                 default:
