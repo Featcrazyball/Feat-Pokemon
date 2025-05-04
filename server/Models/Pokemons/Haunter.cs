@@ -1,3 +1,4 @@
+using Database;
 namespace PokemonPocket;
 
 public class Haunter : PokemonMaster
@@ -9,6 +10,42 @@ public class Haunter : PokemonMaster
     : base("Haunter", "Ghost/Poison", 45, 50, 45, 115, 55, 95, ownerId, 25, "Levitate")
     {
         Nickname = nickname;
+    }
+
+    public Haunter(Gastly gastly)
+    : base("Haunter", "Ghost/Poison", 45, 50, 45, 115, 55, 95, gastly.OwnerId ?? "Unknown", 25, "Levitate")
+    {
+        Id = gastly.Id;
+        Level = 1;
+        Nickname = gastly.Nickname;
+        Experience = gastly.Experience;
+        HpIV = gastly.HpIV;
+        AttackIV = gastly.AttackIV;
+        SpecialAttackIV = gastly.SpecialAttackIV;
+        DefenseIV = gastly.DefenseIV;
+        SpecialDefenseIV = gastly.SpecialDefenseIV;
+        SpeedIV = gastly.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        if (Level >= 1) {
+            using (var context = new DatabaseContext())
+            {
+                var gengar = new Gengar(this);
+                gengar.EvolveLevelUp(Level-1); 
+
+                // Remove previous and add new Pokemon
+                context.PokemonMaster.Add(gengar);
+                context.PokemonMaster.Remove(this);
+                context.SaveChanges();
+            }
+            Console.WriteLine($"{Nickname} has evolved from a Haunter to a Gengar!");
+        } else {
+            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+        }
     }
 
     public override float calculateDamage(float SkillDamage) {

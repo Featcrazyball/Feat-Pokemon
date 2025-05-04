@@ -19,9 +19,9 @@ namespace Models
         private User() { }
 
         // Instance constructor
-        public User(string Id, string Username, string Password, string Email)
+        public User(string Username, string Password, string Email)
         {
-            this.Id = Guid.NewGuid().ToString("N").Substring(0, 15);
+            Id = Guid.NewGuid().ToString("N").Substring(0, 15);
             this.Username = Username;
             this.Password = Password;
             this.Email = Email;

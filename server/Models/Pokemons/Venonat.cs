@@ -1,3 +1,4 @@
+using Database;
 namespace PokemonPocket;
 
 public class Venonat : PokemonMaster
@@ -9,6 +10,25 @@ public class Venonat : PokemonMaster
     : base("Venonat", "Bug/Poison", 60, 55, 50, 40, 55, 45, ownerId, 20, "Compound Eyes")
     {
         Nickname = nickname;
+    }
+
+    public override void Evolve()
+    {
+        if (Level >= 31) {
+            using (var context = new DatabaseContext())
+            {
+                var venomoth = new Venomoth(this);
+                venomoth.EvolveLevelUp(Level-1);
+
+                // Remove previous and add new Pokemon
+                context.PokemonMaster.Add(venomoth);
+                context.PokemonMaster.Remove(this);
+                context.SaveChanges();
+            }
+            Console.WriteLine($"{Nickname} has evolved from a Venonat to a Venomoth!");
+        } else {
+            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+        }
     }
 
     public override float calculateDamage(float SkillDamage) {

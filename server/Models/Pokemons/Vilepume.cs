@@ -11,6 +11,28 @@ public class Vileplume : PokemonMaster
         Nickname = nickname;
     }
 
+    public Vileplume(Gloom gloom)
+    : base("Vileplume", "Grass/Poison", 75, 80, 85, 110, 90, 50, gloom.OwnerId ?? "Unknown", 20, "Effect Spore")
+    {
+        Id = gloom.Id;
+        Level = 1;
+        Nickname = gloom.Nickname;
+        Experience = gloom.Experience;
+        HpIV = gloom.HpIV;
+        AttackIV = gloom.AttackIV;
+        SpecialAttackIV = gloom.SpecialAttackIV;
+        DefenseIV = gloom.DefenseIV;
+        SpecialDefenseIV = gloom.SpecialDefenseIV;
+        SpeedIV = gloom.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

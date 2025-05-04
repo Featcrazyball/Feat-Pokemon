@@ -11,6 +11,28 @@ public class Dewgong : PokemonMaster
         Nickname = nickname;
     }
 
+    public Dewgong(Seel seel)
+    : base("Dewgong", "Water/Ice", 90, 70, 80, 70, 95, 70, seel.OwnerId ?? "Unknown", 30, "Thick Fat")
+    {
+        Id = seel.Id;
+        Level = 1;
+        Nickname = seel.Nickname;
+        Experience = seel.Experience;
+        HpIV = seel.HpIV;
+        AttackIV = seel.AttackIV;
+        SpecialAttackIV = seel.SpecialAttackIV;
+        DefenseIV = seel.DefenseIV;
+        SpecialDefenseIV = seel.SpecialDefenseIV;
+        SpeedIV = seel.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

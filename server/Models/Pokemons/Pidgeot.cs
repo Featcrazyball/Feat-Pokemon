@@ -11,6 +11,28 @@ public class Pidgeot : PokemonMaster
         Nickname = nickname;
     }
 
+    public Pidgeot(Pidgeotto pidgeotto)
+    : base("Pidgeot", "Normal/Flying", 83, 80, 75, 70, 70, 101, pidgeotto.OwnerId ?? "Unknown", 25, "Keen Eye")
+    {
+        Id = pidgeotto.Id;
+        Level = 1;
+        Nickname = pidgeotto.Nickname;
+        Experience = pidgeotto.Experience;
+        HpIV = pidgeotto.HpIV;
+        AttackIV = pidgeotto.AttackIV;
+        SpecialAttackIV = pidgeotto.SpecialAttackIV;
+        DefenseIV = pidgeotto.DefenseIV;
+        SpecialDefenseIV = pidgeotto.SpecialDefenseIV;
+        SpeedIV = pidgeotto.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final form!");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

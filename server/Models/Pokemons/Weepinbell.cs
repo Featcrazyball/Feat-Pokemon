@@ -1,3 +1,4 @@
+using Database;
 namespace PokemonPocket;
 
 public class Weepinbell : PokemonMaster
@@ -9,6 +10,46 @@ public class Weepinbell : PokemonMaster
     : base("Weepinbell", "Grass/Poison", 65, 90, 50, 85, 45, 55, ownerId, 21, "Chlorophyll")
     {
         Nickname = nickname;
+    }
+
+    public Weepinbell(Bellsprout bellsprout)
+    : base("Weepinbell", "Grass/Poison", 65, 90, 50, 85, 45, 55, bellsprout.OwnerId ?? "Unknown", 21, "Chlorophyll")
+    {
+        Id = bellsprout.Id;
+        Level = 1;
+        Nickname = bellsprout.Nickname;
+        Experience = bellsprout.Experience;
+        HpIV = bellsprout.HpIV;
+        AttackIV = bellsprout.AttackIV;
+        SpecialAttackIV = bellsprout.SpecialAttackIV;
+        DefenseIV = bellsprout.DefenseIV;
+        SpecialDefenseIV = bellsprout.SpecialDefenseIV;
+        SpeedIV = bellsprout.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        using (var context = new DatabaseContext())
+        {
+            var item = context.Items.FirstOrDefault(i => i.Name == "Leaf Stone" && i.OwnerId == OwnerId);
+            if (item != null) {
+                context.Items.Remove(item);
+            } else {
+                Console.WriteLine($"{Nickname} needs a Leaf Stone to evolve!");
+                return;
+            }
+
+            var victreebel = new Victreebel(this);
+            victreebel.EvolveLevelUp(Level-1); // Level up to current level
+
+            // Remove previous and add new Pokemon
+            context.PokemonMaster.Add(victreebel);
+            context.PokemonMaster.Remove(this);
+            context.SaveChanges();
+        }
+        Console.WriteLine($"{Nickname} has evolved from a Weepinbell to a Victreebel!");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -11,6 +11,28 @@ public class Hypno : PokemonMaster
         Nickname = nickname;
     }
 
+    public Hypno(Drowzee drowzee)
+    : base("Hypno", "Psychic", 85, 73, 70, 73, 115, 67, drowzee.OwnerId ?? "Unknown", 30, "Insomnia")
+    {
+        Id = drowzee.Id;
+        Level = 1;
+        Nickname = drowzee.Nickname;
+        Experience = drowzee.Experience;
+        HpIV = drowzee.HpIV;
+        AttackIV = drowzee.AttackIV;
+        SpecialAttackIV = drowzee.SpecialAttackIV;
+        DefenseIV = drowzee.DefenseIV;
+        SpecialDefenseIV = drowzee.SpecialDefenseIV;
+        SpeedIV = drowzee.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

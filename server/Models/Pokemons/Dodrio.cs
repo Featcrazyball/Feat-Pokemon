@@ -11,6 +11,28 @@ public class Dodrio : PokemonMaster
         Nickname = nickname;
     }
 
+    public Dodrio(Doduo doduo)
+    : base("Dodrio", "Normal/Flying", 60, 110, 70, 60, 60, 110, doduo.OwnerId ?? "Unknown", 30, "Early Bird")
+    {
+        Id = doduo.Id;
+        Level = 1;
+        Nickname = doduo.Nickname;
+        Experience = doduo.Experience;
+        HpIV = doduo.HpIV;
+        AttackIV = doduo.AttackIV;
+        SpecialAttackIV = doduo.SpecialAttackIV;
+        DefenseIV = doduo.DefenseIV;
+        SpecialDefenseIV = doduo.SpecialDefenseIV;
+        SpeedIV = doduo.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

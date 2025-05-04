@@ -11,6 +11,11 @@ public class Hitmonchan : PokemonMaster
         Nickname = nickname;
     }
 
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

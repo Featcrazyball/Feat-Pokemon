@@ -1,3 +1,4 @@
+using Database;
 namespace PokemonPocket;
 
 public class Doduo : PokemonMaster
@@ -9,6 +10,42 @@ public class Doduo : PokemonMaster
     : base("Doduo", "Normal/Flying", 35, 85, 45, 35, 35, 75, ownerId, 20, "Run Away")
     {
         Nickname = nickname;
+    }
+
+    public Doduo(Doduo doduo)
+    : base("Doduo", "Normal/Flying", 35, 85, 45, 35, 35, 75, doduo.OwnerId ?? "Unknown", 20, "Run Away")
+    {
+        Id = doduo.Id;
+        Level = 1;
+        Nickname = doduo.Nickname;
+        Experience = doduo.Experience;
+        HpIV = doduo.HpIV;
+        AttackIV = doduo.AttackIV;
+        SpecialAttackIV = doduo.SpecialAttackIV;
+        DefenseIV = doduo.DefenseIV;
+        SpecialDefenseIV = doduo.SpecialDefenseIV;
+        SpeedIV = doduo.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        if (Level >= 30) {
+            using (var context = new DatabaseContext())
+            {
+                var dodrio = new Dodrio(this);
+                dodrio.EvolveLevelUp(Level-1); 
+
+                // Remove previous and add new Pokemon
+                context.PokemonMaster.Add(dodrio);
+                context.PokemonMaster.Remove(this);
+                context.SaveChanges();
+            }
+            Console.WriteLine($"{Nickname} has evolved from a Doduo to a Dodrio!");
+        } else {
+            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+        }
     }
 
     public override float calculateDamage(float SkillDamage) {

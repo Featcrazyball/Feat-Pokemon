@@ -11,6 +11,28 @@ public class Electrode : PokemonMaster
         Nickname = nickname;
     }
 
+    public Electrode(Voltorb voltorb)
+    : base("Electrode", "Electric", 60, 50, 70, 80, 80, 150, voltorb.OwnerId ?? "Unknown", 30, "Hyper Cutter")
+    {
+        Id = voltorb.Id;
+        Level = 1;
+        Nickname = voltorb.Nickname;
+        Experience = voltorb.Experience;
+        HpIV = voltorb.HpIV;
+        AttackIV = voltorb.AttackIV;
+        SpecialAttackIV = voltorb.SpecialAttackIV;
+        DefenseIV = voltorb.DefenseIV;
+        SpecialDefenseIV = voltorb.SpecialDefenseIV;
+        SpeedIV = voltorb.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

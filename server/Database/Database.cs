@@ -9,7 +9,6 @@ namespace Database
     {
         public DbSet<User> Users { get; set; }
         public DbSet<PokemonMaster> PokemonMaster { get; set; }
-        public DbSet<Evolution> Evolutions { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Skill> Skills { get; set; }
@@ -17,11 +16,23 @@ namespace Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<PokemonMaster>()
+            var discriminator = modelBuilder.Entity<PokemonMaster>()
                 .HasDiscriminator<string>("PokemonType")
-                .HasValue<PokemonMaster>("Base")
-                .HasValue<Bulbasaur>("Bulbasaur");
+                .HasValue<PokemonMaster>("Base");
+
+            // Automatically register all types that inherit from PokemonMaster
+            var pokemonTypes = typeof(PokemonMaster).Assembly.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(PokemonMaster)));
+            
+            foreach (var pokemonType in pokemonTypes)
+            {
+                modelBuilder.Entity(pokemonType).HasBaseType(typeof(PokemonMaster));
                 
+                modelBuilder.Entity<PokemonMaster>().HasDiscriminator()
+                    .HasValue(pokemonType, pokemonType.Name);
+            }
+    
+            // For skills relationship with skill pools
             modelBuilder.Entity<SkillPool>()
                 .HasMany(s => s.Skills)
                 .WithOne()
@@ -34,5 +45,7 @@ namespace Database
         {
             optionsBuilder.UseSqlite("Data Source=database.db");
         }
+
+
     }
 }

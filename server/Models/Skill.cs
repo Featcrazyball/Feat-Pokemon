@@ -31,10 +31,10 @@ namespace Models
         [ForeignKey("SkillPoolId")]
         public virtual SkillPool? Pool { get; set; }
 
-        private Skill() { } //For EF Core
-        public Skill(string Id, string Name, string Type, int BasePower, float Accuracy, int LevelRequired, int PowerPoints, int Cooldown, int EffectDuration, string Description, string PokemonId)
+        protected Skill() {} //For EF Core
+        public Skill(string Name, string Type, int BasePower, float Accuracy, int LevelRequired, int PowerPoints, int Cooldown, int EffectDuration, string Description, string PokemonId)
         {
-            this.Id = Guid.NewGuid().ToString("N").Substring(0, 15);
+            Id = Guid.NewGuid().ToString("N").Substring(0, 15);
             this.Name = Name;
             this.Type = Type;
             this.BasePower = BasePower;
@@ -46,6 +46,10 @@ namespace Models
             this.Description = Description;
             this.PokemonId = PokemonId;
             InUse = false;
+        }
+
+        public virtual void SkillEfect() {
+            Console.WriteLine($"The skill {Name} has no effect.");
         }
     }
 }

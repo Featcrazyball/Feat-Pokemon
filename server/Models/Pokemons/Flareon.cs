@@ -11,6 +11,28 @@ public class Flareon : PokemonMaster
         Nickname = nickname;
     }
 
+    public Flareon(Eevee eevee)
+    : base("Flareon", "Fire", 65, 130, 60, 95, 110, 65, eevee.OwnerId?? "Unknown", 20, "Flash Fire")
+    {
+        Id = eevee.Id;
+        Level = 1;
+        Nickname = eevee.Nickname;
+        Experience = eevee.Experience;
+        HpIV = eevee.HpIV;
+        AttackIV = eevee.AttackIV;
+        SpecialAttackIV = eevee.SpecialAttackIV;
+        DefenseIV = eevee.DefenseIV;
+        SpecialDefenseIV = eevee.SpecialDefenseIV;
+        SpeedIV = eevee.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

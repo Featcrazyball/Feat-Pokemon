@@ -11,6 +11,28 @@ public class Marowak : PokemonMaster
         Nickname = nickname;
     }
 
+    public Marowak(Cubone cubone)
+    : base("Marowak", "Ground", 60, 80, 110, 50, 80, 45, cubone.OwnerId ?? "Unknown", 20, "Lightning Rod")
+    {
+        Id = cubone.Id;
+        Level = 1;
+        Nickname = cubone.Nickname;
+        Experience = cubone.Experience;
+        HpIV = cubone.HpIV;
+        AttackIV = cubone.AttackIV;
+        SpecialAttackIV = cubone.SpecialAttackIV;
+        DefenseIV = cubone.DefenseIV;
+        SpecialDefenseIV = cubone.SpecialDefenseIV;
+        SpeedIV = cubone.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

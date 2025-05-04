@@ -11,6 +11,28 @@ public class Dragonite : PokemonMaster
         Nickname = nickname;
     }
 
+    public Dragonite(Dragonair dragonair)
+    : base("Dragonite", "Dragon", 91, 134, 95, 100, 100, 80, dragonair.OwnerId?? "Unknown", 60, "Inner Focus")
+    {
+        Id = dragonair.Id;
+        Level = 1;
+        Nickname = dragonair.Nickname;
+        Experience = dragonair.Experience;
+        HpIV = dragonair.HpIV;
+        AttackIV = dragonair.AttackIV;
+        SpecialAttackIV = dragonair.SpecialAttackIV;
+        DefenseIV = dragonair.DefenseIV;
+        SpecialDefenseIV = dragonair.SpecialDefenseIV;
+        SpeedIV = dragonair.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

@@ -11,6 +11,28 @@ public class Tentacruel : PokemonMaster
         Nickname = nickname;
     }
 
+    public Tentacruel(Tentacool tentacool)
+    : base("Tentacruel", "Water/Poison", 80, 70, 65, 80, 120, 100, tentacool.OwnerId ?? "Unknown", 30, "Liquid Ooze")
+    {
+        Id = tentacool.Id;
+        Level = 1;
+        Nickname = tentacool.Nickname;
+        Experience = tentacool.Experience;
+        HpIV = tentacool.HpIV;
+        AttackIV = tentacool.AttackIV;
+        SpecialAttackIV = tentacool.SpecialAttackIV;
+        DefenseIV = tentacool.DefenseIV;
+        SpecialDefenseIV = tentacool.SpecialDefenseIV;
+        SpeedIV = tentacool.SpeedIV;
+        StatPoints = Random.Shared.Next(1, 10);
+        StatsEarned = 0;
+    }
+
+    public override void Evolve()
+    {
+        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }
