@@ -26,11 +26,6 @@ namespace Models
         [ForeignKey("PokemonId")]
         public virtual PokemonMaster? Pokemon { get; set; } 
 
-        // Link to SkillPool
-        public string? SkillPoolId { get; set; }
-        [ForeignKey("SkillPoolId")]
-        public virtual SkillPool? Pool { get; set; }
-
         protected Skill() {} //For EF Core
         public Skill(string Name, string Type, int BasePower, float Accuracy, int LevelRequired, int PowerPoints, int Cooldown, int EffectDuration, string Description, string PokemonId)
         {
@@ -48,7 +43,7 @@ namespace Models
             InUse = false;
         }
 
-        public virtual void SkillEfect() {
+        public virtual void SkillEfect(PokemonMaster target, PokemonMaster user, float Modifer) {
             Console.WriteLine($"The skill {Name} has no effect.");
         }
     }

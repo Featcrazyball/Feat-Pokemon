@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.VisualBasic;
+using Database;
 using Models;
 
 namespace PokemonPocket
@@ -15,6 +15,7 @@ namespace PokemonPocket
 
         // Feat's Features
         public float Health {get;set;}
+        public float MaxHealth {get;set;}
         public float Attack {get;set;}
         public float SpecialAttack {get;set;}
         public float Defense { get;set; } 
@@ -24,13 +25,17 @@ namespace PokemonPocket
         public int StatPoints {get;set;}
         public int? StatsEarned {get;set;}
 
+        // IV's
         public int HpIV {get;set;}
         public int AttackIV {get;set;}
         public int SpecialAttackIV {get;set;}
         public int DefenseIV {get;set;}
         public int SpecialDefenseIV {get;set;}
         public int SpeedIV {get;set;}
-        
+
+        // Skills
+        public virtual string? SkillPool { get; set; }
+        public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
 
         // For Assignment
         public float SkillDamage { get;set; }
@@ -60,6 +65,7 @@ namespace PokemonPocket
             this.OwnerId = OwnerId;
             this.Skill = Skill;
             this.SkillDamage = SkillDamage;
+            MaxHealth = Health;
         }
 
         // For Assignment
@@ -67,6 +73,7 @@ namespace PokemonPocket
             return SkillDamage;
         }
 
+        // For Re-calculation DO NOT TOUCH
         public void EvolveLevelUp(int times)
         {
             for (int i = 0; i < times; i++)
@@ -89,8 +96,10 @@ namespace PokemonPocket
                     }
                 }
             }
+            MaxHealth = Health;
         }
 
+        // For Leveling Up
         public void LevelUp(int times)
         {
             for (int i = 0; i < times; i++)
@@ -117,8 +126,10 @@ namespace PokemonPocket
                     if (Level >= 100) { Console.WriteLine($"Your {Name} has reached a max level of 100!"); break;}
                 }
             }
+            MaxHealth = Health;
         }
 
+        // Stat Points Management
         public void AddStatPoints(int points)
         {
             for (int i = 0; i < points; i++)
@@ -139,12 +150,53 @@ namespace PokemonPocket
             Console.WriteLine($"Stat Points have been removed from your Pokemon!\nYou have {StatPoints} Stat Points left.");
         }
 
+        // Base Form Evolve (dont bother)
         public virtual void Evolve()
         {
             Console.WriteLine($"{Name} is unable to evolve.");
         }
 
-        
+        public bool LearnSkill(string skillName)
+        {
+            using var context = new DatabaseContext();
+            
+            // Check if already knows 4 skills
+            var currentSkillCount = context.Skills.Count(s => s.PokemonId == Id);
+            if (currentSkillCount >= 4)
+            {
+                Console.WriteLine($"{Name} already knows 4 skills. It must forget one first.");
+                return false;
+            }
+            
+            // Find a skill template with this name
+            var skillTemplate = context.Skills.FirstOrDefault(s => s.Name == skillName && s.PokemonId == null);
+            if (skillTemplate == null)
+            {
+                Console.WriteLine($"{skillName} does not exist.");
+                return false;
+            }
+            
+            // Create skill
+            Skill newSkill;
+            switch(skillName)
+            {
+                case "Absorb":
+                    if (Id == null) { Console.WriteLine("Error registering Pokemon ID\nPlease contact an admin (just kidding theres no admin, call Featcrazyball)."); return false; }
+                    newSkill = new Absorb(Id);
+                    break;
+                default:
+                    Console.WriteLine($"Skill {skillName} not recognized.");
+                    return false;
+            }
+            
+            // Add to database
+            context.Skills.Add(newSkill);
+            context.SaveChanges();
+            
+            Console.WriteLine($"{Name} learned {skillName}!");
+            return true;
+        }
+
+
     }
-    
 }

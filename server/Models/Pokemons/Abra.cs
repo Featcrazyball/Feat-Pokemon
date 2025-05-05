@@ -1,4 +1,3 @@
-using Models;
 using Database;
 
 namespace PokemonPocket;

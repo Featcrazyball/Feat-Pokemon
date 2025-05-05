@@ -1,38 +1,143 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Client
 {
     class Client
     {
+        private static bool _isConnected = false;
+        private static readonly CancellationTokenSource _cts = new CancellationTokenSource();
+
         public static async Task Main() 
         {
-            IPAddress ip = IPAddress.Parse("39.109.136.104");
-            IPEndPoint iPEndPoint = new(ip, 8000);
+            try
+            {
+                // Connect to server
+                Console.WriteLine("Connecting to server...");
+                IPAddress ip = IPAddress.Parse("39.109.136.104");
+                IPEndPoint iPEndPoint = new(ip, 8000);
 
-            using Socket client = new(
-                iPEndPoint.AddressFamily,
-                SocketType.Stream,
-                ProtocolType.Tcp
-            );
+                using Socket client = new(
+                    iPEndPoint.AddressFamily,
+                    SocketType.Stream,
+                    ProtocolType.Tcp
+                );
 
-            await client.ConnectAsync(iPEndPoint);
+                // Exception handling for connection
+                try
+                {
+                    await client.ConnectAsync(iPEndPoint);
+                    _isConnected = true;
+                    Console.WriteLine("Connected to server!");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to connect: {ex.Message}");
+                    return;
+                }
 
-            while (true) {
-                var message = Console.ReadLine();
+                // Start receiving messages in a separate thread
+                Task receiveTask = ReceiveMessagesAsync(client);
 
-                var messageBytes = Encoding.UTF8.GetBytes(message ?? string.Empty);
+                // Handle user input in the main thread
+                while (_isConnected)
+                {
+                    try
+                    {
+                        string input = Console.ReadLine() ?? string.Empty;
+                        if (input.ToLower() == "exit")
+                        {
+                            _cts.Cancel();
+                            break;
+                        }
+
+                        if (_isConnected)
+                        {
+                            await SendMessageAsync(client, input);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error sending message: {ex.Message}");
+                        break;
+                    }
+                }
+
+                // Wait for the receive task to complete
+                try
+                {
+                    await receiveTask;
+                }
+                catch (OperationCanceledException) { Console.WriteLine("Received Task Cancelled."); }
+            }
+            finally
+            {
+                Console.WriteLine("Disconnected from server.");
+                _isConnected = false;
+                _cts.Cancel();
+                _cts.Dispose();
+                Environment.Exit(0);
+            }
+        }
+
+        // Receive messages from the server asynchronously
+        private static async Task ReceiveMessagesAsync(Socket client)
+        {
+            byte[] buffer = new byte[4096];
+            
+            while (!_cts.Token.IsCancellationRequested && _isConnected)
+            {
+                try
+                {
+                    int received = await client.ReceiveAsync(buffer, SocketFlags.None, _cts.Token);
+                    if (received == 0)
+                    {
+                        _isConnected = false;
+                        Console.WriteLine("\nServer closed the connection.");
+                        break;
+                    }
+
+                    string message = Encoding.UTF8.GetString(buffer, 0, received);
+                    
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.WriteLine(message);
+                    Console.ResetColor();
+                    Console.Write("> ");
+                }
+                catch (SocketException)
+                {
+                    _isConnected = false;
+                    Console.WriteLine("\nConnection to server lost.");
+                    break;
+                }
+                catch (OperationCanceledException)
+                {
+                    _isConnected = false;
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"\nError receiving message: {ex.Message}");
+                    _isConnected = false;
+                    break;
+                }
+            }
+        }
+
+        // Send messages to the server asynchronously
+        private static async Task SendMessageAsync(Socket client, string message)
+        {
+            try
+            {
+                byte[] messageBytes = Encoding.UTF8.GetBytes(message);
                 await client.SendAsync(messageBytes, SocketFlags.None);
-
-                var buffer = new byte[1_024];
-
-                var received = await client.ReceiveAsync(buffer, SocketFlags.None);
-
-                var messageString = Encoding.UTF8.GetString(buffer, 0, received);
-
-                Console.WriteLine(messageString);
+            }
+            catch (Exception)
+            {
+                _isConnected = false;
+                throw;
             }
         }
     }

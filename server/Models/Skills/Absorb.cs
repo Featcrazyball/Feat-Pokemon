@@ -1,3 +1,4 @@
+using PokemonPocket;
 namespace Models;
 
 public class Absorb : Skill
@@ -8,9 +9,17 @@ public class Absorb : Skill
         this.PokemonId = PokemonId;
     }
 
-    public override void SkillEfect()
+    public override void SkillEfect(PokemonMaster target, PokemonMaster user, float Modifier)
     {
-        // Logic to absorb HP from the target and restore it to the user
-        Console.WriteLine($"{Name} absorbed HP from the target!");
+        float damage = ((user.Level * 2 / 5 + 2) * BasePower * user.Attack / target.Defense / 50 + 2) * Modifier;
+        if (damage < 0) damage = 0;
+
+        target.Health -= damage;
+
+        user.Health += damage / 2;
+        if (user.Health > user.MaxHealth) user.Health = user.MaxHealth;
+
+        Console.WriteLine($"{user.Name} used {Name} on {target.Name}, dealing {damage} damage and recovering {damage / 2} HP.");
     }
+
 }

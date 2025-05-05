@@ -10,9 +10,8 @@ namespace Database
         public DbSet<User> Users { get; set; }
         public DbSet<PokemonMaster> PokemonMaster { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<Status> Statuses { get; set; }
+        // public DbSet<Status> Statuses { get; set; } For the time being no need for this
         public DbSet<Skill> Skills { get; set; }
-        public DbSet<SkillPool> SkillPools { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,12 +31,12 @@ namespace Database
                     .HasValue(pokemonType, pokemonType.Name);
             }
     
-            // For skills relationship with skill pools
-            modelBuilder.Entity<SkillPool>()
-                .HasMany(s => s.Skills)
-                .WithOne()
+            modelBuilder.Entity<PokemonMaster>()
+                .HasMany(p => p.Skills)
+                .WithOne(s => s.Pokemon)
+                .HasForeignKey(s => s.PokemonId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             base.OnModelCreating(modelBuilder);
         }
 

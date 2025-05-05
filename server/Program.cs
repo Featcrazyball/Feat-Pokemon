@@ -1,18 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
-using PokemonPocket;
+﻿using System.Net.Sockets;
+using Database;
+using System.Threading;
 
 namespace Server
 {
     class Server
     {
         static async Task Main() {
-            // Setup Skill Pool
-            StartupMethods.SetUpSkillPool();
+            // Initialize database before starting server
+            using (var context = new DatabaseContext()) {
+                context.Database.EnsureCreated();
+                Console.WriteLine("Database initialized.");
+            }
+
 
             // Server Setup
             Socket server;
