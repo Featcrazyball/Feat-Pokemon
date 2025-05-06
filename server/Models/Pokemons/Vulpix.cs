@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Vulpix : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Vulpix() { } //For EF Core
     public Vulpix(string nickname, string ownerId) 
     : base("Vulpix", "Fire", 38, 41, 40, 50, 65, 65, ownerId, 10, "Flash Fire")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
     
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -20,7 +23,7 @@ public class Vulpix : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Fire Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Fire Stone to evolve!");
                 return;
             }
 
@@ -32,7 +35,7 @@ public class Vulpix : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Vulpix to a Ninetales!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Vulpix to a Ninetales!");
     }
 
     public override float calculateDamage(float SkillDamage) {

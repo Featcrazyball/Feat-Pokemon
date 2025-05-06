@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Charmeleon : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Charmeleon() { } //For EF Core
     public Charmeleon(string nickname, string ownerId) 
     : base("Charmeleon", "Fire", 58, 64, 58, 80, 65, 80, ownerId, 25, "Fire Burst")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Charmeleon(Charmander charm)
@@ -27,9 +30,13 @@ public class Charmeleon : PokemonMaster
         SpeedIV = charm.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 36) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Charmeleon : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Charmeleon to a Charizard!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Charmeleon to a Charizard!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

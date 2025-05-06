@@ -1,14 +1,19 @@
+using Server;
 namespace PokemonPocket;
 
 public class Arbok : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Arbok() { } //For EF Core
     public Arbok(string nickname, string ownerId) 
     : base("Arbok", "Poison", 60, 95, 69, 65, 79, 80, ownerId, 25, "Bite")
     {
         Nickname = nickname;
+        SkillPool = "Wrap, Poison Sting, Bite, Glare, Acid, Screech, Toxic, Body Slam, Take Down, Double-Edge, Rage, Earthquake, Fissure, Skull Bash, Rock Slide, Rest, Substitute";
+
+        // Use this to check for null, or else it will throw an error
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Arbok(Ekans ekans)
@@ -26,11 +31,17 @@ public class Arbok : PokemonMaster
         SpeedIV = ekans.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        
+        SkillPool = "Wrap, Poison Sting, Bite, Glare, Acid, Screech, Toxic, Body Slam, Take Down, Double-Edge, Rage, Earthquake, Fissure, Skull Bash, Rock Slide, Rest, Substitute";
+        // Use this to check for null, or else it will throw an error
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final form!");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

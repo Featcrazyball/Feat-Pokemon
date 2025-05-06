@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Nidorino : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Nidorino() { } //For EF Core
     public Nidorino(string nickname, string ownerId) 
     : base("Nidorino", "Poison", 61, 72, 57, 55, 55, 65, ownerId, 23, "Poison Point")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Nidorino(NidoranM nidoran)
@@ -27,9 +30,13 @@ public class Nidorino : PokemonMaster
         SpeedIV = nidoran.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -37,7 +44,7 @@ public class Nidorino : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -49,7 +56,7 @@ public class Nidorino : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Nidorino to a Nidoking!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Nidorino to a Nidoking!");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -1,19 +1,23 @@
+using System.Data.SQLite;
+using Server;
 namespace PokemonPocket;
 
 public class Mewtwo : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Mewtwo() { } //For EF Core
     public Mewtwo(string nickname, string ownerId) 
     : base("Mewtwo", "Psychic", 106, 110, 90, 154, 90, 130, ownerId, 70, "Pressure")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

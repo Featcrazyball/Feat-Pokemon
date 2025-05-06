@@ -1,14 +1,18 @@
+using Server;
 namespace PokemonPocket;
 
 public class Blastoise : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Blastoise() { } //For EF Core
     public Blastoise(string nickname, string ownerId) 
     : base("Blastoise", "Water", 79, 83, 100, 85, 105, 78, ownerId, 30, "Torrent")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Bubble, Water Gun, Bite, Withdraw, Skull Bash, Hydro Pump, Toxic, Body Slam, Take Down, Blizzard, Hyper Beam, Submission, Seismic Toss, Counter, Ice Beam, Dig, Mimic, Double Team, Bide, Rest, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Blastoise(Wartortle wartortle)
@@ -26,11 +30,15 @@ public class Blastoise : PokemonMaster
         SpeedIV = wartortle.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

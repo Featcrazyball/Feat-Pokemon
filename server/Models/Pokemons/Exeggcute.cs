@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Exeggcute : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Exeggcute() { } //For EF Core
     public Exeggcute(string nickname, string ownerId) 
     : base("Exeggcute", "Grass/Psychic", 60, 40, 80, 60, 45, 40, ownerId, 20, "Chlorophyll")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -20,7 +23,7 @@ public class Exeggcute : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -32,7 +35,7 @@ public class Exeggcute : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Exeggcute to a Exeggutor!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Exeggcute to a Exeggutor!");
     }
 
     public override float calculateDamage(float SkillDamage) {

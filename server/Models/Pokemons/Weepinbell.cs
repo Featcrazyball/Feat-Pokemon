@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Weepinbell : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Weepinbell() { } //For EF Core
     public Weepinbell(string nickname, string ownerId) 
     : base("Weepinbell", "Grass/Poison", 65, 90, 50, 85, 45, 55, ownerId, 21, "Chlorophyll")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Weepinbell(Bellsprout bellsprout)
@@ -27,9 +30,13 @@ public class Weepinbell : PokemonMaster
         SpeedIV = bellsprout.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -37,7 +44,7 @@ public class Weepinbell : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -49,7 +56,7 @@ public class Weepinbell : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Weepinbell to a Victreebel!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Weepinbell to a Victreebel!");
     }
 
     public override float calculateDamage(float SkillDamage) {

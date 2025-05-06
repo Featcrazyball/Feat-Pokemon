@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Machoke : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Machoke() { } //For EF Core
     public Machoke(string nickname, string ownerId) 
     : base("Machoke", "Fighting", 80, 100, 70, 50, 60, 45, ownerId, 20, "Guts")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Machoke(Machop machop)
@@ -27,9 +30,13 @@ public class Machoke : PokemonMaster
         SpeedIV = machop.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 28) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Machoke : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Machoke to a Machamp!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Machoke to a Machamp!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

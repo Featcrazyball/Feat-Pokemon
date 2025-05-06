@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Sandslash : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Sandslash() { } //For EF Core
     public Sandslash(string nickname, string ownerId) 
     : base("Sandslash", "Ground", 75, 100, 110, 45, 55, 65, ownerId, 25, "Sand Attack")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Sandslash(Sandshrew sandshrew)
@@ -25,12 +28,16 @@ public class Sandslash : PokemonMaster
         SpecialDefenseIV = sandshrew.SpecialDefenseIV;
         SpeedIV = sandshrew.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
-        StatsEarned = 0                             ;
+        StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

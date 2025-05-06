@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Wartortle : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Wartortle() { } //For EF Core
     public Wartortle(string nickname, string ownerId) 
     : base("Wartortle", "Water", 59, 63, 80, 65, 80, 58, ownerId, 25, "Water Gun")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Wartortle(Squirtle squirtle)
@@ -27,9 +30,13 @@ public class Wartortle : PokemonMaster
         SpeedIV = squirtle.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 36) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Wartortle : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Wartortle to a Blastoise!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Wartortle to a Blastoise!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

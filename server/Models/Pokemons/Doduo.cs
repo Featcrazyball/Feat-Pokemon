@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Doduo : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Doduo() { } //For EF Core
     public Doduo(string nickname, string ownerId) 
     : base("Doduo", "Normal/Flying", 35, 85, 45, 35, 35, 75, ownerId, 20, "Run Away")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Doduo(Doduo doduo)
@@ -27,9 +30,13 @@ public class Doduo : PokemonMaster
         SpeedIV = doduo.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 30) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Doduo : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Doduo to a Dodrio!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Doduo to a Dodrio!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

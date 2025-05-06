@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Gastly : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Gastly() { } //For EF Core
     public Gastly(string nickname, string ownerId) 
     : base("Gastly", "Ghost/Poison", 30, 35, 30, 100, 30, 80, ownerId, 9, "Levitate")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 25) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Gastly : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Gastly to a Haunter!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Gastly to a Haunter!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

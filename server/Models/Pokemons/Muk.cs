@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Muk : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Muk() { } //For EF Core
     public Muk(string nickname, string ownerId) 
     : base("Muk", "Poison", 105, 105, 75, 65, 100, 50, ownerId, 35, "Poison Touch")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Muk(Grimer grimer)
@@ -28,9 +31,9 @@ public class Muk : PokemonMaster
         StatsEarned = 0;
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -1,19 +1,21 @@
 using Database;
-using Models;
+using Server;
 namespace PokemonPocket;
 
 public class Pikachu : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Pikachu() { } //For EF Core
     public Pikachu(string nickname, string ownerId) 
     : base("Pikachu", "Electric", 35, 55, 40, 50, 50, 90, ownerId, 30, "Lightning Bolt")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -21,7 +23,7 @@ public class Pikachu : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Thunderstone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Thunderstone to evolve!");
                 return;
             }
 
@@ -33,7 +35,7 @@ public class Pikachu : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Pikachu to a Raichu!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Pikachu to a Raichu!");
     }
 
     public override float calculateDamage(float SkillDamage) {

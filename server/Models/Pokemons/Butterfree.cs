@@ -1,15 +1,18 @@
-using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Butterfree : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Butterfree() { } //For EF Core
     public Butterfree(string nickname, string ownerId) 
     : base("Butterfree", "Bug/Flying", 60, 45, 50, 90, 80, 70, ownerId, 25, "Confusion")
     {
         Nickname = nickname;
+        SkillPool = "Confusion, Poison Powder, Stun Spore, Sleep Powder, Psybeam, Supersonic, Whirlwind, Toxic, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Butterfree(Metapod caterpie)
@@ -27,11 +30,16 @@ public class Butterfree : PokemonMaster
         SpeedIV = caterpie.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Confusion, Poison Powder, Stun Spore, Sleep Powder, Psybeam, Supersonic, Whirlwind, Toxic, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final form!");
+        await session.SendMessageAsync($"{Nickname} is already at its final form!");
     }
 
     public override float calculateDamage(float SkillDamage) {

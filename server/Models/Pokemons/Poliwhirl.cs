@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Poliwhirl : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Poliwhirl() { } //For EF Core
     public Poliwhirl(string nickname, string ownerId) 
     : base("Poliwhirl", "Water", 65, 65, 65, 50, 50, 90, ownerId, 25, "Water Absorb")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
     
     public Poliwhirl(Poliwag poliwag)
@@ -27,9 +30,13 @@ public class Poliwhirl : PokemonMaster
         SpeedIV = poliwag.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -37,7 +44,7 @@ public class Poliwhirl : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Water Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Water Stone to evolve!");
                 return;
             }
 
@@ -49,7 +56,7 @@ public class Poliwhirl : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Poliwhirl to a Poliwrath!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Poliwhirl to a Poliwrath!");
     }
 
     public override float calculateDamage(float SkillDamage) {

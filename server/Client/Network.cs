@@ -42,7 +42,7 @@ namespace Server
             return null;
         }
 
-        // Handles client connection
+        // Handles client connection, login and register
         public static async Task HandleClient(Socket client)
         {
             string playerId = Guid.NewGuid().ToString("N").Substring(0, 8);
@@ -51,7 +51,7 @@ namespace Server
             
             try
             {
-                await session.SendMessageAsync("Welcome to Featcrazyball's Pokemon Game! \n[1] Login\n[2] Register");
+                await session.SendMessageAsync("Welcome to Featcrazyball's Pokemon Game! \n[1] Login\n[2] Register\nPlease enter your choice:");
                 string choice = await session.GetInputAsync();
 
                 string username;
@@ -61,25 +61,27 @@ namespace Server
                 switch (choice)
                 {
                     case "1":
-                        await session.SendMessageAsync("┌───────────────────────────────────┐\n│            Logging In             │\n└───────────────────────────────────┘\nEnter your Username:");
-                        username = await session.GetInputAsync();
-                        password = await session.GetInputAsync("Enter your password:");
+                        while(true){
+                            await session.SendMessageAsync("┌───────────────────────────────────┐\n│            Logging In             │\n└───────────────────────────────────┘");
+                            username = await session.GetInputAsync("Please enter your username:");
+                            password = await session.GetInputAsync("Please enter your password:");
 
-                        // Check username and password against the database
-                        using (var context = new DatabaseContext())
-                        {
-                            var user = context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
-                            if (user == null)
+                            // Check username and password against the database
+                            using (var context = new DatabaseContext())
                             {
-                                await session.SendMessageAsync("Invalid username or password. Disconnecting...");
-                                return;
+                                var user = context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
+                                if (user == null)
+                                {
+                                    await session.SendMessageAsync("Invalid username or password. Disconnecting...");
+                                    continue;
+                                }
                             }
+
+                            await session.SendMessageAsync("┌───────────────────────────────────┐\n│           Authenticating...       │\n└───────────────────────────────────┘");
+                            await Task.Delay(2000); // Simulate authentication delay (its fake but funny)
+                            await session.SendMessageAsync($"Welcome back, {username}!");
+                            break;
                         }
-
-                        await session.SendMessageAsync("┌───────────────────────────────────┐\n│           Authenticating...       │\n└───────────────────────────────────┘");
-                        await Task.Delay(2000); // Simulate authentication delay
-                        await session.SendMessageAsync($"Welcome back, {username}!");
-
                         break;
 
                     case "2":
@@ -87,10 +89,10 @@ namespace Server
 
                         while (true)
                         {
-                            username = await session.GetInputAsync("Enter your username:");
-                            email = await session.GetInputAsync("Enter your email:");
-                            password = await session.GetInputAsync("Enter your password:");
-                            string confirmPassword = await session.GetInputAsync("Confirm your password:");
+                            username = await session.GetInputAsync("Please enter your username:");
+                            email = await session.GetInputAsync("Please enter your email:");
+                            password = await session.GetInputAsync("Please enter your password:");
+                            string confirmPassword = await session.GetInputAsync("Please confirm your password:");
 
                             using (var context = new DatabaseContext())
                             {
@@ -132,6 +134,7 @@ namespace Server
                         return;
                 }
 
+                session.Username = username;
                 await Client.GameLoop(session, username);
             
             }

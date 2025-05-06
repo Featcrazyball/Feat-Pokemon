@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Jigglypuff : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Jigglypuff() { } //For EF Core
     public Jigglypuff(string nickname, string ownerId) 
     : base("Jigglypuff", "Normal/Fairy", 115, 45, 20, 45, 25, 25, ownerId, 20, "Cute Charm")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -20,7 +23,7 @@ public class Jigglypuff : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -32,7 +35,7 @@ public class Jigglypuff : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Jigglypuff to a Wigglytuff!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Jigglypuff to a Wigglytuff!");
     }
 
     public override float calculateDamage(float SkillDamage) {

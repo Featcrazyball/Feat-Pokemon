@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
+using PokemonPocket;
 
 namespace Models
 {
@@ -15,6 +15,10 @@ namespace Models
         public int Coins { get; set; }
         public bool FeatVersion { get; set; }
 
+        // Link to Pokemon
+        public virtual ICollection<PokemonMaster> Pokemon { get; set; } = new List<PokemonMaster>();
+        public virtual ICollection<PokemonMaster> BattlePokemon { get; set; } = new List<PokemonMaster>();
+
         // Parameterless constructor for EF Core
         private User() { }
 
@@ -29,12 +33,23 @@ namespace Models
             Losses = 0;
             Coins = 0;
             FeatVersion = false;
+
         }
 
         public double CalculateWinLossRatio()
         {
             if (Losses == 0) return Wins; 
             return Math.Round((double)Wins / Losses, 2);
+        }
+
+        public void UpdateBattlePokemon()
+        {
+            BattlePokemon.Clear();
+            
+            foreach (var pm in Pokemon)
+            {
+                if (pm.Selected) {BattlePokemon.Add(pm);}
+            }
         }
     }
 }

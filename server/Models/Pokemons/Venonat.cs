@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Venonat : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Venonat() { } //For EF Core
     public Venonat(string nickname, string ownerId) 
     : base("Venonat", "Bug/Poison", 60, 55, 50, 40, 55, 45, ownerId, 20, "Compound Eyes")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 31) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Venonat : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Venonat to a Venomoth!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Venonat to a Venomoth!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

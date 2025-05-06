@@ -1,19 +1,22 @@
+using Server;
 namespace PokemonPocket;
 
 public class Hitmonlee : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Hitmonlee() { } //For EF Core
     public Hitmonlee(string nickname, string ownerId) 
     : base("Hitmonlee", "Fighting", 50, 120, 53, 35, 110, 87, ownerId, 20, "Limber")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Dugtrio : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Dugtrio() { } //For EF Core
     public Dugtrio(string nickname, string ownerId) 
     : base("Dugtrio", "Ground", 35, 100, 50, 50, 70, 120, ownerId, 26, "Sand Veil")
     {
         Nickname = nickname;
+        
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Dugtrio(Diglett diglett)
@@ -26,11 +29,15 @@ public class Dugtrio : PokemonMaster
         SpeedIV = diglett.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
     
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

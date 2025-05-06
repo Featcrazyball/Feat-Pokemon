@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Poliwag : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Poliwag() { } //For EF Core
     public Poliwag(string nickname, string ownerId) 
     : base("Poliwag", "Water", 40, 50, 40, 40, 40, 90, ownerId, 16, "Water Absorb")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 25) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Poliwag : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Poliwag to a Poliwhirl!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Poliwag to a Poliwhirl!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

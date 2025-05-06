@@ -1,23 +1,28 @@
 using Database;
+using Server;
 
 namespace PokemonPocket;
 
 public class Abra : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Abra() { } //For EF Core
     public Abra(string nickname, string ownerId) 
     : base("Abra", "Psychic", 25, 20, 15, 105, 55, 90, ownerId, 10, "Synchronize")
     {
         Nickname = nickname;
+        SkillPool = "Toxic, Rage, Hyper Beam, SolarBeam, Psychic, Mimic, Double Team, Bide, Swift, Dream Eater, Rest, Psywave, Substitute";
+
+        // Use this to check for null, or else it will throw an error
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {
             using (var context = new DatabaseContext())
@@ -30,9 +35,10 @@ public class Abra : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Abra to a Kadabra!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Abra to a Kadabra!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
+
 }

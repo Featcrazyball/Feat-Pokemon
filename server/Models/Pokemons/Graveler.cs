@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Graveler : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Graveler() { } //For EF Core
     public Graveler(string nickname, string ownerId) 
     : base("Graveler", "Rock/Ground", 55, 95, 115, 45, 45, 35, ownerId, 25, "Sturdy")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Graveler(Geodude geodude)
@@ -27,9 +30,13 @@ public class Graveler : PokemonMaster
         SpeedIV = geodude.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 1) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Graveler : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Geodude to a Graveler!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Geodude to a Graveler!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

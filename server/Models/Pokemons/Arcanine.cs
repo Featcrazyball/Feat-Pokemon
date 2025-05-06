@@ -1,14 +1,18 @@
+using Server;
 namespace PokemonPocket;
 
 public class Arcanine : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Arcanine() { } //For EF Core
     public Arcanine(string nickname, string ownerId) 
     : base("Arcanine", "Fire", 90, 110, 80, 100, 80, 95, ownerId, 59, "Intimidate")
     {
         Nickname = nickname;
+        SkillPool = "Ember, Leer, Take Down, Agility, Flamethrower, Toxic, Body Slam, Double-Edge, Rage, Dragon Rage, Dig, Mimic, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Arcanine(Growlithe growlithe)
@@ -26,11 +30,16 @@ public class Arcanine : PokemonMaster
         SpeedIV = growlithe.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Ember, Leer, Take Down, Agility, Flamethrower, Toxic, Body Slam, Double-Edge, Rage, Dragon Rage, Dig, Mimic, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

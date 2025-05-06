@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Pidgeotto : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Pidgeotto() { } //For EF Core
     public Pidgeotto(string nickname, string ownerId) 
     : base("Pidgeotto", "Normal/Flying", 63, 60, 55, 50, 50, 71, ownerId, 25, "Gust")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Pidgeotto(Pidgey pidgey)
@@ -27,9 +30,13 @@ public class Pidgeotto : PokemonMaster
         SpeedIV = pidgey.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 36) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Pidgeotto : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Pidgeotto to a Pidgeot!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Pidgeotto to a Pidgeot!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

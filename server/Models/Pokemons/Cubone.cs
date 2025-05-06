@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Cubone : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Cubone() { } //For EF Core
     public Cubone(string nickname, string ownerId) 
     : base("Cubone", "Ground", 50, 50, 95, 40, 50, 35, ownerId, 20, "Lightning Rod")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 28) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Cubone : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Cubone to a Marowak!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Cubone to a Marowak!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

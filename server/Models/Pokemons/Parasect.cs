@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Parasect : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Parasect() { } //For EF Core
     public Parasect(string nickname, string ownerId) 
     : base("Parasect", "Bug/Grass", 60, 95, 80, 60, 80, 30, ownerId, 24, "Effect Spore")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
     
     public Parasect(Paras paras)
@@ -26,11 +29,15 @@ public class Parasect : PokemonMaster
         SpeedIV = paras.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Clefable : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Clefable() { } //For EF Core
     public Clefable(string nickname, string ownerId) 
     : base("Clefable", "Fairy", 95, 70, 73, 95, 90, 60, ownerId, 35, "Cute Charm")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Clefable(Clefairy clefairy)
@@ -26,11 +29,15 @@ public class Clefable : PokemonMaster
         SpeedIV = clefairy.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

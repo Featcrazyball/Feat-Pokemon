@@ -1,14 +1,19 @@
+using Server;
 namespace PokemonPocket;
 
 public class Alakazam : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Alakazam() { } //For EF Core
     public Alakazam(string nickname, string ownerId) 
     : base("Alakazam", "Psychic", 55, 50, 45, 135, 95, 120, ownerId, 20, "Synchronize")
     {
         Nickname = nickname;
+        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
+
+        // Use this to check for null, or else it will throw an error
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Alakazam(Kadabra kadabra) 
@@ -26,11 +31,18 @@ public class Alakazam : PokemonMaster
         SpeedIV = kadabra.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        
+        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
+
+        // Use this to check for null, or else it will throw an error
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

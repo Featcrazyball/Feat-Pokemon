@@ -7,10 +7,38 @@ namespace Server
     class Server
     {
         static async Task Main() {
+            // For submission
             // Initialize database before starting server
-            using (var context = new DatabaseContext()) {
+            // using (var context = new DatabaseContext()) {
+            //     context.Database.EnsureCreated();
+            //     Console.WriteLine("Database initialized.");
+            // }
+
+            // For testing only. plz delete after
+            Console.WriteLine("Initializing database...");
+            try
+            {
+                // Check if the database file exists
+                string dbPath = "database.db";
+                if (File.Exists(dbPath))
+                {
+                    File.Delete(dbPath);
+                    Console.WriteLine("Deleted existing database file");
+                }
+
+                if (File.Exists(dbPath + "-wal"))
+                    File.Delete(dbPath + "-wal");
+                if (File.Exists(dbPath + "-shm"))
+                    File.Delete(dbPath + "-shm");
+                
+                // Create fresh database
+                using var context = new DatabaseContext();
                 context.Database.EnsureCreated();
-                Console.WriteLine("Database initialized.");
+                Console.WriteLine("Created new database");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Database initialization error: {ex.Message}");
             }
 
 

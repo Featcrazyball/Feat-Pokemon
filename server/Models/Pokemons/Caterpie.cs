@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Caterpie : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Caterpie() { } //For EF Core
     public Caterpie(string nickname, string ownerId) 
     : base("Caterpie", "Bug", 45, 30, 35, 20, 20, 45, ownerId,  10, "Shield Dust")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 7) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Caterpie : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Caterpie to a Metapod!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Caterpie to a Metapod!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

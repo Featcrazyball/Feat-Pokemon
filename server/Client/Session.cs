@@ -8,6 +8,7 @@ namespace Server
     {
         private Socket _client;
         public string PlayerId { get; private set; }
+        public string? Username { get; set; } 
         
         public ClientSession(Socket client, string playerId)
         {

@@ -1,19 +1,22 @@
+using Server;
 namespace PokemonPocket;
 
 public class Moltres : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Moltres() { } //For EF Core
     public Moltres(string nickname, string ownerId) 
     : base("Moltres", "Fire/Flying", 90, 100, 90, 125, 85, 90, ownerId, 30, "Flame Body")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -100,11 +100,13 @@ namespace Client
 
                     string message = Encoding.UTF8.GetString(buffer, 0, received);
                     
+                    if (message.Contains("2q30-8b6r7-vyq20974ryf-b09qw8r7bq9-28-3v")) {Environment.Exit(0);} 
+
                     Console.WriteLine();
                     Console.ForegroundColor = ConsoleColor.DarkBlue;
                     Console.WriteLine(message);
                     Console.ResetColor();
-                    Console.Write("> ");
+                    if (IsMessage(message)) { Console.Write("> "); }
                 }
                 catch (SocketException)
                 {
@@ -140,5 +142,23 @@ namespace Client
                 throw;
             }
         }
+    
+        // Bad but I have no choice...
+        private static bool IsMessage(string m)
+        {
+            string[] s = new[]
+            {
+                "Please enter your Username:",
+                "Please enter your password:",
+                "Please enter your email:",
+                "Please confirm your password:",
+                "Please enter your choice:"
+            };
+
+            foreach (var str in s) { if (m.Contains(str)) { return true; }}  
+
+            return false;
+        }
+
     }
 }

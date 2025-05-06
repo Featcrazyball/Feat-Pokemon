@@ -1,18 +1,22 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Bellsprout : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Bellsprout() { } //For EF Core
     public Bellsprout(string nickname, string ownerId) 
     : base("Bellsprout", "Grass/Poison", 50, 75, 35, 70, 30, 40, ownerId, 10, "Chlorophyll")
     {
         Nickname = nickname;
+        SkillPool = "Vine Whip, Growth, Wrap, Sleep Powder, Poison Powder, Stun Spore, Acid, Razor Leaf, Toxic, SolarBeam, Rage, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 21) {
             using (var context = new DatabaseContext())
@@ -25,9 +29,9 @@ public class Bellsprout : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Bellsprout to a Weepinbell!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Bellsprout to a Weepinbell!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

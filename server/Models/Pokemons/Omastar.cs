@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Omastar : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Omastar() { } //For EF Core
     public Omastar(string nickname, string ownerId) 
     : base("Omastar", "Rock/Water", 70, 60, 125, 115, 70, 55, ownerId, 40, "Swift Swim")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Omastar(Omanyte omanyte)
@@ -26,11 +29,15 @@ public class Omastar : PokemonMaster
         SpeedIV = omanyte.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

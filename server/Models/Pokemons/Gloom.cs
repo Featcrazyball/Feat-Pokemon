@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Gloom : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Gloom() { } //For EF Core
     public Gloom(string nickname, string ownerId) 
     : base("Gloom", "Grass/Poison", 60, 65, 70, 85, 75, 40, ownerId, 20, "Chlorophyll")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Gloom(Oddish oddish)
@@ -27,9 +30,13 @@ public class Gloom : PokemonMaster
         SpeedIV = oddish.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -37,7 +44,7 @@ public class Gloom : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -49,7 +56,7 @@ public class Gloom : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Gloom to a Vileplume!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Gloom to a Vileplume!");
     }
 
     public override float calculateDamage(float SkillDamage) {

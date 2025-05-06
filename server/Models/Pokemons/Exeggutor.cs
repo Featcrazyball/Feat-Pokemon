@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Exeggutor : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Exeggutor() { } //For EF Core
     public Exeggutor(string nickname, string ownerId) 
     : base("Exeggutor", "Grass/Psychic", 95, 95, 85, 125, 75, 55, ownerId, 30, "Chlorophyll")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Exeggutor(Exeggcute exeggcute)
@@ -26,11 +29,15 @@ public class Exeggutor : PokemonMaster
         SpeedIV = exeggcute.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

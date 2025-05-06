@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Magikarp : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Magikarp() { } //For EF Core
     public Magikarp(string nickname, string ownerId) 
     : base("Magikarp", "Water", 20, 10, 55, 15, 20, 80, ownerId, 5, "Splash")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Magikarp : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Magikarp to a Gyarados!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Magikarp to a Gyarados!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

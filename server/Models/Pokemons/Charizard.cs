@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Charizard : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Charizard() { } //For EF Core
     public Charizard(string nickname, string ownerId) 
     : base("Charizard", "Fire/Flying", 78, 84, 78, 109, 85, 100, ownerId, 40, "Fire Burst")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Charizard(Charmeleon charmander)
@@ -26,11 +29,15 @@ public class Charizard : PokemonMaster
         SpeedIV = charmander.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final form!");
+        await session.SendMessageAsync($"{Nickname} is already at its final form!");
     }
 
     public override float calculateDamage(float SkillDamage) {

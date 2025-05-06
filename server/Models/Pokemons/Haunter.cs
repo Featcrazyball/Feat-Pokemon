@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Haunter : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Haunter() { } //For EF Core
     public Haunter(string nickname, string ownerId) 
     : base("Haunter", "Ghost/Poison", 45, 50, 45, 115, 55, 95, ownerId, 25, "Levitate")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Haunter(Gastly gastly)
@@ -27,9 +30,13 @@ public class Haunter : PokemonMaster
         SpeedIV = gastly.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 1) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Haunter : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Haunter to a Gengar!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Haunter to a Gengar!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

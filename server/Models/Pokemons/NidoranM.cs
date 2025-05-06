@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class NidoranM : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private NidoranM() { } //For EF Core
     public NidoranM(string nickname, string ownerId) 
     : base("NidoranM", "Poison", 46, 57, 40, 40, 40, 50, ownerId, 10, "Poison Point")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class NidoranM : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a NidoranM to a Nidorino!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a NidoranM to a Nidorino!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

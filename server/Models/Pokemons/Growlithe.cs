@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Growlithe : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Growlithe() { } //For EF Core
     public Growlithe(string nickname, string ownerId) 
     : base("Growlithe", "Fire", 55, 70, 45, 70, 50, 60, ownerId, 10, "Intimidate")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
@@ -20,7 +23,7 @@ public class Growlithe : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                Console.WriteLine($"{Nickname} needs a Fire Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname} needs a Fire Stone to evolve!");
                 return;
             }
 
@@ -32,7 +35,7 @@ public class Growlithe : PokemonMaster
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
-        Console.WriteLine($"{Nickname} has evolved from a Growlithe to a Arcanine!");
+        await session.SendMessageAsync($"{Nickname} has evolved from a Growlithe to a Arcanine!");
     }
 
     public override float calculateDamage(float SkillDamage) {

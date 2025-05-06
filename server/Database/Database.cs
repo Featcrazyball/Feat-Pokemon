@@ -37,6 +37,12 @@ namespace Database
                 .HasForeignKey(s => s.PokemonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Pokemon)
+                .WithOne(p => p.Owner)
+                .HasForeignKey(p => p.OwnerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(modelBuilder);
         }
 

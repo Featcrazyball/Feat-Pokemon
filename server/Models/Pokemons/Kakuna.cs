@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
     
 public class Kakuna : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Kakuna() { } //For EF Core
     public Kakuna(string nickname, string ownerId) 
     : base("Kakuna", "Bug/Poison", 45, 25, 50, 25, 25, 35, ownerId, 15, "Shed Skin")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Kakuna(Weedle weedle)
@@ -27,9 +30,13 @@ public class Kakuna : PokemonMaster
         SpeedIV = weedle.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 7) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Kakuna : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Kakuna to a Beedrill!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Kakuna to a Beedrill!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

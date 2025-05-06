@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Gyarados : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Gyarados() { } //For EF Core
     public Gyarados(string nickname, string ownerId) 
     : base("Gyarados", "Water/Ice", 95, 125, 79, 60, 100, 81, ownerId, 30, "Intimidate")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Gyarados(Magikarp magikarp)
@@ -26,11 +29,15 @@ public class Gyarados : PokemonMaster
         SpeedIV = magikarp.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

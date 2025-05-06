@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Raichu : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Raichu() { } //For EF Core
     public Raichu(string nickname, string ownerId) 
     : base("Raichu", "Electric", 60, 90, 55, 90, 80, 110, ownerId, 25, "Thunderbolt")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Raichu(Pikachu pikachu)
@@ -26,11 +29,15 @@ public class Raichu : PokemonMaster
         SpeedIV = pikachu.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final form!");
+        await session.SendMessageAsync($"{Nickname} is already at its final form!");
     }
 
     public override float calculateDamage(float SkillDamage) {

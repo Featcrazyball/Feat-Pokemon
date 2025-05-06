@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Magnemite : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Magnemite() { } //For EF Core
     public Magnemite(string nickname, string ownerId) 
     : base("Magnemite", "Electric/Steel", 25, 35, 70, 95, 55, 45, ownerId, 10, "Magnet Pull")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 30) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Magnemite : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Magnemite to a Magnetron!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Magnemite to a Magnetron!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

@@ -1,18 +1,21 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Kabuto : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Kabuto() { } //For EF Core
     public Kabuto(string nickname, string ownerId) 
     : base("Kabuto", "Rock/Water", 30, 80, 90, 55, 45, 55, ownerId, 20, "Battle Armor")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 40) {
             using (var context = new DatabaseContext())
@@ -25,9 +28,9 @@ public class Kabuto : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Kabuto to a Kabutops!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Kabuto to a Kabutops!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

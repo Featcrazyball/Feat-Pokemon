@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Kadabra : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Kadabra() { } //For EF Core
     public Kadabra(string nickname, string ownerId) 
     : base("Kadabrah", "Psychic", 40, 35, 30, 120, 70, 105, ownerId, 50, "Synchronize")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Kadabra(Abra abra) 
@@ -27,9 +30,13 @@ public class Kadabra : PokemonMaster
         SpeedIV = abra.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 1) {
             using (var context = new DatabaseContext())
@@ -42,9 +49,9 @@ public class Kadabra : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Abra to a Kadabra!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Abra to a Kadabra!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 

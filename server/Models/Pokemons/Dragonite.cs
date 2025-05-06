@@ -1,14 +1,17 @@
+using Server;
 namespace PokemonPocket;
 
 public class Dragonite : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Dragonite() { } //For EF Core
     public Dragonite(string nickname, string ownerId) 
     : base("Dragonite", "Dragon", 91, 134, 95, 100, 100, 80, ownerId, 60, "Inner Focus")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     public Dragonite(Dragonair dragonair)
@@ -26,11 +29,15 @@ public class Dragonite : PokemonMaster
         SpeedIV = dragonair.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
-        Console.WriteLine($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

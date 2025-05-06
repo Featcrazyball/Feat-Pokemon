@@ -1,15 +1,18 @@
 using Database;
+using Server;
 namespace PokemonPocket;
 
 public class Bulbasaur : PokemonMaster
 {
-    public string? Nickname {get;set;}
-
     private Bulbasaur() { } //For EF Core
     public Bulbasaur(string nickname, string ownerId) 
     : base("Bulbasaur", "Grass/Poison", 45, 49, 49, 65, 65, 45, ownerId, 10, "Water Burst")
     {
         Nickname = nickname;
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+            foreach (var skill in newSkills) {Skills.Add(skill);};
     }
 
     // Ask Teacher
@@ -17,7 +20,7 @@ public class Bulbasaur : PokemonMaster
         return 2*SkillDamage;
     }
 
-    public override void Evolve()
+    public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {
             using (var context = new DatabaseContext())
@@ -30,9 +33,9 @@ public class Bulbasaur : PokemonMaster
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
-            Console.WriteLine($"{Nickname} has evolved from a Bulbasaur to a Ivysaur!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Bulbasaur to a Ivysaur!");
         } else {
-            Console.WriteLine($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
 }
