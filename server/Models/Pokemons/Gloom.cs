@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Gloom : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Leaf Stone";
     private Gloom() { } //For EF Core
     public Gloom(string nickname, string ownerId) 
     : base("Gloom", "Grass/Poison", 60, 65, 70, 85, 75, 40, ownerId, 20, "Chlorophyll")

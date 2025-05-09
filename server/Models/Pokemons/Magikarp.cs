@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Magikarp : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 16";
     private Magikarp() { } //For EF Core
     public Magikarp(string nickname, string ownerId) 
     : base("Magikarp", "Water", 20, 10, 55, 15, 20, 80, ownerId, 5, "Splash")

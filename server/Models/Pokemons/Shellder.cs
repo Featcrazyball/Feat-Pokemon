@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Shellder : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Water Stone";
     private Shellder() { } //For EF Core
     public Shellder(string nickname, string ownerId) 
     : base("Shellder", "Water", 30, 65, 100, 45, 25, 40, ownerId, 15, "Shell Armor")

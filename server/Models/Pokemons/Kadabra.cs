@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Kadabra : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Trade";
     private Kadabra() { } //For EF Core
     public Kadabra(string nickname, string ownerId) 
     : base("Kadabrah", "Psychic", 40, 35, 30, 120, 70, 105, ownerId, 50, "Synchronize")

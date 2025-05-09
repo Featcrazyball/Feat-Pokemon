@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Diglett : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 26";
     private Diglett() { } //For EF Core
     public Diglett(string nickname, string ownerId) 
     : base("Diglett", "Ground", 10, 55, 25, 35, 45, 95, ownerId, 10, "Sand Veil")

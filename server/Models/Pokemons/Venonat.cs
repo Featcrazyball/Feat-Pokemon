@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Venonat : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 31";
     private Venonat() { } //For EF Core
     public Venonat(string nickname, string ownerId) 
     : base("Venonat", "Bug/Poison", 60, 55, 50, 40, 55, 45, ownerId, 20, "Compound Eyes")

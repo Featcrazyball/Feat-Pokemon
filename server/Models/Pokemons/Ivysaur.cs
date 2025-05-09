@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Ivysaur : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 32";
     private Ivysaur() { } //For EF Core
     public Ivysaur(string nickname, string ownerId) 
     : base("Ivysaur", "Grass/Poison", 60, 62, 63, 80, 80, 60, ownerId, 20, "Water Burst")

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Weedle : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 7";
     private Weedle() { } //For EF Core
     public Weedle(string nickname, string ownerId) 
     : base("Weedle", "Bug/Poison", 40, 35, 30, 20, 20, 50, ownerId, 10, "Shield Dust")

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Rhyhorn : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 42";
     private Rhyhorn() { } //For EF Core
     public Rhyhorn(string nickname, string ownerId) 
     : base("Rhyhorn", "Ground/Rock", 80, 85, 95, 30, 30, 25, ownerId, 20, "Lightning Rod")

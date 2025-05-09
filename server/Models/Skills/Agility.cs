@@ -1,6 +1,5 @@
 using Server;
 using PokemonPocket;
-using FeatCalculator;
 
 namespace Models;
 
@@ -12,15 +11,22 @@ public class Agility : Skill
         this.PokemonId = PokemonId;
     }
 
-    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, float Modifier, ClientSession UserSession, ClientSession TargetSession)
+    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, ClientSession UserSession, ClientSession TargetSession)
     {
         PowerPoints -= 1;
         
-        for (int i = 0; i < 2; i++)
-            if (user.SpeedStage >= 6) {break;}
-            user.Speed = (float)(user.MaxSpeed * Calculator.CalculateStage(user.SpeedStage));
-            user.SpeedStage += 1;
+        // Update last move and first move
+        await SkillHelper.MoveUpdater(this, user, UserSession, TargetSession);
 
+        for (int i = 0; i < 2; i++)
+        {
+            if (user.SpeedStage >= 6) {break;}
+            user.SpeedStage += 1;
+            user.Speed = (float)(user.MaxSpeed * SkillHelper.CalculateStage(user.SpeedStage));
+        }
+
+        if (user.Paralyzed) {user.Speed *= (float)0.5;}
+        
         await UserSession.SendMessageAsync($"Your {user.Name} used Agility, increasing its Speed to {user.Speed}.");
         await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Agility, increasing its Speed to {user.Speed}.");
     }

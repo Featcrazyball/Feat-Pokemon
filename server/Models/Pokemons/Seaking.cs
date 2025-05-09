@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Seaking : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Seaking() { } //For EF Core
     public Seaking(string nickname, string ownerId) 
     : base("Seaking", "Water", 80, 92, 65, 65, 80, 68, ownerId, 30, "Swift Swim")

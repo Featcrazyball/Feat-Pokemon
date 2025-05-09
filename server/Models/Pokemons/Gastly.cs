@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Gastly : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 25";
     private Gastly() { } //For EF Core
     public Gastly(string nickname, string ownerId) 
     : base("Gastly", "Ghost/Poison", 30, 35, 30, 100, 30, 80, ownerId, 9, "Levitate")

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Growlithe : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Fire Stone";
     private Growlithe() { } //For EF Core
     public Growlithe(string nickname, string ownerId) 
     : base("Growlithe", "Fire", 55, 70, 45, 70, 50, 60, ownerId, 10, "Intimidate")

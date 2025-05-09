@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Poliwhirl : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Water Stone";
     private Poliwhirl() { } //For EF Core
     public Poliwhirl(string nickname, string ownerId) 
     : base("Poliwhirl", "Water", 65, 65, 65, 50, 50, 90, ownerId, 25, "Water Absorb")

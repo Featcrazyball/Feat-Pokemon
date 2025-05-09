@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Omanyte : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 40";
     private Omanyte() { } //For EF Core
     public Omanyte(string nickname, string ownerId) 
     : base("Omanyte", "Rock/Water", 35, 40, 100, 90, 55, 35, ownerId, 20, "Swift Swim")

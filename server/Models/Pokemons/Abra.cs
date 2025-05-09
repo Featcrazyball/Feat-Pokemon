@@ -5,6 +5,8 @@ namespace PokemonPocket;
 
 public class Abra : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 16";
+
     private Abra() { } //For EF Core
     public Abra(string nickname, string ownerId) 
     : base("Abra", "Psychic", 25, 20, 15, 105, 55, 90, ownerId, 10, "Synchronize")

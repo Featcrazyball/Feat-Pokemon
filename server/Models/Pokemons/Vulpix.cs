@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Vulpix : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Fire Stone";
     private Vulpix() { } //For EF Core
     public Vulpix(string nickname, string ownerId) 
     : base("Vulpix", "Fire", 38, 41, 40, 50, 65, 65, ownerId, 10, "Flash Fire")

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Pidgey : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "18";
     private Pidgey() { } //For EF Core
     public Pidgey(string nickname, string ownerId) 
     : base("Pidgey", "Normal/Flying", 40, 45, 40, 35, 35, 56, ownerId, 10, "Keen Eye")

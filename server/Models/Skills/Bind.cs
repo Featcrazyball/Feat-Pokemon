@@ -11,20 +11,16 @@ public class Bind : Skill
         this.PokemonId = PokemonId;
     }
 
-    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, float Modifier, ClientSession UserSession, ClientSession TargetSession)
+    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, ClientSession UserSession, ClientSession TargetSession)
     {
         PowerPoints -= 1;
-        if (target.BindActive) {await UserSession.SendMessageAsync($"Opponent already being bind, thus binding fails"); return;}
-        
-        if (Random.Shared.NextDouble() > Accuracy) {await UserSession.SendMessageAsync($"Your {user.Name} used Bind, but it missed!"); return;}
 
-        bool crit = false;
-        if (Random.Shared.NextDouble() > user.CritRate) {crit = true;}
-        if (crit) 
-        {
-            await UserSession.SendMessageAsync("CRITICAL HIT!"); 
-            await TargetSession.SendMessageAsync("CRITICAL HIT!");
-        }
+        // Update last move and first move
+        await SkillHelper.MoveUpdater(this, user, UserSession, TargetSession);
+
+        // Accuracy check
+        if (await SkillHelper.CheckAccuracy(Accuracy, user, target, UserSession, TargetSession, skillName : "Bind") == false)
+            return;
 
         int turns;
         float chance = Random.Shared.Next(0, 100);
@@ -33,13 +29,54 @@ public class Bind : Skill
         else if (chance > 37.5) turns = 3;
         else turns = 2;
 
-        float damage = ((user.Level * 2 / 5 + 2) * BasePower * (crit ? user.CritDmg : 1) * user.Attack / target.Defense / 50 + 2) * Modifier;
+        // Damage Calculation
+        float damage = await SkillHelper.FeatCalculateDamage(
+            BasePower, 
+            user, 
+            target, 
+            await SkillHelper.GetEffectiveness(UserSession, TargetSession, "Normal", target.Type?.Split('/') ?? Array.Empty<string>()),  
+            UserSession, 
+            TargetSession
+        );
 
-        target.BindDamage = damage;
-        target.BindTurns = turns;
-        target.BindActive = true;
+        if (target.Substitude == true)
+        {
+            if (target.SubstituteHealth <= damage) 
+            {
+                target.Substitude = false;
+                target.SubstituteHealth = 0;
 
-        await UserSession.SendMessageAsync($"Your {user.Name} used Bind and is now squeezing the target!");
-        await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bind and is now squeezing the target!");
+                if (!target.BindActive) {
+                    target.BindDamage = target.MaxHealth / 8; 
+                    target.BindTurns = turns;
+                    target.BindActive = true;
+                }
+
+                await UserSession.SendMessageAsync($"Your {user.Name} used Bind and broke {target.Name}'s Substitude and binding {TargetSession.Username}'s {target.Name}!");
+                await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bind broke your {target.Name}'s Substitude and bind your {target.Name}!");
+            }
+            else
+            {
+                target.SubstituteHealth -= damage;
+
+                await UserSession.SendMessageAsync($"Your {user.Name} used Bind on {target.Name}'s Substitude, dealing {damage} damage.");
+                await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bind on your {target.Name}'s Substitude, dealing {damage} damage.");
+                if (target.SubstituteHealth < 0) target.SubstituteHealth = 0;
+            }
+        }
+        else
+        {
+            target.Health -= damage;
+            await SkillHelper.ProcessRage(target, TargetSession, UserSession);
+
+            if (!target.BindActive) {
+                target.BindDamage = target.MaxHealth / 8; 
+                target.BindTurns = turns;
+                target.BindActive = true;
+            }
+
+            await UserSession.SendMessageAsync($"Your {user.Name} used Bind and is now squeezing the target!");
+            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bind and is now squeezing the target!");
+        }
     }
 }

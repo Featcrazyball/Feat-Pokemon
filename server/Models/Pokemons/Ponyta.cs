@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Ponyta : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 40";
     private Ponyta() { } //For EF Core
     public Ponyta(string nickname, string ownerId) 
     : base("Ponyta", "Fire", 50, 85, 55, 65, 65, 90, ownerId, 20, "Flame Body")

@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Porygon : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Porygon() { } //For EF Core
     public Porygon(string nickname, string ownerId) 
     : base("Porygon", "Normal", 65, 60, 70, 85, 75, 40, ownerId, 15, "Trace")

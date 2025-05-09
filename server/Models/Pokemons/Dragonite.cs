@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Dragonite : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Dragonite() { } //For EF Core
     public Dragonite(string nickname, string ownerId) 
     : base("Dragonite", "Dragon", 91, 134, 95, 100, 100, 80, ownerId, 60, "Inner Focus")

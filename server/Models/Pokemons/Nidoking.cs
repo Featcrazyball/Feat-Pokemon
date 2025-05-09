@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Nidoking : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Nidoking() { } //For EF Core
     public Nidoking(string nickname, string ownerId)
     : base("Nidoking", "Poison/Ground", 81, 102, 77, 85, 75, 85, ownerId, 30, "Poison Point")

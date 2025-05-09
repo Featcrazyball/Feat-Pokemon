@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Psyduck : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 33";
     private Psyduck() { } //For EF Core
     public Psyduck(string nickname, string ownerId) 
     : base("Psyduck", "Water", 50, 52, 48, 65, 50, 55, ownerId, 33, "Damp")

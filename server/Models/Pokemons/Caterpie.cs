@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Caterpie : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 7";
     private Caterpie() { } //For EF Core
     public Caterpie(string nickname, string ownerId) 
     : base("Caterpie", "Bug", 45, 30, 35, 20, 20, 45, ownerId,  10, "Shield Dust")

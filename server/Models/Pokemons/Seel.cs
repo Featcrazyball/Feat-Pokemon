@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Seel : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 34";
     private Seel() { } //For EF Core
     public Seel(string nickname, string ownerId) 
     : base("Seel", "Water", 65, 45, 55, 45, 70, 45, ownerId, 15, "Thick Fat")

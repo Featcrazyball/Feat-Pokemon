@@ -5,6 +5,8 @@ using Database;
 using Models;
 using Server;
 
+// {Requirements} is required for evolution
+
 namespace PokemonPocket
 {
     public class PokemonMaster 
@@ -16,6 +18,8 @@ namespace PokemonPocket
         public string? Type {get;set;}
         public int Level {get;set;}
         public int Experience {get;set;}
+        public virtual string? Requirements {get;set;}
+        public bool Evolvable {get;set;} = false;
 
         // Feat's Features
         [NotMapped] public float Health {get;set;}
@@ -37,8 +41,10 @@ namespace PokemonPocket
         [NotMapped] public int DefenseStage {get;set;} = 0;
         [NotMapped] public int SpecialDefenseStage {get;set;} = 0;
         [NotMapped] public int SpeedStage {get;set;} = 0;
+        [NotMapped] public int AccuracyStage {get;set;} = 0;
+        [NotMapped] public int EvasionStage {get;set;} = 0;
 
-        [NotMapped] public float CritRate {get;set;} = 1/16f; // Crit Rate
+        [NotMapped] public float CritRate {get;set;} = 1/24f; // Crit Rate
         [NotMapped] public float CritDmg {get;set;} = 1.5f; // Crit Damage
 
         // Extra Info
@@ -67,6 +73,17 @@ namespace PokemonPocket
         public bool Starter {get;set;} = false;
 
         // Arena 
+        [NotMapped] public Skill? Firstmove { get; set; }
+        [NotMapped] public Skill? Lastmove { get; set; }
+        [NotMapped] public int Priority { get; set; } = 0;
+        [NotMapped] public int PayDay { get; set; } = 0;
+
+        [NotMapped] public bool RazorWindActive { get; set; } = false;
+
+        [NotMapped] public bool Disable { get; set; } = false;
+        [NotMapped] public int DisableTurns { get; set; } = 0;
+        [NotMapped] public string DisabledSkill { get; set; } = string.Empty;
+
         [NotMapped] public float BideDamage { get; set; } = 0; 
         [NotMapped] public int BideTurns { get; set; } = 0;
         [NotMapped] public bool BideActive { get; set; } = false;
@@ -76,12 +93,55 @@ namespace PokemonPocket
         [NotMapped] public bool BindActive { get; set; } = false;
 
         [NotMapped] public bool Flinch { get; set; } = false;
-        [NotMapped] public int FlinchTurns { get; set; } = 0;
 
         [NotMapped] public bool Paralyzed { get; set; } = false;
         [NotMapped] public bool ParalyzeSpeed { get; set; } = false;
 
+        [NotMapped] public bool Burning { get; set; } = false;
+        [NotMapped] public bool BurningAttack { get; set; } = false;
+        [NotMapped] public float BurnDamage { get; set; } = 0;
+        
         [NotMapped] public bool Freezing { get; set; } = false;
+        [NotMapped] public bool Poisoned { get; set; } = false;
+
+        [NotMapped] public bool RageActive { get; set; } = false;
+
+        [NotMapped] public bool InAir { get; set; } = false;
+        [NotMapped] public bool Levitate { get; set; } = false;
+        [NotMapped] public bool Flying { get; set; } = false;
+
+        [NotMapped] public bool Substitude { get; set; } = false;
+        [NotMapped] public float SubstituteHealth { get; set; } = 0;
+
+        [NotMapped] public bool Confused { get; set; } = false;
+        [NotMapped] public int ConfusionTurns { get; set; } = 0;
+
+        [NotMapped] public bool Dig { get; set; } = false;
+        [NotMapped] public float DigDamage { get; set; } = 0;
+        [NotMapped] public bool Underground { get; set; } = false;
+
+        [NotMapped] public bool Rest { get; set; } = false;
+        [NotMapped] public bool Sleeping { get; set; } = false;
+        [NotMapped] public int SleepTurns { get; set; } = 0;
+
+        [NotMapped] public bool HyperBeamRecharge { get; set; } = false;
+
+        [NotMapped] public bool LightScreen { get; set; } = false;
+        [NotMapped] public int LightScreenTurns { get; set; } = 0;
+        [NotMapped] public bool Reflect { get; set; } = false;
+        [NotMapped] public int ReflectTurns { get; set; } = 0;
+
+        [NotMapped] public bool LeechSeed { get; set; } = false;
+        [NotMapped] public int LeechSeedTurns { get; set; } = 0;
+
+        [NotMapped] public bool Mist { get; set; } = false;
+        [NotMapped] public int MistTurns { get; set; } = 0;
+
+        [NotMapped] public bool Mimic { get; set; } = false;
+        [NotMapped] public Skill? MimicSkill { get; set; }
+
+        [NotMapped] public bool PetalDance { get; set; } = false;
+        [NotMapped] public int PetalDanceTurns { get; set; } = 0; 
 
         // For Assignment
         public float SkillDamage { get;set; }
@@ -372,6 +432,16 @@ namespace PokemonPocket
             }
             poke.Starter = true;
             context.SaveChanges();
+        }
+    
+        public Skill? ArenaTempSkillGain(string skillName)
+        {
+            return skillName switch
+            {
+                "Absorb" => new Absorb(Id ?? "TempId"),
+                "Acid" => new Acid(Id ?? "TempId"),
+                _ => null,
+            };
         }
     }
 }

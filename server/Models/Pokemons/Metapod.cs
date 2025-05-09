@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Metapod : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 10";
     private Metapod() { } //For EF Core
     public Metapod(string nickname, string ownerId) 
     : base("Metapod", "Bug", 50, 20, 55, 25, 25, 30, ownerId, 25, "Harden")

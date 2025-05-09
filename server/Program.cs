@@ -56,8 +56,24 @@ namespace Server
 
             // Client Loop
             while (true) {
-                var client = await server.AcceptAsync();
-                var customer = Task.Run(() => NetworkMethods.HandleClient(client));
+                try
+                {
+                    var client = await server.AcceptAsync();
+                    var customer = Task.Run(() => NetworkMethods.HandleClient(client));
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine($"Socket exception: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"General exception: {ex.Message}");
+                }
+                finally
+                {
+                    Console.WriteLine("Server Died....");
+                }
+
             } 
         }
     }

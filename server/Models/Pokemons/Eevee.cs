@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Eevee : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Water Stone/Thunder Stone/Fire Stone";
     private Eevee() { } //For EF Core
     public Eevee(string nickname, string ownerId) 
     : base("Eevee", "Normal", 55, 55, 50, 45, 65, 55, ownerId, 25, "Run Away")

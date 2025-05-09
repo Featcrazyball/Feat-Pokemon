@@ -4,6 +4,8 @@ using System.Collections.Concurrent;
 using Database;
 using Models;
 
+// Reminder to make 5 new pokemons when register for new users.
+
 namespace Server
 {
     public static class NetworkMethods
@@ -80,6 +82,7 @@ namespace Server
                             await session.SendMessageAsync("┌───────────────────────────────────┐\n│           Authenticating...       │\n└───────────────────────────────────┘");
                             await Task.Delay(2000); // Simulate authentication delay (its fake but funny)
                             await session.SendMessageAsync($"Welcome back, {username}!");
+                            await session.SendMessageAsync("Announcement: As the game is in development, everyone will be given 69000 coins to start with.");
                             break;
                         }
                         break;

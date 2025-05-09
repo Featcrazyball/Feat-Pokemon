@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Graveler : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Trade";
     private Graveler() { } //For EF Core
     public Graveler(string nickname, string ownerId) 
     : base("Graveler", "Rock/Ground", 55, 95, 115, 45, 45, 35, ownerId, 25, "Sturdy")

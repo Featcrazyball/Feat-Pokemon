@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Nidorina : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Moon Stone";
     private Nidorina() { } //For EF Core
     public Nidorina(string nickname, string ownerId) 
     : base("Nidorina", "Poison", 70, 62, 67, 55, 55, 56, ownerId, 20, "Poison Point")

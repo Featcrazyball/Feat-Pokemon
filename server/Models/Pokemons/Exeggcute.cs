@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Exeggcute : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Leaf Stone";
     private Exeggcute() { } //For EF Core
     public Exeggcute(string nickname, string ownerId) 
     : base("Exeggcute", "Grass/Psychic", 60, 40, 80, 60, 45, 40, ownerId, 20, "Chlorophyll")

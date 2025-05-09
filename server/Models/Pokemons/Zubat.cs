@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Zubat : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 22";
     private Zubat() { } //For EF Core
     public Zubat(string nickname, string ownerId) 
     : base("Zubat", "Poison/Flying", 40, 45, 40, 30, 40, 55, ownerId, 10, "Inner Focus")

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Geodude : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 25";
     private Geodude() { } //For EF Core
     public Geodude(string nickname, string ownerId) 
     : base("Geodude", "Rock/Ground", 40, 80, 100, 30, 30, 20, ownerId, 10, "Sturdy")

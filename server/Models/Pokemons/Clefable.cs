@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Clefable : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Clefable() { } //For EF Core
     public Clefable(string nickname, string ownerId) 
     : base("Clefable", "Fairy", 95, 70, 73, 95, 90, 60, ownerId, 35, "Cute Charm")

@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Rhydon : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Rhydon() { } //For EF Core
     public Rhydon(string nickname, string ownerId) 
     : base("Rhydon", "Ground/Rock", 105, 130, 120, 45, 45, 40, ownerId, 30, "Lightning Rod")

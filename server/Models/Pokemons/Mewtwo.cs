@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Mewtwo : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Mewtwo() { } //For EF Core
     public Mewtwo(string nickname, string ownerId) 
     : base("Mewtwo", "Psychic", 106, 110, 90, 154, 90, 130, ownerId, 70, "Pressure")

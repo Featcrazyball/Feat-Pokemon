@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Rapidash : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Rapidash() { } //For EF Core
     public Rapidash(string nickname, string ownerId) 
     : base("Rapidash", "Fire", 65, 100, 70, 80, 80, 105, ownerId, 40, "Flame Body")

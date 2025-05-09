@@ -1,6 +1,5 @@
 using Server;
 using PokemonPocket;
-using FeatCalculator;
 
 namespace Models;
 
@@ -12,33 +11,77 @@ public class Bite : Skill
         this.PokemonId = PokemonId;
     }
 
-    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, float Modifier, ClientSession UserSession, ClientSession TargetSession)
+    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, ClientSession UserSession, ClientSession TargetSession)
     {
         PowerPoints -= 1;
 
-        if (target.Flinch == false)
-            if (Random.Shared.NextDouble() > 0.9) {target.Flinch = true; target.FlinchTurns =1;}
+        // Update last move and first move
+        await SkillHelper.MoveUpdater(this, user, UserSession, TargetSession);
 
-        float damage = ((user.Level * 2 / 5 + 2) * BasePower * user.Attack / target.Defense / 50 + 2) * Modifier;
-        if (Random.Shared.NextDouble() > user.CritRate) 
+        // Accuracy check
+        if (await SkillHelper.CheckAccuracy(Accuracy, user, target, UserSession, TargetSession, skillName : "Bite") == false)
+            return;
+
+        // Damage Calculation
+        float damage = await SkillHelper.FeatCalculateSpecialDamage(
+            BasePower, 
+            user, 
+            target, 
+            await SkillHelper.GetEffectiveness(UserSession, TargetSession, "Dark", target.Type?.Split('/') ?? Array.Empty<string>()),  
+            UserSession, 
+            TargetSession
+        );
+
+        // Substitude
+        if (target.Substitude == true)
         {
-            damage *= user.CritDmg;
-            await UserSession.SendMessageAsync("CRITICAL HIT!");
-            await TargetSession.SendMessageAsync("CRITICAL HIT!");
-        }
-        if (damage < 0) damage = 0;
+            if (target.SubstituteHealth <= damage) 
+            {
+                target.Substitude = false;
+                target.SubstituteHealth = 0;
 
-        target.Health -= damage;
+                if (target.Flinch == false || Random.Shared.NextDouble() > 0.9)
+                {
+                    target.Flinch = true; 
+                    await UserSession.SendMessageAsync($"Your {user.Name} used Bite and broke {target.Name}'s Substitude.\n{TargetSession.Username}'s {target.Name} flinched!");
+                    await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bite broke your {target.Name}'s Substitude.\nYour {target.Name} flinched!");
+                }
+                else
+                {
+                    await UserSession.SendMessageAsync($"Your {user.Name} used Bite and broke {target.Name}'s Substitude!");
+                    await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bite broke your {target.Name}'s Substitude!");
+                }
+            }
+            else
+            {
+                target.SubstituteHealth -= damage;
 
-        if (target.Flinch)
-        {
-            await UserSession.SendMessageAsync($"Your {user.Name} used Bite on {target.Name}, dealing {damage} damage and causing flinching!");
-            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bite on your {target.Name}, dealing {damage} damage and causing flinching!");
+                await UserSession.SendMessageAsync($"Your {user.Name} used Bite on {target.Name}'s Substitude, dealing {damage} damage.");
+                await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bite on your {target.Name}'s Substitude, dealing {damage} damage.");
+                if (target.SubstituteHealth < 0) target.SubstituteHealth = 0;
+            }
         }
         else
         {
-            await UserSession.SendMessageAsync($"Your {user.Name} used Bite on {target.Name}, dealing {damage} damage.");
-            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bite on your {target.Name}, dealing {damage} damage.");
+            target.Health -= damage;
+            await SkillHelper.ProcessRage(target, TargetSession, UserSession);
+
+            if (target.Flinch == false || Random.Shared.NextDouble() > 0.9)
+            {
+                target.Flinch = true; 
+            }
+
+            if (target.Flinch)
+            {
+                await UserSession.SendMessageAsync($"Your {user.Name} used Bite on {target.Name}, dealing {damage} damage.\n{TargetSession.Username}'s {target.Name} flinched!");
+                await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bite on your {target.Name}, dealing {damage} damage.\nYour {target.Name} flinched!");
+            }
+            else
+            {
+                await UserSession.SendMessageAsync($"Your {user.Name} used Bite on {target.Name}, dealing {damage} damage.");
+                await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Bite on your {target.Name}, dealing {damage} damage.");
+            }
         }
+
     }
 }

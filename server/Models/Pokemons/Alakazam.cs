@@ -3,12 +3,13 @@ namespace PokemonPocket;
 
 public class Alakazam : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Alakazam() { } //For EF Core
     public Alakazam(string nickname, string ownerId) 
     : base("Alakazam", "Psychic", 55, 50, 45, 135, 95, 120, ownerId, 20, "Synchronize")
     {
         Nickname = nickname;
-        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
+        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Kinesis, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
 
         // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();
@@ -32,7 +33,7 @@ public class Alakazam : PokemonMaster
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
         
-        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
+        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Kinesis, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
 
         // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();

@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Marowak : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Marowak() { } //For EF Core
     public Marowak(string nickname, string ownerId) 
     : base("Marowak", "Ground", 60, 80, 110, 50, 80, 45, ownerId, 20, "Lightning Rod")

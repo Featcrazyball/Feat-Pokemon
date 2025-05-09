@@ -1,7 +1,5 @@
 using Server;
 using PokemonPocket;
-using FeatCalculator;
-using System.Runtime.ConstrainedExecution;
 
 namespace Models;
 
@@ -13,43 +11,90 @@ public class Barrage : Skill
         this.PokemonId = PokemonId;
     }
 
-    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, float Modifier, ClientSession UserSession, ClientSession TargetSession)
+    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, ClientSession UserSession, ClientSession TargetSession)
     {
         PowerPoints -= 1;
-        // Accuracy check
-        if (Random.Shared.NextDouble() > Accuracy)
-        {
-            await UserSession.SendMessageAsync($"Your {user.Name} used Barrage, but it missed!");
-            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Barrage, but it missed!");
-            return;
-        }
-        bool crit = false;
-        if (Random.Shared.NextDouble() > user.CritRate) {crit = true;}
-        if (crit) 
-        {
-            await UserSession.SendMessageAsync("CRITICAL HIT!"); 
-            await TargetSession.SendMessageAsync("CRITICAL HIT!");
-        }
+        
+        // Update last move and first move
+        await SkillHelper.MoveUpdater(this, user, UserSession, TargetSession);
 
+        // Calculate number of hits (2-5)
         int hits;
-        float chance = Random.Shared.Next(0, 100);
-        if (chance > 87.5) hits = 5;
-        else if (chance > 75) hits = 4;
-        else if (chance > 37.5) hits = 3;
-        else hits = 2;
+        int missed = 0;
+        bool broken = false;
+        float damageToPokemon = 0;
+        float damageToSubstitute = 0;
 
-        float totalDamage = 0;
-
+        float damage =0;
+        double hitChance = Random.Shared.NextDouble();
+        
+        if (hitChance < 0.375) hits = 2;
+        else if (hitChance < 0.75) hits = 3;
+        else if (hitChance < 0.875) hits = 4;
+        else hits = 5;
+            
+        // Accuracy check
         for (int i = 0; i < hits; i++)
         {
-            float damage = ((user.Level * 2 / 5 + 2) * BasePower*(i+1) * user.Attack / target.Defense / 50 + 2) * Modifier;
-            if (damage < 0) damage = 0;
-            if (crit) {damage *= user.CritDmg;}
-            totalDamage += damage;
-            target.Health -= damage;
+            if (Random.Shared.NextDouble() < (Accuracy * (SkillHelper.CalculateStage(user.AccuracyStage) / SkillHelper.CalculateStage(target.EvasionStage))))
+            {  
+                damage = ((2 * user.Level + 2) * damage * user.Attack / target.Defense / 50 + 2) * SkillHelper.QuietGetEffectiveness("Normal", target.Type?.Split('/') ?? Array.Empty<string>()) ;
+                
+                // Substitute handling
+                if (target.Substitude)
+                {
+                    if (target.SubstituteHealth <= damage)
+                    {
+                        target.Substitude = false;
+                        target.SubstituteHealth = 0;
+                        broken = true;
+                    }
+                    else
+                    {
+                        target.SubstituteHealth -= damage;
+                        
+                        damageToSubstitute += damage;
+                        if (target.SubstituteHealth < 0) target.SubstituteHealth = 0;
+                    }
+                }
+                else
+                {
+                    target.Health -= damage;
+                    await SkillHelper.ProcessRage(target, TargetSession, UserSession);
+                    damageToPokemon += damage;
+                }
+            } else {
+                missed++;
+            }
         }
 
-        await UserSession.SendMessageAsync($"Your {user.Name} used Barrage on {target.Name}, hitting {hits} times for a total of {totalDamage} damage.");
-        await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Barrage on your {target.Name}, hitting {hits} times for a total of {totalDamage} damage.");
+        if (missed == hits) 
+        {
+            await UserSession.SendMessageAsync($"Your {user.Name} used Barrage, but missed all its hits!");
+            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Barrage, but missed all its hits!");
+            return;
+        }
+
+        await UserSession.SendMessageAsync($"Your {user.Name} used Barrage, hitting {hits - missed} times and missing {missed} times!");
+        await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Barrage, hitting {hits - missed} times and missing {missed} times!");
+
+        if (broken) 
+        {
+            await UserSession.SendMessageAsync($"Your {user.Name} used Barrage and broke {target.Name}'s Substitute!");
+            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Barrage and broke your {target.Name}'s Substitute!");
+        }
+
+        if (target.Substitude)
+        {
+            await UserSession.SendMessageAsync($"Your {user.Name} used Barrage on {target.Name}'s Substitute, dealing {damageToSubstitute:F1} damage.");
+            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Barrage on your {target.Name}'s Substitute, dealing {damageToSubstitute:F1} damage.");
+        }
+
+        if (!target.Substitude && damageToPokemon > 0)
+        {
+            await UserSession.SendMessageAsync($"Your {user.Name} used Barrage on {target.Name}, dealing {damageToPokemon:F1} damage!");
+            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Barrage on your {target.Name}, dealing {damageToPokemon:F1} damage!");
+        }
+
     }
 }

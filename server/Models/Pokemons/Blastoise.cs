@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Blastoise : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Blastoise() { } //For EF Core
     public Blastoise(string nickname, string ownerId) 
     : base("Blastoise", "Water", 79, 83, 100, 85, 105, 78, ownerId, 30, "Torrent")

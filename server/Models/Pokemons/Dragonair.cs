@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Dragonair : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 55";
     private Dragonair() { } //For EF Core
     public Dragonair(string nickname, string ownerId) 
     : base("Dragonair", "Dragon", 61, 84, 65, 70, 70, 70, ownerId, 30, "Shed Skin")

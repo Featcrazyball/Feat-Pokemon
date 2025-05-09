@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Victreebel : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Victreebel() { } //For EF Core
     public Victreebel(string nickname, string ownerId) 
     : base("Victreebel", "Grass/Poison", 80, 105, 65, 100, 70, 70, ownerId, 20, "Chlorophyll")

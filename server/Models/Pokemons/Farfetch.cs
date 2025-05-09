@@ -3,6 +3,7 @@ namespace PokemonPocket;
 
 public class Farfetch : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Unevolvable";
     private Farfetch() { } //For EF Core
     public Farfetch(string nickname, string ownerId) 
     : base("Farfetch", "Normal/Flying", 52, 90, 55, 58, 62, 60, ownerId, 20, "Keen Eye")

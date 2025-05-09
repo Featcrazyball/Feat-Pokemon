@@ -1,6 +1,5 @@
 using Server;
 using PokemonPocket;
-using FeatCalculator;
 
 namespace Models;
 
@@ -10,12 +9,20 @@ public class Bide : Skill
     public Bide(string PokemonId) : base("Bide", "Normal", 0, -1, 20, 1, 0, 0, "The user endures attacks for two turns and then strikes back double the damage taken.", PokemonId)    
     {
         this.PokemonId = PokemonId;
+        Priority = -1;
     }
 
-    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, float Modifier, ClientSession UserSession, ClientSession TargetSession)
+    public override async Task SkillEfect(PokemonMaster target, PokemonMaster user, ClientSession UserSession, ClientSession TargetSession)
     {
         PowerPoints -= 1;
-        if (user.BideActive) {await UserSession.SendMessageAsync($"Your {user.Name} is already using Bide!"); return;}
+
+        // Update last move and first move
+        await SkillHelper.MoveUpdater(this, user, UserSession, TargetSession);
+
+        if (user.BideActive) {
+            await UserSession.SendMessageAsync($"Your {user.Name} is already using Bide!"); 
+            return;
+        }
         
         user.BideDamage = 0;
         user.BideTurns = 2;

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Wartortle : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "Level 36";
     private Wartortle() { } //For EF Core
     public Wartortle(string nickname, string ownerId) 
     : base("Wartortle", "Water", 59, 63, 80, 65, 80, 58, ownerId, 25, "Water Gun")

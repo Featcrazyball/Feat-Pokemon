@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Jigglypuff : PokemonMaster
 {
+    public override string? Requirements { get; set; } = "1 Moon Stone";
     private Jigglypuff() { } //For EF Core
     public Jigglypuff(string nickname, string ownerId) 
     : base("Jigglypuff", "Normal/Fairy", 115, 45, 20, 45, 25, 25, ownerId, 20, "Cute Charm")
