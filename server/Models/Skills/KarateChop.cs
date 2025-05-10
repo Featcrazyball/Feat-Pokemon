@@ -25,6 +25,7 @@ public class KarateChop : Skill
         // Karate Chop has a higher crit rate in Gen 1 (1/8 instead of 1/16)
         float originalCritRate = user.CritRate;
         user.CritRate *= 3;
+        if (user.CritRate > 0.996f) user.CritRate = 0.996f; 
         
         // Damage Calculation
         float damage = ((2 * user.Level / 5 + 2) * BasePower * user.Attack / target.Defense / 50 + 2) * await SkillHelper.GetEffectiveness(UserSession, TargetSession, "Fighting", target.Type?.Split('/') ?? Array.Empty<string>());

@@ -37,6 +37,7 @@ public class RazorWind : Skill
 
         float oldCritRate = user.CritRate;
         user.CritRate *= 3; 
+        if (user.CritRate > 0.996f) user.CritRate = 0.996f; 
 
         // Damage calculation
         float damage = await SkillHelper.FeatCalculateDamage(

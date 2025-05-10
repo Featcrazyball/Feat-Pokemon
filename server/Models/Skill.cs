@@ -25,6 +25,7 @@ namespace Models
         // For skills that copy
         public bool Mimic {get;set;} = false; 
         public bool Metronome {get;set;} = false; 
+        public bool Transform {get;set;} = false;
 
         // For Arena
         public int TurnsLeft { get; set; } // Number of turns the skill has been in use

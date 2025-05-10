@@ -25,7 +25,7 @@ public class Hypnosis : Skill
         // Check if target already has a status condition
         if (target.Sleeping)
         {
-            await UserSession.SendMessageAsync($"{target.Name} is already sleeping!");
+            await UserSession.SendMessageAsync($"{TargetSession.Username}'s {target.Name} is already sleeping!");
             await TargetSession.SendMessageAsync($"Your {target.Name} is already sleeping!");
             return;
         }

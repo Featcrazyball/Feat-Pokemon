@@ -23,7 +23,7 @@ public class PoisonPowder : Skill
             return;
 
         // Check if target already has a status condition
-        if (target.Poisoned)
+        if (target.Poisoned && !target.BadlyPoisoned)
         {
             await UserSession.SendMessageAsync($"{target.Name} already has a status condition!");
             await TargetSession.SendMessageAsync($"Your {target.Name} already has a status condition!");

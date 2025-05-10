@@ -21,6 +21,7 @@ public class FocusEnergy : Skill
         // Raise critical hit ratio
         float oldCritRate = user.CritRate;
         user.CritRate *= 4; // Quadruple crit rate
+        if (user.CritRate > 0.996f) user.CritRate = 0.996f; 
         
         await UserSession.SendMessageAsync($"Your {user.Name} used Focus Energy and is getting pumped! (Crit rate: {oldCritRate:F3} → {user.CritRate:F3})");
         await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Focus Energy and is getting pumped! (Crit rate: {oldCritRate:F3} → {user.CritRate:F3})");

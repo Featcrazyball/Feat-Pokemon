@@ -44,7 +44,7 @@ namespace PokemonPocket
         [NotMapped] public int AccuracyStage {get;set;} = 0;
         [NotMapped] public int EvasionStage {get;set;} = 0;
 
-        [NotMapped] public float CritRate {get;set;} = 1/24f; // Crit Rate
+        [NotMapped] public float CritRate {get;set;}
         [NotMapped] public float CritDmg {get;set;} = 1.5f; // Crit Damage
 
         // Extra Info
@@ -142,6 +142,17 @@ namespace PokemonPocket
 
         [NotMapped] public bool PetalDance { get; set; } = false;
         [NotMapped] public int PetalDanceTurns { get; set; } = 0; 
+        [NotMapped] public bool Thrashing { get; set; } = false;
+        [NotMapped] public int ThrashTurns { get; set; } = 0;
+
+        [NotMapped] public bool ChargingSkull { get; set; } = false;
+        [NotMapped] public bool ChargingSky { get; set; } = false;
+        [NotMapped] public bool ChargingSolar { get; set; } = false;
+
+        [NotMapped] public bool BadlyPoisoned { get; set; } = false;
+        [NotMapped] public int BadlyPoisonedTurns { get; set; } = 0;
+
+        [NotMapped] public bool Transform { get; set; } = false;
 
         // For Assignment
         public float SkillDamage { get;set; }
@@ -177,6 +188,43 @@ namespace PokemonPocket
             Defense = MaxDefense;
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
+            CritRate = MaxSpeed/512;
+        }
+
+        public PokemonMaster(PokemonMaster poke)
+        {
+            Id = poke.Id;
+            Name = poke.Name;
+            Nickname = poke.Nickname;
+            Type = poke.Type;
+            Level = poke.Level;
+            Experience = poke.Experience;
+            Requirements = poke.Requirements;
+            Evolvable = poke.Evolvable;
+
+            // Feat's Features
+            Health = poke.Health;
+            Attack = poke.Attack;
+            SpecialAttack = poke.SpecialAttack;
+            Defense = poke.Defense;
+            SpecialDefense = poke.SpecialDefense;
+            Speed = poke.Speed;
+
+            MaxHealth = poke.MaxHealth;
+            MaxAttack = poke.MaxAttack;
+            MaxSpecialAttack = poke.MaxSpecialAttack;
+            MaxDefense = poke.MaxDefense;
+            MaxSpecialDefense = poke.MaxSpecialDefense;
+            MaxSpeed = poke.MaxSpeed;
+
+            AttackStage = 0;
+            SpecialAttackStage = 0;
+            DefenseStage = 0;
+            SpecialDefenseStage = 0;
+            SpeedStage = 0;
+
+            CritRate = MaxSpeed/512;
+            CritDmg = poke.CritDmg;
         }
 
         // For Assignment
@@ -443,5 +491,7 @@ namespace PokemonPocket
                 _ => null,
             };
         }
+
+        
     }
 }

@@ -35,7 +35,14 @@ namespace Arena;
 // Rest clears burn, paralysis, freeze, and poison. It does not clear confusion or sleep. The sleep status can be removed by using certain moves or items, or by switching out the Pokémon. The sleep status lasts until the target is healed or switched out.
 // Reminder sleep does not cure when switched out
 // Reminder for roar to switch out pokemon if lower level
-
+// Reminder for struggle to only be used if no pp left
+// Reminder for thrash, it will hit 2-3 times in a row. The user will become confused after the last hit. The confusion lasts for 2-5 turns. The confusion can be removed by using certain moves or items, or by switching out the Pokémon. The confusion lasts until the target is healed or switched out.
+// Reminder to undo conversion after battle to original type
+// reminder for badly poisoned, the turns increase by 1 every turn. The damage is calculated as 1/16 of the target's max health + 1/16 of the target's max health * turns. The damage is applied at the end of each turn. The badly poisoned status can be removed by using certain moves or items, or by switching out the Pokémon. The badly poisoned status lasts until the target is healed or switched out.
+// Reminder for transform to return everything to normal after battle
+// Reminder for transform that it returns to original form after battle
+// Reminder for transform to use skills of target
+// Reminder for whrilwind to switch out pokemon
 
 public class Arena
 {
@@ -44,16 +51,23 @@ public class Arena
 
     // Creator Pokemon
     public virtual ICollection<PokemonMaster>? creatorPokemon { get; set; } = new List<PokemonMaster>();
+    public virtual ICollection<PokemonMaster>? CreatorBackup { get; set; } = new List<PokemonMaster>();
     public PokemonMaster? CreatorBattle { get; set; } = null;
     public virtual ICollection<PokemonMaster>? creatorFainted { get; set; } = new List<PokemonMaster>();
 
     // Joiner Pokemon
     public virtual ICollection<PokemonMaster>? joinerPokemon { get; set; } = new List<PokemonMaster>();
+    public virtual ICollection<PokemonMaster>? JoinerBackup { get; set; } = new List<PokemonMaster>();
     public PokemonMaster? JoinerBattle { get; set; } = null;
     public virtual ICollection<PokemonMaster>? joinerFainted { get; set; } = new List<PokemonMaster>();
 
+    // Backups
+    public Dictionary<string, PokemonStats> JoinerPokemonStats { get; private set; } = new Dictionary<string, PokemonStats>();
+
     // Battle Stats
     public int turn { get; set; } = 0;
+
+    private readonly PokemonBackupService _backupService = new PokemonBackupService();
 
     public Arena(User player1, User player2)
     {
@@ -61,14 +75,25 @@ public class Arena
         joiner = player2;
 
         // Creator Pokemon
-        creatorPokemon = player1.Pokemon.ToList();
+        creatorPokemon = player1.Pokemon.Where(p => p.Selected && !p.Starter).ToList();
         creatorFainted = new List<PokemonMaster>();
         CreatorBattle = creatorPokemon.FirstOrDefault(p => p.Starter);
 
         // Joiner Pokemon
-        joinerPokemon = player2.Pokemon.ToList();
+        joinerPokemon = player2.Pokemon.Where(p => p.Selected).ToList();
         joinerFainted = new List<PokemonMaster>();
         JoinerBattle = joinerPokemon.FirstOrDefault(p => p.Starter);
+
+        // Backups
+        CreatorBackup = creatorPokemon.ToList();
+        JoinerBackup = joinerPokemon.ToList();
+        
+        // Create stat backups
+        _backupService.BackupPokemonStats(
+            creatorPokemon, 
+            CreatorBattle!, 
+            joinerPokemon, 
+            JoinerBattle!);
     }
 
     // Very important for killing pokemon and ending batle
@@ -274,4 +299,23 @@ public class Arena
         }
     }
 
+    public void RestorePokemonStats()
+    {
+
+        _backupService.RestorePokemonStats(
+            creatorPokemon!, 
+            CreatorBattle!, 
+            joinerPokemon!, 
+            JoinerBattle!, 
+            creatorFainted!, 
+            joinerFainted!);
+        
+        _backupService.ClearStatusConditions(
+            creatorPokemon!,
+            CreatorBattle!,
+            joinerPokemon!,
+            JoinerBattle!,
+            creatorFainted!,
+            joinerFainted!);
+    }
 }
