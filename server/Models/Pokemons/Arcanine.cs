@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Arcanine : PokemonMaster
@@ -13,7 +14,12 @@ public class Arcanine : PokemonMaster
         
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Arcanine(Growlithe growlithe)
@@ -35,7 +41,12 @@ public class Arcanine : PokemonMaster
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

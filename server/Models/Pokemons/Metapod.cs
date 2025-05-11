@@ -10,10 +10,16 @@ public class Metapod : PokemonMaster
     : base("Metapod", "Bug", 50, 20, 55, 25, 25, 30, ownerId, 25, "Harden")
     {
         Nickname = nickname;
+        SkillPool = "Harden";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Metapod(Caterpie caterpie)
@@ -31,10 +37,21 @@ public class Metapod : PokemonMaster
         SpeedIV = caterpie.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Harden";
 
-        var newSkills = LearnSkillFromSkillPool();
-        if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        using (var context = new DatabaseContext())
+        {
+            var newSkills = LearnSkillFromSkillPool();
+            if (newSkills != null)
+            {
+                foreach (var skill in newSkills) 
+                {
+                    Skills.Add(skill);
+                    context.Skills.Add(skill);
+                };
+                context.SaveChanges();
+            }
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -45,8 +62,13 @@ public class Metapod : PokemonMaster
                 var butterfree = new Butterfree(this);
                 butterfree.EvolveLevelUp(Level-1); // Level up to 10
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(butterfree);
+                foreach (var skill in butterfree.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

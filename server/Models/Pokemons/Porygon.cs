@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Porygon : PokemonMaster
@@ -9,10 +10,16 @@ public class Porygon : PokemonMaster
     : base("Porygon", "Normal", 65, 60, 70, 85, 75, 40, ownerId, 15, "Trace")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Sharpen, Conversion, Psybeam, Recover, Agility, Tri Attack, Toxic, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

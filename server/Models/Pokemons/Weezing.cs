@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Weezing : PokemonMaster
@@ -9,10 +10,16 @@ public class Weezing : PokemonMaster
     : base("Weezing", "Poison", 65, 90, 120, 85, 70, 60, ownerId, 35, "Levitate")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Smog, Sludge, SmokeScreen, Self-Destruct, Haze, Explosion, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
     
     public Weezing(Koffing koffing)
@@ -30,10 +37,16 @@ public class Weezing : PokemonMaster
         SpeedIV = koffing.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Tackle, Smog, Sludge, Smokescreen, Self-Destruct, Haze, Explosion, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
     
     public override async Task Evolve(ClientSession session)

@@ -10,10 +10,16 @@ public class Weedle : PokemonMaster
     : base("Weedle", "Bug/Poison", 40, 35, 30, 20, 20, 50, ownerId, 10, "Shield Dust")
     {
         Nickname = nickname;
+        SkillPool = "Poison Sting, String Shot";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Weedle : PokemonMaster
                 var kakuna = new Kakuna(this);
                 kakuna.EvolveLevelUp(Level-1); // Level up to 7
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(kakuna);
+                foreach (var skill in kakuna.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

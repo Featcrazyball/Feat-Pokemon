@@ -10,10 +10,16 @@ public class Omanyte : PokemonMaster
     : base("Omanyte", "Rock/Water", 35, 40, 100, 90, 55, 35, ownerId, 20, "Swift Swim")
     {
         Nickname = nickname;
+        SkillPool = "Water Gun, Withdraw, Horn Attack, Leer, Spike Cannon, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Omanyte : PokemonMaster
                 var omastar = new Omastar(this);
                 omastar.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(omastar);
+                foreach (var skill in omastar.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

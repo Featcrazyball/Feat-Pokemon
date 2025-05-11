@@ -10,10 +10,16 @@ public class Grimer : PokemonMaster
     : base("Grimer", "Poison", 80, 80, 50, 40, 50, 25, ownerId, 15, "Poison Touch")
     {
         Nickname = nickname;
+        SkillPool = "Pound, Disable, Poison Gas, Minimize, Sludge, Harden, Screech, Acid Armor, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Grimer : PokemonMaster
                 var muk = new Muk(this);
                 muk.EvolveLevelUp(Level-1); 
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(muk);
+                foreach (var skill in muk.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

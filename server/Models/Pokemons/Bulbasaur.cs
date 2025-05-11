@@ -10,10 +10,16 @@ public class Bulbasaur : PokemonMaster
     : base("Bulbasaur", "Grass/Poison", 45, 49, 49, 65, 65, 45, ownerId, 10, "Water Burst")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Growl, Leech Seed, Vine Whip, Poison Powder, Sleep Powder, Razor Leaf, Growth, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     // Ask Teacher
@@ -23,18 +29,28 @@ public class Bulbasaur : PokemonMaster
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 16) {
+        if (Level >= 16) {  // Bulbasaur evolves at level 16
             using (var context = new DatabaseContext())
             {
                 var ivysaur = new Ivysaur(this);
-                ivysaur.EvolveLevelUp(Level-1); 
+                ivysaur.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add the evolved Pokemon to the context
                 context.PokemonMaster.Add(ivysaur);
+                
+                // Add all skills for the evolved Pokemon
+                foreach (var skill in ivysaur.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove the original Pokemon
                 context.PokemonMaster.Remove(this);
+                
+                // Save all changes in a single transaction
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Bulbasaur to a Ivysaur!");
+            await session.SendMessageAsync($"{Nickname} has evolved from a Bulbasaur to an Ivysaur!");
         } else {
             await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }

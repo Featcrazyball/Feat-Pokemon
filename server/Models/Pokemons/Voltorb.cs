@@ -10,10 +10,16 @@ public class Voltorb : PokemonMaster
     : base("Voltorb", "Electric", 40, 30, 50, 55, 55, 100, ownerId, 20, "Static")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Screech, Sonic Boom, Self-Destruct, Light Screen, Swift, Explosion, Thunderbolt, Thunder, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Flash";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Voltorb : PokemonMaster
                 var electrode = new Electrode(this);
                 electrode.EvolveLevelUp(Level-1); 
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(electrode);
+                foreach (var skill in electrode.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

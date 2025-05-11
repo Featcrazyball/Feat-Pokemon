@@ -10,10 +10,16 @@ public class Staryu : PokemonMaster
     : base("Staryu", "Water", 30, 45, 55, 70, 55, 85, ownerId, 20, "Illuminate")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Harden, Water Gun, Recover, Swift, Minimize, Light Screen, Hydro Pump, Surf, Thunderbolt, Ice Beam, Blizzard, Psychic, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Flash";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -31,8 +37,13 @@ public class Staryu : PokemonMaster
             var starmie = new Starmie(this);
             starmie.EvolveLevelUp(Level-1); // Level up to current level
 
-            // Remove previous and add new Pokemon
             context.PokemonMaster.Add(starmie);
+            foreach (var skill in starmie.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Pidgeot : PokemonMaster
@@ -9,10 +10,16 @@ public class Pidgeot : PokemonMaster
     : base("Pidgeot", "Normal/Flying", 83, 80, 75, 70, 70, 101, ownerId, 25, "Keen Eye")
     {
         Nickname = nickname;
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Agility, Sky Attack, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Pidgeot(Pidgeotto pidgeotto)
@@ -30,10 +37,16 @@ public class Pidgeot : PokemonMaster
         SpeedIV = pidgeotto.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Agility, Sky Attack, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

@@ -10,10 +10,16 @@ public class Krabby : PokemonMaster
     : base("Krabby", "Water", 30, 105, 90, 25, 25, 50, ownerId, 10, "Hyper Cutter")
     {
         Nickname = nickname;
+        SkillPool = "Bubble, Leer, Guillotine, Stomp, Crabhammer, Harden, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Krabby : PokemonMaster
                 var kingler = new Kingler(this);
                 kingler.EvolveLevelUp(Level-1); 
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(kingler);
+                foreach (var skill in kingler.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

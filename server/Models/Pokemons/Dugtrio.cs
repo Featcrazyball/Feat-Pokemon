@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Dugtrio : PokemonMaster
@@ -9,10 +10,16 @@ public class Dugtrio : PokemonMaster
     : base("Dugtrio", "Ground", 35, 100, 50, 50, 70, 120, ownerId, 26, "Sand Veil")
     {
         Nickname = nickname;
-        
+        SkillPool = "Scratch, Growl, Dig, Sand Attack, Slash, Earthquake, Fissure, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Substitute";
+
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Dugtrio(Diglett diglett)
@@ -30,10 +37,16 @@ public class Dugtrio : PokemonMaster
         SpeedIV = diglett.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
-
+        SkillPool = "Scratch, Growl, Dig, Sand Attack, Slash, Earthquake, Fissure, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Substitute";
+        
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
     
     public override async Task Evolve(ClientSession session)

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Farfetch : PokemonMaster
@@ -9,10 +10,16 @@ public class Farfetch : PokemonMaster
     : base("Farfetch", "Normal/Flying", 52, 90, 55, 58, 62, 60, ownerId, 20, "Keen Eye")
     {
         Nickname = nickname;
+        SkillPool = "Peck, Sand Attack, Leer, Fury Attack, Swords Dance, Agility, Slash, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

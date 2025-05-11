@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Raticate : PokemonMaster
@@ -9,10 +10,16 @@ public class Raticate : PokemonMaster
     : base("Raticate", "Normal", 55, 81, 60, 50, 70, 97, ownerId, 25, "Run Away")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Tail Whip, Quick Attack, Hyper Fang, Focus Energy, Super Fang, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Raticate(Rattata rattata)
@@ -30,10 +37,16 @@ public class Raticate : PokemonMaster
         SpeedIV = rattata.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Tackle, Tail Whip, Quick Attack, Hyper Fang, Focus Energy, Super Fang, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Hypno : PokemonMaster
@@ -9,10 +10,16 @@ public class Hypno : PokemonMaster
     : base("Hypno", "Psychic", 85, 73, 70, 73, 115, 67, ownerId, 30, "Insomnia")
     {
         Nickname = nickname;
+        SkillPool = "Pound, Hypnosis, Disable, Confusion, Headbutt, Poison Gas, Psychic, Meditate, Seismic Toss, Body Slam, Take Down, Double-Edge, Submission, Counter, Rage, Thunder Wave, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Hypno(Drowzee drowzee)
@@ -30,10 +37,16 @@ public class Hypno : PokemonMaster
         SpeedIV = drowzee.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Pound, Hypnosis, Disable, Confusion, Headbutt, Poison Gas, Psychic, Meditate, Seismic Toss, Body Slam, Take Down, Double-Edge, Submission, Counter, Rage, Thunder Wave, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Omastar : PokemonMaster
@@ -9,10 +10,16 @@ public class Omastar : PokemonMaster
     : base("Omastar", "Rock/Water", 70, 60, 125, 115, 70, 55, ownerId, 40, "Swift Swim")
     {
         Nickname = nickname;
+        SkillPool = "Water Gun, Withdraw, Horn Attack, Leer, Spike Cannon, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Omastar(Omanyte omanyte)
@@ -30,10 +37,16 @@ public class Omastar : PokemonMaster
         SpeedIV = omanyte.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Water Gun, Withdraw, Horn Attack, Leer, Spike Cannon, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

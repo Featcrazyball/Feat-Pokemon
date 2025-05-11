@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Flareon : PokemonMaster
@@ -9,10 +10,16 @@ public class Flareon : PokemonMaster
     : base("Flareon", "Fire", 65, 130, 60, 95, 110, 65, ownerId, 20, "Flash Fire")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Sand Attack, Quick Attack, Leer, Ember, Fire Spin, Smog, Flamethrower, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Flareon(Eevee eevee)
@@ -30,10 +37,16 @@ public class Flareon : PokemonMaster
         SpeedIV = eevee.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Tackle, Sand Attack, Quick Attack, Leer, Ember, Fire Spin, Smog, Flamethrower, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

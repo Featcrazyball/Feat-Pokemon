@@ -10,10 +10,16 @@ public class Kakuna : PokemonMaster
     : base("Kakuna", "Bug/Poison", 45, 25, 50, 25, 25, 35, ownerId, 15, "Shed Skin")
     {
         Nickname = nickname;
+        SkillPool = "Harden";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Kakuna(Weedle weedle)
@@ -31,10 +37,16 @@ public class Kakuna : PokemonMaster
         SpeedIV = weedle.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Harden";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -45,8 +57,14 @@ public class Kakuna : PokemonMaster
                 var beedrill = new Beedrill(this);
                 beedrill.EvolveLevelUp(Level-1); // Level up to 7
 
-                // Remove previous and add new Pokemon
+                // Add new skills to Beedrill
                 context.PokemonMaster.Add(beedrill);
+                foreach (var skill in beedrill.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

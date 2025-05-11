@@ -10,10 +10,16 @@ public class Eevee : PokemonMaster
     : base("Eevee", "Normal", 55, 55, 50, 45, 65, 55, ownerId, 25, "Run Away")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Sand Attack, Growl, Quick Attack, Bite, Tail Whip, Take Down, Double-Edge, Reflect, Mimic, Double Team, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -37,8 +43,13 @@ public class Eevee : PokemonMaster
                     var vaporeon = new Vaporeon(this);
                     vaporeon.EvolveLevelUp(Level-1); // Level up to current level
 
-                    // Remove previous and add new Pokemon
                     context.PokemonMaster.Add(vaporeon);
+                    foreach (var skill in vaporeon.Skills)
+                    {
+                        context.Skills.Add(skill);
+                    }
+
+                    // Remove previous and add new Pokemon
                     context.PokemonMaster.Remove(this);
                     context.SaveChanges();
                 }
@@ -58,8 +69,13 @@ public class Eevee : PokemonMaster
                     var jolteon = new Jolteon(this);
                     jolteon.EvolveLevelUp(Level-1); // Level up to current level
 
-                    // Remove previous and add new Pokemon
                     context.PokemonMaster.Add(jolteon);
+                    foreach (var skill in jolteon.Skills)
+                    {
+                        context.Skills.Add(skill);
+                    }
+
+                    // Remove previous and add new Pokemon
                     context.PokemonMaster.Remove(this);
                     context.SaveChanges();
                 }
@@ -79,8 +95,13 @@ public class Eevee : PokemonMaster
                     var flareon = new Flareon(this);
                     flareon.EvolveLevelUp(Level-1); // Level up to current level
 
-                    // Remove previous and add new Pokemon
                     context.PokemonMaster.Add(flareon);
+                    foreach (var skill in flareon.Skills)
+                    {
+                        context.Skills.Add(skill);
+                    }
+
+                    // Remove previous and add new Pokemon
                     context.PokemonMaster.Remove(this);
                     context.SaveChanges();
                 }

@@ -10,10 +10,16 @@ public class Meowth : PokemonMaster
     : base("Meowth", "Normal", 40, 45, 35, 40, 40, 90, ownerId, 10, "Pickup")
     {
         Nickname = nickname;
+        SkillPool = "Scratch, Growl, Bite, Pay Day, Screech, Fury Swipes, Slash, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Meowth : PokemonMaster
                 var persian = new Persian(this);
                 persian.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(persian);
+                foreach (var skill in persian.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

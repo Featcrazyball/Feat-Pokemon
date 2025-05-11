@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Dewgong : PokemonMaster
@@ -9,10 +10,16 @@ public class Dewgong : PokemonMaster
     : base("Dewgong", "Water/Ice", 90, 70, 80, 70, 95, 70, ownerId, 30, "Thick Fat")
     {
         Nickname = nickname;
+        SkillPool = "Headbutt, Growl, Aurora Beam, Rest, Take Down, Ice Beam, Agility, Toxic, Body Slam, Double-Edge, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Skull Bash, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Dewgong(Seel seel)
@@ -30,15 +37,21 @@ public class Dewgong : PokemonMaster
         SpeedIV = seel.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Headbutt, Growl, Aurora Beam, Rest, Take Down, Ice Beam, Agility, Toxic, Body Slam, Double-Edge, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Skull Bash, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
     {
-        await session.GetChoiceAsync($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

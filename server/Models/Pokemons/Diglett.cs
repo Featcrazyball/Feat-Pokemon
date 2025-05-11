@@ -10,10 +10,16 @@ public class Diglett : PokemonMaster
     : base("Diglett", "Ground", 10, 55, 25, 35, 45, 95, ownerId, 10, "Sand Veil")
     {
         Nickname = nickname;
+        SkillPool = "Scratch, Growl, Dig, Sand Attack, Slash, Earthquake, Fissure, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,14 @@ public class Diglett : PokemonMaster
                 var dugtrio = new Dugtrio(this);
                 dugtrio.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add skills for the evolved Pokemon
                 context.PokemonMaster.Add(dugtrio);
+                foreach (var skill in dugtrio.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

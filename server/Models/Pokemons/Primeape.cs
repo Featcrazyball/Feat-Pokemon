@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Primeape : PokemonMaster
@@ -9,10 +10,16 @@ public class Primeape : PokemonMaster
     : base("Primeape", "Fighting", 65, 105, 60, 60, 70, 95, ownerId, 27, "Vital Spirit")
     {
         Nickname = nickname;
+        SkillPool = "Scratch, Leer, Low Kick, Karate Chop, Fury Swipes, Focus Energy, Seismic Toss, Thrash, Screech, Submission, Counter, Strength, Earthquake, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Primeape(Mankey mankey)
@@ -30,10 +37,16 @@ public class Primeape : PokemonMaster
         SpeedIV = mankey.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Scratch, Leer, Low Kick, Karate Chop, Fury Swipes, Focus Energy, Seismic Toss, Thrash, Screech, Submission, Counter, Strength, Earthquake, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

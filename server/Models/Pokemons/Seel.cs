@@ -10,10 +10,16 @@ public class Seel : PokemonMaster
     : base("Seel", "Water", 65, 45, 55, 45, 70, 45, ownerId, 15, "Thick Fat")
     {
         Nickname = nickname;
+        SkillPool = "Headbutt, Growl, Aurora Beam, Rest, Take Down, Ice Beam, Surf, Body Slam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Seel : PokemonMaster
                 var dewgong = new Dewgong(this);
                 dewgong.EvolveLevelUp(Level-1); 
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(dewgong);
+                foreach (var skill in dewgong.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

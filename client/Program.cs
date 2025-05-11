@@ -148,11 +148,13 @@ namespace Client
         {
             string[] s = new[]
             {
-                "Please enter your Username:",
-                "Please enter your password:",
-                "Please enter your email:",
-                "Please confirm your password:",
-                "Please enter your choice:"
+                "👤 Username  : ",
+                "📧 Email     : ",
+                "🔒 Password  : ",
+                "✅ Confirm   : ",
+                "👤 Username:",
+                "🔑 Password:",
+                "Please enter your choice:",
             };
 
             foreach (var str in s) { if (m.Contains(str)) { return true; }}  

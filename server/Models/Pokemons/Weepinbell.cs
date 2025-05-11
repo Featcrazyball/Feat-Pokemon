@@ -10,10 +10,16 @@ public class Weepinbell : PokemonMaster
     : base("Weepinbell", "Grass/Poison", 65, 90, 50, 85, 45, 55, ownerId, 21, "Chlorophyll")
     {
         Nickname = nickname;
+        SkillPool = "Vine Whip, Sleep Powder, Stun Spore, Acid, Razor Leaf, Growth, Wrap, PoisonPowder, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Weepinbell(Bellsprout bellsprout)
@@ -31,10 +37,16 @@ public class Weepinbell : PokemonMaster
         SpeedIV = bellsprout.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Vine Whip, Sleep Powder, Stun Spore, Acid, Razor Leaf, Growth, Wrap, Poison Powder, Solar Beam, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -52,8 +64,13 @@ public class Weepinbell : PokemonMaster
             var victreebel = new Victreebel(this);
             victreebel.EvolveLevelUp(Level-1); // Level up to current level
 
-            // Remove previous and add new Pokemon
             context.PokemonMaster.Add(victreebel);
+            foreach (var skill in victreebel.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }

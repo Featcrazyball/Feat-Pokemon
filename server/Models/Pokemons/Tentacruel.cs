@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Tentacruel : PokemonMaster
@@ -9,10 +10,16 @@ public class Tentacruel : PokemonMaster
     : base("Tentacruel", "Water/Poison", 80, 70, 65, 80, 120, 100, ownerId, 30, "Liquid Ooze")
     {
         Nickname = nickname;
+        SkillPool = "Acid, Supersonic, Wrap, Poison Sting, Water Gun, Constrict, Barrier, Screech, Toxic, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Tentacruel(Tentacool tentacool)
@@ -30,10 +37,16 @@ public class Tentacruel : PokemonMaster
         SpeedIV = tentacool.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Acid, Supersonic, Wrap, Poison Sting, Water Gun, Constrict, Barrier, Screech, Toxic, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

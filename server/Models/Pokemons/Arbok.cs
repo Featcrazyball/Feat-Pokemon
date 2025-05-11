@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Arbok : PokemonMaster
@@ -11,10 +12,14 @@ public class Arbok : PokemonMaster
         Nickname = nickname;
         SkillPool = "Wrap, Poison Sting, Bite, Glare, Acid, Screech, Toxic, Body Slam, Take Down, Double-Edge, Rage, Earthquake, Fissure, Skull Bash, Rock Slide, Rest, Substitute";
 
-        // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Arbok(Ekans ekans)
@@ -34,10 +39,14 @@ public class Arbok : PokemonMaster
         StatsEarned = 0;
         
         SkillPool = "Wrap, Poison Sting, Bite, Glare, Acid, Screech, Toxic, Body Slam, Take Down, Double-Edge, Rage, Earthquake, Fissure, Skull Bash, Rock Slide, Rest, Substitute";
-        // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

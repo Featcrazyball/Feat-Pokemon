@@ -10,10 +10,16 @@ public class Venonat : PokemonMaster
     : base("Venonat", "Bug/Poison", 60, 55, 50, 40, 55, 45, ownerId, 20, "Compound Eyes")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Disable, Supersonic, Confusion, Poison Powder, Leech Life, Stun Spore, Psybeam, Sleep Powder, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Venonat : PokemonMaster
                 var venomoth = new Venomoth(this);
                 venomoth.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(venomoth);
+                foreach (var skill in venomoth.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

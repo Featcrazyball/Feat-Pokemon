@@ -10,10 +10,16 @@ public class Cubone : PokemonMaster
     : base("Cubone", "Ground", 50, 50, 95, 40, 50, 35, ownerId, 20, "Lightning Rod")
     {
         Nickname = nickname;
+        SkillPool = "Bone Club, Growl, Tail Whip, Headbutt, Leer, Focus Energy, Bonemerang, Rage, Thrash, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Earthquake, Fissure, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Skull Bash, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,9 +30,19 @@ public class Cubone : PokemonMaster
                 var marowak = new Marowak(this);
                 marowak.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add the evolved Pokemon to the context
                 context.PokemonMaster.Add(marowak);
+                
+                // Add all skills for the evolved Pokemon
+                foreach (var skill in marowak.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove the original Pokemon
                 context.PokemonMaster.Remove(this);
+                
+                // Save all changes in a single transaction
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Cubone to a Marowak!");
@@ -34,7 +50,6 @@ public class Cubone : PokemonMaster
             await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
-
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;

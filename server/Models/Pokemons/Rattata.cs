@@ -10,10 +10,16 @@ public class Rattata : PokemonMaster
     : base("Rattata", "Normal", 30, 56, 35, 25, 35, 72, ownerId, 25, "Run Away")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Tail Whip, Quick Attack, Hyper Fang, Focus Energy, Super Fang, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Rattata : PokemonMaster
                 var ratticate = new Raticate(this);
                 ratticate.EvolveLevelUp(Level-1); // Level up to 20
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(ratticate);
+                foreach (var skill in ratticate.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

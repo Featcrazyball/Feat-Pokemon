@@ -10,10 +10,16 @@ public class Oddish : PokemonMaster
     : base("Oddish", "Grass/Poison", 45, 50, 55, 75, 65, 30, ownerId, 10, "Chlorophyll")
     {
         Nickname = nickname;
+        SkillPool = "Absorb, PoisonPowder, Stun Spore, Sleep Powder, Acid, SolarBeam, Toxic, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Oddish : PokemonMaster
                 var gloom = new Gloom(this);
                 gloom.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(gloom);
+                foreach (var skill in gloom.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

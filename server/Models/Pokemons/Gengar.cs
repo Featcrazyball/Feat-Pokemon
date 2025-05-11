@@ -1,5 +1,6 @@
 using System.Data.SQLite;
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Gengar : PokemonMaster
@@ -10,10 +11,16 @@ public class Gengar : PokemonMaster
     : base("Gengar", "Ghost/Poison", 60, 65, 60, 130, 75, 110, ownerId, 25, "Cursed Body")
     {
         Nickname = nickname;
+        SkillPool = "Lick, Confuse Ray, Night Shade, Hypnosis, Dream Eater, Toxic, Body Slam, Seismic Toss, Thunderbolt, Thunder, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Gengar(Haunter haunter)
@@ -31,10 +38,16 @@ public class Gengar : PokemonMaster
         SpeedIV = haunter.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Lick, Confuse Ray, Night Shade, Hypnosis, Dream Eater, Toxic, Body Slam, Seismic Toss, Thunderbolt, Thunder, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

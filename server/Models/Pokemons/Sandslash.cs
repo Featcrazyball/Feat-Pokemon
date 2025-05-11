@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Sandslash : PokemonMaster
@@ -9,10 +10,16 @@ public class Sandslash : PokemonMaster
     : base("Sandslash", "Ground", 75, 100, 110, 45, 55, 65, ownerId, 25, "Sand Attack")
     {
         Nickname = nickname;
+        SkillPool = "Scratch, Sand Attack, Slash, Poison Sting, Swift, Fury Swipes, Earthquake, Hyper Beam, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Sandslash(Sandshrew sandshrew)
@@ -30,10 +37,16 @@ public class Sandslash : PokemonMaster
         SpeedIV = sandshrew.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Scratch, Sand Attack, Slash, Poison Sting, Swift, Fury Swipes, Earthquake, Hyper Beam, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

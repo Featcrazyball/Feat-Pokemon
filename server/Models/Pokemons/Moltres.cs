@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Moltres : PokemonMaster
@@ -9,10 +10,16 @@ public class Moltres : PokemonMaster
     : base("Moltres", "Fire/Flying", 90, 100, 90, 125, 85, 90, ownerId, 30, "Flame Body")
     {
         Nickname = nickname;
+        SkillPool = "Peck, Fire Spin, Leer, Agility, Sky Attack, Hyper Beam, Fire Blast, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

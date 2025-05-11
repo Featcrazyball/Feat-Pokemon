@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Clefable : PokemonMaster
@@ -9,10 +10,16 @@ public class Clefable : PokemonMaster
     : base("Clefable", "Fairy", 95, 70, 73, 95, 90, 60, ownerId, 35, "Cute Charm")
     {
         Nickname = nickname;
+        SkillPool = "Sing, Double Slap, Minimize, Metronome, Defense Curl, Light Screen, Solar Beam, Thunderbolt, Thunder, Psychic, Teleport, Seismic Toss, Counter, Toxic, Body Slam, Take Down, Double-Edge, Submission, Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Psywave, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Clefable(Clefairy clefairy)
@@ -30,10 +37,16 @@ public class Clefable : PokemonMaster
         SpeedIV = clefairy.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Sing, Double Slap, Minimize, Metronome, Defense Curl, Light Screen, Solar Beam, Thunderbolt, Thunder, Psychic, Teleport, Seismic Toss, Counter, Toxic, Body Slam, Take Down, Double-Edge, Submission, Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Psywave, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

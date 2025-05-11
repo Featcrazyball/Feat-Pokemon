@@ -10,10 +10,16 @@ public class Jigglypuff : PokemonMaster
     : base("Jigglypuff", "Normal/Fairy", 115, 45, 20, 45, 25, 25, ownerId, 20, "Cute Charm")
     {
         Nickname = nickname;
+        SkillPool = "Sing, Disable, Defense Curl, Double Slap, Rest, Body Slam, Take Down, Double-Edge, Seismic Toss, Counter, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Thunderbolt, Thunder, Psychic, Psywave, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -31,8 +37,13 @@ public class Jigglypuff : PokemonMaster
             var wigglytuff = new Wigglytuff(this);
             wigglytuff.EvolveLevelUp(Level-1); // Level up to current level
 
-            // Remove previous and add new Pokemon
             context.PokemonMaster.Add(wigglytuff);
+            foreach (var skill in wigglytuff.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }

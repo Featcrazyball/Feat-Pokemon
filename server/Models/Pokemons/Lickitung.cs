@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Lickitung : PokemonMaster
@@ -9,10 +10,16 @@ public class Lickitung : PokemonMaster
     : base("Lickitung", "Normal", 90, 55, 75, 60, 75, 30, ownerId, 20, "Oblivious")
     {
         Nickname = nickname;
+        SkillPool = "Wrap, Supersonic, Stomp, Disable, Defense Curl, Slam, Screech, Body Slam, Earthquake, Hyper Beam, Surf, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

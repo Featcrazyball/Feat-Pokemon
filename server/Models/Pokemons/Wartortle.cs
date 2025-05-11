@@ -10,10 +10,16 @@ public class Wartortle : PokemonMaster
     : base("Wartortle", "Water", 59, 63, 80, 65, 80, 58, ownerId, 25, "Water Gun")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Tail Whip, Bubble, Water Gun, Bite, Withdraw, Skull Bash, Hydro Pump, Surf, Ice Beam, Blizzard, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Wartortle(Squirtle squirtle)
@@ -31,10 +37,16 @@ public class Wartortle : PokemonMaster
         SpeedIV = squirtle.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Tackle, Tail Whip, Bubble, Water Gun, Bite, Withdraw, Skull Bash, Hydro Pump, Surf, Ice Beam, Blizzard, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -45,8 +57,13 @@ public class Wartortle : PokemonMaster
                 var blastoise = new Blastoise(this);
                 blastoise.EvolveLevelUp(Level-1); // Level up to 36
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(blastoise);
+                foreach (var skill in blastoise.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

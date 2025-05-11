@@ -10,10 +10,16 @@ public class Slowpoke : PokemonMaster
     : base("Slowpoke", "Water/Psychic", 90, 65, 65, 40, 40, 15, ownerId, 20, "Oblivious")
     {
         Nickname = nickname;
+        SkillPool = "Confusion, Disable, Headbutt, Growl, Water Gun, Amnesia, Psychic, Surf, Ice Beam, Blizzard, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Slowpoke : PokemonMaster
                 var slowbro = new Slowbro(this);
                 slowbro.EvolveLevelUp(Level-1); // Level up to current level
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(slowbro);
+                foreach (var skill in slowbro.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

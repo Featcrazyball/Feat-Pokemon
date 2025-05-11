@@ -27,7 +27,7 @@ public class Mimic : Skill
         }
         
         string moveName = target.Lastmove?.Name ?? "Unknown";
-        Skill? CopiedMove = user.ArenaTempSkillGain(moveName);
+        Skill? CopiedMove = user.ArenaTempSkillGain(moveName.ToLower());
         
         if (CopiedMove == null)
         {

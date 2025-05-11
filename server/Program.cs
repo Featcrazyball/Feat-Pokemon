@@ -69,10 +69,6 @@ namespace Server
                 {
                     Console.WriteLine($"General exception: {ex.Message}");
                 }
-                finally
-                {
-                    Console.WriteLine("Server Died....");
-                }
 
             } 
         }

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Jynx : PokemonMaster
@@ -9,10 +10,16 @@ public class Jynx : PokemonMaster
     : base("Jynx", "Ice/Psychic", 65, 50, 35, 115, 95, 95, ownerId, 30, "Oblivious")
     {
         Nickname = nickname;
+        SkillPool = "Pound, Lovely Kiss, Lick, Double Slap, Ice Punch, Body Slam, Thrash, Blizzard, Psychic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

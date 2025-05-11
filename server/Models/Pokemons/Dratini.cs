@@ -10,10 +10,16 @@ public class Dratini : PokemonMaster
     : base("Dratini", "Dragon", 41, 64, 45, 50, 50, 50, ownerId, 15, "Shed Skin")
     {
         Nickname = nickname;
+        SkillPool = "Wrap, Leer, Thunder Wave, Agility, Slam, Dragon Rage, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Rage, Thunderbolt, Thunder, Surf, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,14 @@ public class Dratini : PokemonMaster
                 var dragonair = new Dragonair(this);
                 dragonair.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add skills for the evolved Pokemon
                 context.PokemonMaster.Add(dragonair);
+                foreach (var skill in dragonair.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

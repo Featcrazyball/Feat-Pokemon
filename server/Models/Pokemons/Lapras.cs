@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Lapras : PokemonMaster
@@ -9,10 +10,16 @@ public class Lapras : PokemonMaster
     : base("Lapras", "Water/Ice", 130, 85, 80, 85, 95, 60, ownerId, 30, "Water Absorb")
     {
         Nickname = nickname;
+        SkillPool = "Water Gun, Sing, Mist, Body Slam, Confuse Ray, Ice Beam, Hydro Pump, Blizzard, Thunderbolt, Psychic, Surf, Strength, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

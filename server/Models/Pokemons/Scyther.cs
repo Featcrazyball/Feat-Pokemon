@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Scyther : PokemonMaster
@@ -9,10 +10,16 @@ public class Scyther : PokemonMaster
     : base("Scyther", "Bug/Flying", 70, 110, 80, 55, 80, 105, ownerId, 20, "Swarm")
     {
         Nickname = nickname;
+        SkillPool = "Quick Attack, Leer, Focus Energy, Agility, Slash, Swords Dance, Hyper Beam, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

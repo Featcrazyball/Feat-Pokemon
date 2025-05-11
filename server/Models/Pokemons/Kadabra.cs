@@ -10,10 +10,16 @@ public class Kadabra : PokemonMaster
     : base("Kadabrah", "Psychic", 40, 35, 30, 120, 70, 105, ownerId, 50, "Synchronize")
     {
         Nickname = nickname;
+        SkillPool = "Teleport, Confusion, Disable, Psybeam, Recover, Psychic, Reflect, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Counter, Rage, Thunder Wave, Mimic, Double Team, Bide, Metronome, Skull Bash, Rest, Psywave, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Kadabra(Abra abra) 
@@ -31,10 +37,15 @@ public class Kadabra : PokemonMaster
         SpeedIV = abra.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
-
+        SkillPool = "Teleport, Confusion, Disable, Psybeam, Recover, Psychic, Reflect, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Counter, Rage, Thunder Wave, Mimic, Double Team, Bide, Metronome, Skull Bash, Rest, Psywave, Substitute";
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -45,8 +56,13 @@ public class Kadabra : PokemonMaster
                 var alakazam = new Alakazam(this);
                 alakazam.EvolveLevelUp(Level-1); // Level up to current level
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(alakazam);
+                foreach (var skill in alakazam.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

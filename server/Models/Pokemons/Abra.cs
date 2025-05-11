@@ -14,10 +14,14 @@ public class Abra : PokemonMaster
         Nickname = nickname;
         SkillPool = "Toxic, Rage, Hyper Beam, SolarBeam, Psychic, Mimic, Double Team, Bide, Swift, Dream Eater, Rest, Psywave, Substitute";
 
-        // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override float calculateDamage(float SkillDamage) {
@@ -30,17 +34,26 @@ public class Abra : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var kadabra = new Kadabra(this);
-                kadabra.EvolveLevelUp(Level-1); // Level up to current level
+                kadabra.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add the evolved Pokemon to the context
                 context.PokemonMaster.Add(kadabra);
+                
+                // Add all skills for the evolved Pokemon
+                foreach (var skill in kadabra.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove the original Pokemon
                 context.PokemonMaster.Remove(this);
+                
+                // Save all changes in a single transaction
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Abra to a Kadabra!");
+            await session.SendMessageAsync($"{Nickname} has evolved from Abra to Kadabra!");
         } else {
             await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
         }
     }
-
 }

@@ -10,10 +10,16 @@ public class Vulpix : PokemonMaster
     : base("Vulpix", "Fire", 38, 41, 40, 50, 65, 65, ownerId, 10, "Flash Fire")
     {
         Nickname = nickname;
+        SkillPool = "Ember, Tail Whip, Quick Attack, Roar, Confuse Ray, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
     
     public override async Task Evolve(ClientSession session)
@@ -31,8 +37,13 @@ public class Vulpix : PokemonMaster
             var ninetales = new Ninetales(this);
             ninetales.EvolveLevelUp(Level-1); // Level up to current level
 
-            // Remove previous and add new Pokemon
             context.PokemonMaster.Add(ninetales);
+            foreach (var skill in ninetales.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }

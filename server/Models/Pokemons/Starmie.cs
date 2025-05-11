@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Starmie : PokemonMaster
@@ -9,10 +10,16 @@ public class Starmie : PokemonMaster
     : base("Starmie", "Water/Psychic", 60, 75, 85, 100, 85, 115, ownerId, 30, "Illuminate")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Harden, Recover, Swift, Minimize, Light Screen, Hydro Pump, Surf, Thunderbolt, Ice Beam, Blizzard, Psychic, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Flash";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Starmie(Staryu staryu)
@@ -30,10 +37,16 @@ public class Starmie : PokemonMaster
         SpeedIV = staryu.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Tackle, Harden, Recover, Swift, Minimize, Light Screen, Hydro Pump, Surf, Thunderbolt, Ice Beam, Blizzard, Psychic, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Flash";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

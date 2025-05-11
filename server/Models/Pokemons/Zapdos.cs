@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Zapdos : PokemonMaster
@@ -9,10 +10,16 @@ public class Zapdos : PokemonMaster
     : base("Zapdos", "Electric/Flying", 90, 90, 85, 125, 90, 100, ownerId, 30, "Pressure")
     {
         Nickname = nickname;
+        SkillPool = "Peck, Thunder Shock, Thunder Wave, Agility, Drill Peck, Thunder, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

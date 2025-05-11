@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Aerodactyl : PokemonMaster
@@ -11,10 +12,14 @@ public class Aerodactyl : PokemonMaster
         Nickname = nickname;
         SkillPool = "Wing Attack, Supersonic, Bite, Take Down, Agility, Hyper Beam, Toxic, Rage, Earthquake, Mimic, Double-Edge, Skull Bash, Rest, Substitute";
 
-        // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

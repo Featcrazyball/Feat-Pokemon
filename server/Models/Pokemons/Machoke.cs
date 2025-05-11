@@ -10,10 +10,16 @@ public class Machoke : PokemonMaster
     : base("Machoke", "Fighting", 80, 100, 70, 50, 60, 45, ownerId, 20, "Guts")
     {
         Nickname = nickname;
+        SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Machoke(Machop machop)
@@ -31,10 +37,21 @@ public class Machoke : PokemonMaster
         SpeedIV = machop.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
-        var newSkills = LearnSkillFromSkillPool();
-        if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        using (var context = new DatabaseContext())
+        {
+            var newSkills = LearnSkillFromSkillPool();
+            if (newSkills != null)
+            {
+                foreach (var skill in newSkills) 
+                {
+                    Skills.Add(skill);
+                    context.Skills.Add(skill);
+                };
+                context.SaveChanges();
+            }
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -45,8 +62,13 @@ public class Machoke : PokemonMaster
                 var machamp = new Machamp(this);
                 machamp.EvolveLevelUp(Level-1); 
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(machamp);
+                foreach (var skill in machamp.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Blastoise : PokemonMaster
@@ -13,7 +14,12 @@ public class Blastoise : PokemonMaster
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Blastoise(Wartortle wartortle)
@@ -31,10 +37,16 @@ public class Blastoise : PokemonMaster
         SpeedIV = wartortle.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Tackle, Bubble, Water Gun, Bite, Withdraw, Skull Bash, Hydro Pump, Toxic, Body Slam, Take Down, Blizzard, Hyper Beam, Submission, Seismic Toss, Counter, Ice Beam, Dig, Mimic, Double Team, Bide, Rest, Substitute, Surf, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

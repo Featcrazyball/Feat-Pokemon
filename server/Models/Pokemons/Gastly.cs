@@ -10,10 +10,17 @@ public class Gastly : PokemonMaster
     : base("Gastly", "Ghost/Poison", 30, 35, 30, 100, 30, 80, ownerId, 9, "Levitate")
     {
         Nickname = nickname;
+        SkillPool = "Lick, Confuse Ray, Night Shade, Hypnosis, Dream Eater, Toxic, Psychic, Rage, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +31,14 @@ public class Gastly : PokemonMaster
                 var haunter = new Haunter(this);
                 haunter.EvolveLevelUp(Level-1); 
 
-                // Remove previous and add new Pokemon
+                // Add skills for the evolved Pokemon
                 context.PokemonMaster.Add(haunter);
+                foreach (var skill in haunter.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

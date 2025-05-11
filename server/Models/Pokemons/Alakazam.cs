@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Alakazam : PokemonMaster
@@ -11,10 +12,14 @@ public class Alakazam : PokemonMaster
         Nickname = nickname;
         SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Kinesis, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
 
-        // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Alakazam(Kadabra kadabra) 
@@ -35,10 +40,14 @@ public class Alakazam : PokemonMaster
         
         SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Kinesis, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
 
-        // Use this to check for null, or else it will throw an error
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

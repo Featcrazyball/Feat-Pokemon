@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Vaporeon : PokemonMaster
@@ -9,10 +10,16 @@ public class Vaporeon : PokemonMaster
     : base("Vaporeon", "Water", 130, 65, 60, 110, 95, 65, ownerId, 30, "Water Absorb")
     {
         Nickname = nickname;
+        SkillPool = "Tackle, Sand Attack, Quick Attack, Water Gun, Tail Whip, Bite, Aurora Beam, Haze, Mist, Acid Armor, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Vaporeon(Eevee eevee)
@@ -30,10 +37,16 @@ public class Vaporeon : PokemonMaster
         SpeedIV = eevee.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Tackle, Sand Attack, Quick Attack, Water Gun, Tail Whip, Bite, Aurora Beam, Haze, Mist, Acid Armor, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, BubbleBeam, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

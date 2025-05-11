@@ -247,19 +247,69 @@ namespace PokemonPocket
             DefenseStage = 0;
             SpecialDefenseStage = 0;
             SpeedStage = 0;
+            AccuracyStage = 0;
+            EvasionStage = 0;
 
-            CritRate = 1 / 16f; // Crit Rate
+            CritRate = MaxSpeed/512; // Crit Rate
             CritDmg = 1.5f; // Crit Damage
 
-            // Extra Info
-            BideDamage = 0;
+            // Arena
+            Firstmove =null;
+            Lastmove = null;
+            Priority  = 0;
+            PayDay = 0;
+            RazorWindActive = false;
+            Disable = false;
+            DisableTurns = 0;
+            DisabledSkill = string.Empty;
+            BideDamage = 0; 
             BideTurns = 0;
             BideActive = false;
-
             BindDamage = 0;
             BindTurns = 0;
             BindActive = false;
-
+            Flinch = false;
+            Paralyzed = false;
+            ParalyzeSpeed = false;
+            Burning = false;
+            BurningAttack = false;
+            BurnDamage = 0;
+            Freezing = false;
+            Poisoned = false;
+            RageActive = false;
+            InAir = false;
+            Levitate = false;
+            Flying = false;
+            Substitude = false;
+            SubstituteHealth = 0;
+            Confused = false;
+            ConfusionTurns = 0;
+            Dig = false;
+            DigDamage = 0;
+            Underground = false;
+            Rest = false;
+            Sleeping = false;
+            SleepTurns = 0;
+            HyperBeamRecharge = false;
+            LightScreen = false;
+            LightScreenTurns = 0;
+            Reflect = false;
+            ReflectTurns = 0;
+            LeechSeed = false;
+            LeechSeedTurns = 0;
+            Mist = false;
+            MistTurns = 0;
+            Mimic = false;
+            PetalDance = false;
+            PetalDanceTurns = 0; 
+            Thrashing = false;
+            ThrashTurns = 0;
+            ChargingSkull = false;
+            ChargingSky = false;
+            ChargingSolar = false;
+            BadlyPoisoned = false;
+            BadlyPoisonedTurns = 0;
+            Transform = false;
         }
 
         // For Re-calculation DO NOT TOUCH
@@ -349,14 +399,66 @@ namespace PokemonPocket
             await session.SendMessageAsync($"Stat Points have been removed from your Pokemon!\nYou have {StatPoints} Stat Points left.");
         }
 
+        public async Task AssignStatPoints(int points, string stat, ClientSession session)
+        {
+            if (points > StatPoints)
+            {
+                await session.SendMessageAsync($"You do not have enough Stat Points to assign {points} points to {stat}.");
+                return;
+            }
+
+            for (int i = 0; i < points; i++)
+            {
+                if (StatPoints > 0) { StatPoints -= 1;}
+                else { break; }
+                switch(stat.ToLower())
+                {
+                    case "health":
+                        MaxHealth += 1;
+                        break;
+                    case "attack":
+                        MaxAttack += 1;
+                        break;
+                    case "specialattack":
+                        MaxSpecialAttack += 1;
+                        break;
+                    case "defense":
+                        MaxDefense += 1;
+                        break;
+                    case "specialdefense":
+                        MaxSpecialDefense += 1;
+                        break;
+                    case "speed":
+                        MaxSpeed += 1;
+                        break;
+                    default:
+                        await session.SendMessageAsync($"Invalid stat: {stat}. Please choose from Health, Attack, Special Attack, Defense, Special Defense, or Speed.");
+                        break;
+                }
+            }
+
+            if (stat.ToLower() == "health")
+                await session.SendMessageAsync($"Your {Name} has gained {points} {stat} points!\nYour {stat} is now {MaxHealth}.");
+            else if (stat.ToLower() == "attack")
+                await session.SendMessageAsync($"Your {Name} has gained {points} {stat} points!\nYour {stat} is now {MaxAttack}.");
+            else if (stat.ToLower() == "special attack")
+                await session.SendMessageAsync($"Your {Name} has gained {points} {stat} points!\nYour {stat} is now {MaxSpecialAttack}.");
+            else if (stat.ToLower() == "defense")
+                await session.SendMessageAsync($"Your {Name} has gained {points} {stat} points!\nYour {stat} is now {MaxDefense}.");
+            else if (stat.ToLower() == "special defense")
+                await session.SendMessageAsync($"Your {Name} has gained {points} {stat} points!\nYour {stat} is now {MaxSpecialDefense}.");
+            else if (stat.ToLower() == "speed")
+                await session.SendMessageAsync($"Your {Name} has gained {points} {stat} points!\nYour {stat} is now {MaxSpeed}.");
+        }
+
         // Base Form Evolve (dont bother)
         public virtual async Task Evolve(ClientSession session)
         {
             await session.SendMessageAsync($"{Nickname} is unable evolve.");
         }
 
-        // Skill Management (Incomplete)
-        public async Task<bool> LearnSkill(string skillName, ClientSession session)
+        // Skill Management (Complete)
+        public async Task LearnSkill(string skillName, ClientSession session)
         {
             using var context = new DatabaseContext();
             
@@ -365,7 +467,7 @@ namespace PokemonPocket
             if (currentSkillCount >= 4)
             {
                 await session.SendMessageAsync($"{Nickname} already knows 4 skills. It must forget one first.");
-                return false;
+                return;
             }
             
             // Find a skill template with this name
@@ -373,20 +475,16 @@ namespace PokemonPocket
             if (skillTemplate == null)
             {
                 await session.SendMessageAsync($"{skillName} does not exist.");
-                return false;
+                return;
             }
             
             // Create skill
-            Skill newSkill;
-            switch(skillName)
+            Skill newSkill = ArenaTempSkillGain(skillName.ToLower())!;
+
+            if (newSkill == null)
             {
-                case "Absorb":
-                    if (Id == null) { await session.SendMessageAsync("Error registering Pokemon ID\nPlease contact an admin (just kidding theres no admin, call Featcrazyball)."); return false; }
-                    newSkill = new Absorb(Id);
-                    break;
-                default:
-                    await session.SendMessageAsync($"Skill {skillName} is not recognized.");
-                    return false;
+                await session.SendMessageAsync($"{skillName} is not a valid skill.");
+                return;
             }
             
             // Add to database
@@ -394,7 +492,6 @@ namespace PokemonPocket
             context.SaveChanges();
             
             await session.SendMessageAsync($"{Nickname} has learned {skillName}!");
-            return true;
         }
 
         public async Task ForgetSkill(string skillName, ClientSession session)
@@ -416,59 +513,45 @@ namespace PokemonPocket
             Console.WriteLine($"{Name} has forgotten {skillName}!");
         }
     
-        // Skill Pool Management (Incomplete)
-        public virtual List<Skill>? LearnSkillFromSkillPool()
+        // Skill Pool Management (Complete)
+        public List<Skill> LearnSkillFromSkillPool()
         {
-            if (string.IsNullOrEmpty(SkillPool))
+            List<Skill> newSkills = new List<Skill>();
+            if (string.IsNullOrEmpty(SkillPool)) return newSkills;
+            
+            var skills = SkillPool.Split(',').Select(s => s.Trim()).ToList();
+            Random random = new Random();
+            
+            // Choose random skills (up to 4)
+            int numSkills = Random.Shared.Next(1, 5);
+            
+            if (SkillPool.Length < numSkills)
             {
-                return null;
+                numSkills = SkillPool.Length;
             }
 
-            var skillNames = SkillPool.Split(',');
-
-            var random = new Random();
-            int numberOfSkillsToLearn = random.Next(1, Math.Min(4, skillNames.Length) + 1);
-            var selectedSkillNames = new HashSet<string>(); 
-            
-            while (selectedSkillNames.Count < numberOfSkillsToLearn)
+            for (int i = 0; i < numSkills; i++)
             {
-                int randomIndex = random.Next(0, skillNames.Length);
-                selectedSkillNames.Add(skillNames[randomIndex].Trim());
-            }
-
-            var newSkills = new List<Skill>();
-            using var context = new DatabaseContext();
-            
-            foreach (var skillName in selectedSkillNames)
-            {
-                Skill? newSkill = null;
-                
-                switch(skillName)
+                while (true)
                 {
-                    case "Absorb":
-                        if (Id == null) continue;
-                        newSkill = new Absorb(Id);
-                        break;
-                        
-                    // Add cases for other skills here as you implement them
-                    // case "Tackle":
-                    //     newSkill = new Tackle(Id);
-                    //     break;
-                        
-                    default:
-                        break;
+                    int index = random.Next(skills.Count);
+                    var skillName = skills[index];
+                    skills.RemoveAt(index);
+                    
+                    // Create skill but don't save directly
+                    var skill = ArenaTempSkillGain(skillName.ToLower());
+                    
+                    if (skill == null)
+                    {
+                        Console.WriteLine($"Skill {skillName} not found.");
+                        continue;
+                    }
+                    newSkills.Add(skill);
+                    break;
                 }
-                
-                if (newSkill != null)
-                {
-                    context.Skills.Add(newSkill);
-                    newSkills.Add(newSkill);
-                } 
             }
-            
-            if (newSkills.Count > 0) {context.SaveChanges();}
-                
-            return newSkills.Count > 0 ? newSkills : null;
+            // Instead of saving here with context.SaveChanges(), return the skills
+            return newSkills;
         }
 
         public void SetStarter(PokemonMaster poke) 
@@ -486,12 +569,65 @@ namespace PokemonPocket
         {
             return skillName switch
             {
-                "Absorb" => new Absorb(Id ?? "TempId"),
-                "Acid" => new Acid(Id ?? "TempId"),
+                "absorb" => new Absorb(Id!), "acid" => new Acid(Id!), "acid armor" => new AcidArmor(Id!),
+                "agility" => new Agility(Id!), "amnesia" => new Amnesia(Id!), "aurora beam" => new AuroraBeam(Id!),
+                "barrage" => new Barrage(Id!), "barrier" => new Models.Barrier(Id!), "bide" => new Bide(Id!),
+                "bind" => new Bind(Id!), "bite" => new Bite(Id!), "blizzard" => new Blizzard(Id!),
+                "body slam" => new BodySlam(Id!), "bone club" => new BoneClub(Id!), "bonemerang" => new Bonemerang(Id!),
+                "bubble" => new Bubble(Id!), "bubble beam" => new BubbleBeam(Id!), "clamp" => new Clamp(Id!),
+                "comet punch" => new CometPunch(Id!), "confuse ray" => new ConfuseRay(Id!), "confusion" => new Confusion(Id!),
+                "constrict" => new Constrict(Id!), "conversion" => new Conversion(Id!), "counter" => new Counter(Id!),
+                "crabhammer" => new Crabhammer(Id!), "cut" => new Cut(Id!), "defense curl" => new DefenseCurl(Id!),
+                "dig" => new Dig(Id!), "disable" => new Disable(Id!), "dizzy punch" => new DizzyPunch(Id!),
+                "double-edge" => new DoubleEdge(Id!), "double kick" => new DoubleKick(Id!), "double slap" => new DoubleSlap(Id!),
+                "double team" => new DoubleTeam(Id!), "dragon rage" => new DragonRage(Id!), "dream eater" => new DreamEater(Id!),
+                "drill peck" => new DrillPeck(Id!), "earthquake" => new Earthquake(Id!), "egg bomb" => new EggBomb(Id!),
+                "ember" => new Ember(Id!), "explosion" => new Explosion(Id!), "fire blast" => new FireBlast(Id!),
+                "fire punch" => new FirePunch(Id!), "fire spin" => new FireSpin(Id!), "fissure" => new Fissure(Id!),
+                "flamethrower" => new Flamethrower(Id!), "flash" => new Flash(Id!), "fly" => new Fly(Id!),
+                "focus energy" => new FocusEnergy(Id!), "fury attack" => new FuryAttack(Id!), "fury swipes" => new FurySwipes(Id!),
+                "glare" => new Glare(Id!), "growl" => new Growl(Id!), "growth" => new Growth(Id!),
+                "guillotine" => new Guillotine(Id!), "gust" => new Gust(Id!), "harden" => new Harden(Id!),
+                "haze" => new Haze(Id!), "headbutt" => new Headbutt(Id!), "high jump kick" => new HighJumpKick(Id!),
+                "horn attack" => new HornAttack(Id!), "horn drill" => new HornDrill(Id!), "hydro pump" => new HydroPump(Id!),
+                "hyper beam" => new HyperBeam(Id!), "hyper fang" => new HyperFang(Id!), "hypnosis" => new Hypnosis(Id!),
+                "ice beam" => new IceBeam(Id!), "ice punch" => new IcePunch(Id!), "jump kick" => new JumpKick(Id!),
+                "karate chop" => new KarateChop(Id!), "kinesis" => new Kinesis(Id!), "leech life" => new LeechLife(Id!),
+                "leech seed" => new LeechSeed(Id!), "leer" => new Leer(Id!), "lick" => new Lick(Id!),
+                "light screen" => new LightScreen(Id!), "lovely kiss" => new LovelyKiss(Id!), "low kick" => new LowKick(Id!),
+                "meditate" => new Meditate(Id!), "mega drain" => new MegaDrain(Id!), "mega kick" => new MegaKick(Id!),
+                "mega punch" => new MegaPunch(Id!), "metronome" => new Metronome(Id!), "mimic" => new Mimic(Id!),
+                "minimize" => new Minimize(Id!), "mirror move" => new MirrorMove(Id!), "mist" => new Mist(Id!),
+                "night shade" => new NightShade(Id!), "pay day" => new PayDay(Id!), "peck" => new Peck(Id!),
+                "petal dance" => new PetalDance(Id!), "pin missile" => new PinMissile(Id!), "poison gas" => new PoisonGas(Id!),
+                "poison powder" => new PoisonPowder(Id!), "poison sting" => new PoisonSting(Id!), "pound" => new Pound(Id!),
+                "psybeam" => new Psybeam(Id!), "psychic" => new Psychic(Id!), "psywave" => new Psywave(Id!),
+                "quick attack" => new QuickAttack(Id!), "rage" => new Rage(Id!), "razor leaf" => new RazorLeaf(Id!),
+                "razor wind" => new RazorWind(Id!), "recover" => new Recover(Id!), "reflect" => new Reflect(Id!),
+                "rest" => new Rest(Id!), "roar" => new Roar(Id!), "rock slide" => new RockSlide(Id!),
+                "rock throw" => new RockThrow(Id!), "rolling kick" => new RollingKick(Id!), "sand attack" => new SandAttack(Id!),
+                "scratch" => new Scratch(Id!), "screech" => new Screech(Id!), "seismic toss" => new SeismicToss(Id!),
+                "self-destruct" => new SelfDestruct(Id!), "sharpen" => new Sharpen(Id!), "sing" => new Sing(Id!),
+                "skull bash" => new SkullBash(Id!), "sky attack" => new SkyAttack(Id!), "slam" => new Slam(Id!),
+                "slash" => new Slash(Id!), "sleep powder" => new SleepPowder(Id!), "sludge" => new Sludge(Id!),
+                "smog" => new Smog(Id!), "smokescreen" => new Smokescreen(Id!), "soft-boiled" => new SoftBoiled(Id!),
+                "solar beam" => new SolarBeam(Id!), "sonic boom" => new SonicBoom(Id!), "spike cannon" => new SpikeCannon(Id!),
+                "splash" => new Splash(Id!), "spore" => new Spore(Id!), "stomp" => new Stomp(Id!),
+                "strength" => new Strength(Id!), "string shot" => new StringShot(Id!), "struggle" => new Struggle(Id!),
+                "stun spore" => new StunSpore(Id!), "submission" => new Submission(Id!), "substitute" => new Substitute(Id!),
+                "super fang" => new SuperFang(Id!), "supersonic" => new Supersonic(Id!), "surf" => new Surf(Id!),
+                "swift" => new Swift(Id!), "swords dance" => new SwordsDance(Id!), "tackle" => new Tackle(Id!),
+                "tail whip" => new TailWhip(Id!), "take down" => new TakeDown(Id!), "teleport" => new Teleport(Id!),
+                "thrash" => new Thrash(Id!), "thunder" => new Thunder(Id!), "thunderbolt" => new Thunderbolt(Id!),
+                "thunder punch" => new ThunderPunch(Id!), "thunder shock" => new ThunderShock(Id!), "thunder wave" => new ThunderWave(Id!),
+                "toxic" => new Toxic(Id!), "transform" => new Transform(Id!), "tri attack" => new TriAttack(Id!),
+                "twineedle" => new Twineedle(Id!), "vine whip" => new VineWhip(Id!), "vise grip" => new ViseGrip(Id!),
+                "waterfall" => new Waterfall(Id!), "water gun" => new WaterGun(Id!), "whirlwind" => new Whirlwind(Id!),
+                "wing attack" => new WingAttack(Id!), "withdraw" => new Withdraw(Id!), "wrap" => new Wrap(Id!),
                 _ => null,
             };
         }
 
-        
+
     }
 }

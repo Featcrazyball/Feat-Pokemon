@@ -10,10 +10,16 @@ public class Drowzee : PokemonMaster
     : base("Drowzee", "Psychic", 60, 48, 45, 43, 90, 42, ownerId, 20, "Insomnia")
     {
         Nickname = nickname;
+        SkillPool = "Pound, Hypnosis, Disable, Confusion, Headbutt, Poison Gas, Psychic, Meditate, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Thunder Wave, Mimic, Double Team, Reflect, Bide, Metronome, Skull Bash, Dream Eater, Rest, Psywave, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -22,10 +28,16 @@ public class Drowzee : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var hypno = new Hypno(this);
-                hypno.EvolveLevelUp(Level-1); // Level up to current level
+                hypno.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add skills for the evolved Pokemon
                 context.PokemonMaster.Add(hypno);
+                foreach (var skill in hypno.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

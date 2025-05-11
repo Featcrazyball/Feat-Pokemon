@@ -14,20 +14,35 @@ public class Bellsprout : PokemonMaster
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 21) {
+        if (Level >= 21) {  // assuming level 21 is when Bellsprout evolves
             using (var context = new DatabaseContext())
             {
                 var weepinbell = new Weepinbell(this);
-                weepinbell.EvolveLevelUp(Level-1); 
+                weepinbell.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add the evolved Pokemon to the context
                 context.PokemonMaster.Add(weepinbell);
+                
+                // Add all skills for the evolved Pokemon
+                foreach (var skill in weepinbell.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove the original Pokemon
                 context.PokemonMaster.Remove(this);
+                
+                // Save all changes in a single transaction
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Bellsprout to a Weepinbell!");

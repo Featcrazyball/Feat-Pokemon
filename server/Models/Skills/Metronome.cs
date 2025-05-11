@@ -60,7 +60,7 @@ public class Metronome : Skill
         
         // Select a random move
         string randomMove = AllMoves[Random.Shared.Next(AllMoves.Length)];
-        Skill? moveToUse = user.ArenaTempSkillGain(randomMove);
+        Skill? moveToUse = user.ArenaTempSkillGain(randomMove.ToLower());
 
         if (moveToUse == null)
         {
@@ -69,6 +69,7 @@ public class Metronome : Skill
             return;
         }
 
+        moveToUse.Metronome = true;
         // Execute the selected move
         await moveToUse.SkillEfect(target, user, UserSession, TargetSession);
     }

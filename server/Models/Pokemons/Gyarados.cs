@@ -1,6 +1,7 @@
 using Server;
-namespace PokemonPocket;
+using Database;
 
+namespace PokemonPocket;
 public class Gyarados : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Unevolvable";
@@ -9,10 +10,16 @@ public class Gyarados : PokemonMaster
     : base("Gyarados", "Water/Ice", 95, 125, 79, 60, 100, 81, ownerId, 30, "Intimidate")
     {
         Nickname = nickname;
+        SkillPool = "Bite, Dragon Rage, Leer, Hydro Pump, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Hyper Beam, Rage, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Fire Blast, Skull Bash, Rest, Substitute, Surf, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Gyarados(Magikarp magikarp)
@@ -30,10 +37,16 @@ public class Gyarados : PokemonMaster
         SpeedIV = magikarp.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Bite, Dragon Rage, Leer, Hydro Pump, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Hyper Beam, Rage, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Fire Blast, Skull Bash, Rest, Substitute, Surf, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

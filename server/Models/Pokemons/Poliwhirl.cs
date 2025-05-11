@@ -10,10 +10,16 @@ public class Poliwhirl : PokemonMaster
     : base("Poliwhirl", "Water", 65, 65, 65, 50, 50, 90, ownerId, 25, "Water Absorb")
     {
         Nickname = nickname;
+        SkillPool = "Bubble, Hypnosis, Water Gun, Double Slap, Body Slam, Amnesia, Hydro Pump, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf, Strength";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
     
     public Poliwhirl(Poliwag poliwag)
@@ -31,10 +37,17 @@ public class Poliwhirl : PokemonMaster
         SpeedIV = poliwag.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Bubble, Hypnosis, Water Gun, DoubleSlap, Body Slam, Amnesia, Hydro Pump, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf, Strength";
+
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -52,8 +65,13 @@ public class Poliwhirl : PokemonMaster
             var poliwrath = new Poliwrath(this);
             poliwrath.EvolveLevelUp(Level-1); // Level up to current level
 
-            // Remove previous and add new Pokemon
             context.PokemonMaster.Add(poliwrath);
+            foreach (var skill in poliwrath.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Ninetales : PokemonMaster
@@ -9,10 +10,16 @@ public class Ninetales : PokemonMaster
     : base("Ninetales", "Fire", 73, 76, 75, 81, 100, 100, ownerId, 20, "Flash Fire")
     {
         Nickname = nickname;
+        SkillPool = "Ember, Quick Attack, Roar, Confuse Ray, Flamethrower, Fire Spin, Hyper Beam, Fire Blast, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Ninetales(Vulpix vulpix)
@@ -30,10 +37,16 @@ public class Ninetales : PokemonMaster
         SpeedIV = vulpix.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Ember, Quick Attack, Roar, Confuse Ray, Flamethrower, Fire Spin, Hyper Beam, Fire Blast, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

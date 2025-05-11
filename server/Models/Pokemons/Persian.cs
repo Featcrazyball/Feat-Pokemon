@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Persian : PokemonMaster
@@ -9,10 +10,16 @@ public class Persian : PokemonMaster
     : base("Persian", "Normal", 65, 70, 60, 65, 65, 115, ownerId, 34, "Limber")
     {
         Nickname = nickname;
+        SkillPool = "Scratch, Growl, Bite, Screech, Slash, Hyper Beam, Body Slam, Take Down, Double-Edge, Bubble Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Persian(Meowth meowth)
@@ -30,10 +37,16 @@ public class Persian : PokemonMaster
         SpeedIV = meowth.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Scratch, Growl, Bite, Screech, Slash, Hyper Beam, Body Slam, Take Down, Double-Edge, Bubble Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

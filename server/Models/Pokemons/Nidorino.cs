@@ -10,10 +10,16 @@ public class Nidorino : PokemonMaster
     : base("Nidorino", "Poison", 61, 72, 57, 55, 55, 65, ownerId, 23, "Poison Point")
     {
         Nickname = nickname;
+        SkillPool = "Leer, Tackle, Horn Attack, Poison Sting, Focus Energy, Fury Attack, Horn Drill, Double Kick, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Nidorino(NidoranM nidoran)
@@ -31,10 +37,16 @@ public class Nidorino : PokemonMaster
         SpeedIV = nidoran.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Leer, Tackle, Horn Attack, Poison Sting, Focus Energy, Fury Attack, Horn Drill, Double Kick, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -52,8 +64,13 @@ public class Nidorino : PokemonMaster
             var nidoking = new Nidoking(this);
             nidoking.EvolveLevelUp(Level-1); // Level up to current level
 
-            // Remove previous and add new Pokemon
             context.PokemonMaster.Add(nidoking);
+            foreach (var skill in nidoking.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
             context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }

@@ -10,10 +10,16 @@ public class Poliwag : PokemonMaster
     : base("Poliwag", "Water", 40, 50, 40, 40, 40, 90, ownerId, 16, "Water Absorb")
     {
         Nickname = nickname;
+        SkillPool = "Bubble, Hypnosis, Water Gun, Double Slap, Body Slam, Amnesia, Hydro Pump, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Poliwag : PokemonMaster
                 var poliwhirl = new Poliwhirl(this);
                 poliwhirl.EvolveLevelUp(Level-1); 
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(poliwhirl);
+                foreach (var skill in poliwhirl.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

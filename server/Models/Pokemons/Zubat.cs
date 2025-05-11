@@ -10,10 +10,16 @@ public class Zubat : PokemonMaster
     : base("Zubat", "Poison/Flying", 40, 45, 40, 30, 40, 55, ownerId, 10, "Inner Focus")
     {
         Nickname = nickname;
+        SkillPool = "Leech Life, Supersonic, Bite, Confuse Ray, Wing Attack, Haze, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,9 +30,15 @@ public class Zubat : PokemonMaster
                 var golbat = new Golbat(this);
                 golbat.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(golbat);
+                
+                foreach (var skill in golbat.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
                 context.PokemonMaster.Remove(this);
+                
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Zubat to a Golbat!");

@@ -10,23 +10,39 @@ public class Charmander : PokemonMaster
     : base("Charmander", "Fire", 39, 52, 43, 60, 50, 65, ownerId, 10, "Solar Power")
     {
         Nickname = nickname;
+        SkillPool = "Scratch, Growl, Ember, Leer, Rage, Slash, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Counter, Dragon Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 16) {
+        if (Level >= 16) {  // Charmander evolves at level 16
             using (var context = new DatabaseContext())
             {
                 var charmeleon = new Charmeleon(this);
-                charmeleon.EvolveLevelUp(Level-1); 
+                charmeleon.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add the evolved Pokemon to the context
                 context.PokemonMaster.Add(charmeleon);
+                
+                // Add all skills for the evolved Pokemon
+                foreach (var skill in charmeleon.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove the original Pokemon
                 context.PokemonMaster.Remove(this);
+                
+                // Save all changes in a single transaction
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Charmander to a Charmeleon!");

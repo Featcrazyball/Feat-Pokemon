@@ -42,22 +42,5 @@ namespace Server
             return Encoding.UTF8.GetString(buffer, 0, received);
         }
         
-        // For multiple choice questions
-        public async Task<string> GetChoiceAsync(string prompt, params string[] options)
-        {
-            var fullPrompt = new StringBuilder(prompt);
-            fullPrompt.AppendLine();
-            
-            for (int i = 0; i < options.Length; i++)
-            {
-                fullPrompt.AppendLine($"[{i+1}] {options[i]}");
-            }
-            
-            fullPrompt.Append("Enter your choice: ");
-            
-            // Get input from client
-            var response = await GetInputAsync(fullPrompt.ToString());
-            return response.Trim();
-        }
     }
 }

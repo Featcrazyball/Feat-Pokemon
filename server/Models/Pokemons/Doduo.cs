@@ -10,10 +10,16 @@ public class Doduo : PokemonMaster
     : base("Doduo", "Normal/Flying", 35, 85, 45, 35, 35, 75, ownerId, 20, "Run Away")
     {
         Nickname = nickname;
+        SkillPool = "Peck, Growl, Fury Attack, Drill Peck, Rage, Agility, Tri Attack, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Doduo(Doduo doduo)
@@ -31,10 +37,16 @@ public class Doduo : PokemonMaster
         SpeedIV = doduo.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Peck, Growl, Fury Attack, Drill Peck, Rage, Agility, Tri Attack, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -43,10 +55,16 @@ public class Doduo : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var dodrio = new Dodrio(this);
-                dodrio.EvolveLevelUp(Level-1); 
+                dodrio.EvolveLevelUp(Level-1);
 
-                // Remove previous and add new Pokemon
+                // Add skills for the evolved Pokemon
                 context.PokemonMaster.Add(dodrio);
+                foreach (var skill in dodrio.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+                
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Electabuzz : PokemonMaster
@@ -9,10 +10,16 @@ public class Electabuzz : PokemonMaster
     : base("Electabuzz", "Electric", 65, 83, 57, 95, 85, 105, ownerId, 30, "Static")
     {
         Nickname = nickname;
+        SkillPool = "Quick Attack, Leer, Thunder Shock, Screech, Thunder Punch, Thunder, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Thunderbolt, Thunder Wave, Psychic, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

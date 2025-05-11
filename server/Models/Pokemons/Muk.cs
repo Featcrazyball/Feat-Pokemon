@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Muk : PokemonMaster
@@ -9,10 +10,16 @@ public class Muk : PokemonMaster
     : base("Muk", "Poison", 105, 105, 75, 65, 100, 50, ownerId, 35, "Poison Touch")
     {
         Nickname = nickname;
+        SkillPool = "Pound, Poison Gas, Harden, Minimize, Sludge, Acid Armor, Screech, Toxic, Body Slam, Hyper Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Fire Blast, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Muk(Grimer grimer)
@@ -30,6 +37,21 @@ public class Muk : PokemonMaster
         SpeedIV = grimer.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Pound, Poison Gas, Harden, Minimize, Sludge, Acid Armor, Screech, Toxic, Body Slam, Hyper Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Fire Blast, Substitute";
+
+        using (var context = new DatabaseContext())
+        {
+            var newSkills = LearnSkillFromSkillPool();
+            if (newSkills != null)
+            {
+                foreach (var skill in newSkills) 
+                {
+                    Skills.Add(skill);
+                    context.Skills.Add(skill);
+                };
+                context.SaveChanges();
+            }
+        }
     }
 
     public override async Task Evolve(ClientSession session)

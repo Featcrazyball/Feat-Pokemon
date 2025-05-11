@@ -10,10 +10,16 @@ public class Pidgey : PokemonMaster
     : base("Pidgey", "Normal/Flying", 40, 45, 40, 35, 35, 56, ownerId, 10, "Keen Eye")
     {
         Nickname = nickname;
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
@@ -24,8 +30,13 @@ public class Pidgey : PokemonMaster
                 var pidgeotto = new Pidgeotto(this);
                 pidgeotto.EvolveLevelUp(Level-1); // Level up to 18
 
-                // Remove previous and add new Pokemon
                 context.PokemonMaster.Add(pidgeotto);
+                foreach (var skill in pidgeotto.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
                 context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Ditto : PokemonMaster
@@ -9,10 +10,16 @@ public class Ditto : PokemonMaster
     : base("Ditto", "Normal", 48, 48, 48, 48, 48, 48, ownerId, 20, "Limber")
     {
         Nickname = nickname;
+        SkillPool = "Transform";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

@@ -1,4 +1,5 @@
 using Server;
+using Database;
 namespace PokemonPocket;
 
 public class Poliwrath : PokemonMaster
@@ -9,10 +10,16 @@ public class Poliwrath : PokemonMaster
     : base("Poliwrath", "Water", 90, 95, 95, 70, 90, 70, ownerId, 60, "Water Absorb")
     {
         Nickname = nickname;
+        SkillPool = "Hypnosis, Water Gun, DoubleSlap, Body Slam, Amnesia, Hydro Pump, Submission, Counter, Seismic Toss, Strength, Earthquake, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public Poliwrath(Poliwhirl poliwhirl)
@@ -30,10 +37,16 @@ public class Poliwrath : PokemonMaster
         SpeedIV = poliwhirl.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
+        SkillPool = "Hypnosis, Water Gun, DoubleSlap, Body Slam, Amnesia, Hydro Pump, Submission, Counter, Seismic Toss, Strength, Earthquake, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)

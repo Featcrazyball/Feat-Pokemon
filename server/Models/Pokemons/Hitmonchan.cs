@@ -1,4 +1,6 @@
 using Server;
+using Database;
+
 namespace PokemonPocket;
 
 public class Hitmonchan : PokemonMaster
@@ -9,10 +11,16 @@ public class Hitmonchan : PokemonMaster
     : base("Hitmonchan", "Fighting", 50, 105, 79, 35, 110, 76, ownerId, 20, "Keen Eye")
     {
         Nickname = nickname;
+        SkillPool = "Comet Punch, Agility, Fire Punch, Ice Punch, Thunder Punch, Mega Punch, Counter, Seismic Toss, Body Slam, Take Down, Double-Edge, Submission, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
-            foreach (var skill in newSkills) {Skills.Add(skill);};
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
     }
 
     public override async Task Evolve(ClientSession session)
