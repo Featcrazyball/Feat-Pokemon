@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.OleDb;
 using Arena;
 using Database;
 using Models;
@@ -378,6 +379,41 @@ namespace PokemonPocket
             Speed = MaxSpeed;
         }
 
+        // Check if can evolve
+        public string CheckEvolve()
+        {
+            if (Requirements!.Contains("Level"))
+            {
+                int req = int.Parse(Requirements.Split(' ')[1]);
+                return Level >= req ? "true level" : "false level";
+
+            } else if (Requirements.Contains("Stone"))
+            {
+                var req = Requirements.Split(' ').Skip(1);
+                string count = Requirements.Split(' ')[0];
+                string stringReq = string.Empty;
+
+                foreach (var ch in req)
+                {
+                    stringReq += ch.Trim() + " ";
+                }
+                
+                stringReq = stringReq.Trim();
+                using var context = new DatabaseContext();
+                var item = context.Items.FirstOrDefault(i => i.Name == stringReq);
+
+                return item != null ? $"true item|{count} {stringReq}" : "false item";
+            
+            } else if (Requirements.Contains("Trade"))
+            {
+                return "true trade";
+            } else if (Requirements.Contains("Unevolvable"))
+            {
+                return "false unevolvable";
+            }
+            return "false null";
+        }
+
         // Stat Points Management
         public async Task AddStatPoints(int points, ClientSession session)
         {
@@ -627,7 +663,6 @@ namespace PokemonPocket
                 _ => null,
             };
         }
-
 
     }
 }

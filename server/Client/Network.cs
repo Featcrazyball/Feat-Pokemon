@@ -132,7 +132,6 @@ namespace Server
 ║                  ✅  LOGIN SUCCESSFUL  ✅                    ║
 ║                                                              ║
 ║          Welcome back to the world of Pokémon,               ║
-║                  Trainer {username}!                               ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝");
 
@@ -156,6 +155,12 @@ namespace Server
                             
                             username = await session.GetInputAsync("👤 Username:");
 
+                            if (username.Length < 3 || username.Length > 20)
+                            {
+                                await session.SendMessageAsync("Username must be between 3 and 20 characters.");
+                                continue;
+                            }
+
                             while (true)
                             {
                                 email = await session.GetInputAsync("📧 Email:");
@@ -168,6 +173,12 @@ namespace Server
 
                             password = await session.GetInputAsync("🔒 Password:");
                             string confirmPassword = await session.GetInputAsync("✅ Confirm Password:");
+
+                            if (password.Length < 8)
+                            {
+                                await session.SendMessageAsync("Password must at least 8 characters long.");
+                                continue;
+                            }
 
                             using (var context = new DatabaseContext())
                             {
@@ -206,6 +217,11 @@ namespace Server
 
                                 // Create 5 unique Pokemon for the user
                                 List<PokemonMaster> createdPokemon = new List<PokemonMaster>();
+
+                                // Add abra
+                                var abra = new Abra("Abra", newUser.Id!);
+                                context.PokemonMaster.Add(abra);
+
                                 while (tempCount < 5 && selectedIndices.Count < ListofStuff.AllPokemon.Count())
                                 {
                                     int randomIndex = random.Next(0, ListofStuff.AllPokemon.Count());
@@ -219,6 +235,14 @@ namespace Server
                                             if (pokemon != null)
                                             {
                                                 createdPokemon.Add(pokemon);
+                                                context.PokemonMaster.Add(pokemon);
+                                                Console.WriteLine($"Added {pokemon.Nickname} to the database.");
+
+                                                foreach (var skill in pokemon.Skills)
+                                                {
+                                                    context.Skills.Add(skill);
+                                                    Console.WriteLine($"Added skill {skill.Name} to Pokemon {pokemon.Name}");
+                                                }
                                                 tempCount++;
                                             }
                                         }
@@ -234,9 +258,8 @@ namespace Server
 
                                 // Now save everything at once
                                 try {
-                                    // Use the specialized method to save Pokemon and their skills
-                                    SavePokemonWithSkills(context, createdPokemon);
-                                    
+                                    context.SaveChanges();
+
                                     await session.SendMessageAsync(@"
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
@@ -316,27 +339,5 @@ namespace Server
             _activeUsernames.TryRemove(username, out _);
         }
 
-        // Save stuff or else database die
-        private static void SavePokemonWithSkills(DatabaseContext context, List<PokemonMaster> pokemons)
-        {
-            // First add all Pokemon to context
-            foreach (var pokemon in pokemons)
-            {
-                context.PokemonMaster.Add(pokemon);
-            }
-            
-            context.SaveChanges();
-            
-            // Now save all associated skills
-            foreach (var pokemon in pokemons)
-            {
-                foreach (var skill in pokemon.Skills)
-                {
-                    context.Skills.Add(skill);
-                }
-            }
-            
-            context.SaveChanges();
-        }
     }
 }

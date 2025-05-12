@@ -43,18 +43,17 @@ public class Client
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
 ║    [7] 🚪 EXIT         │ Save & Return to Real World                         ║
 ║                                                                              ║
-╠══════════════════════════════════════════════════════════════════════════════╣
-║    🪙 COINS: " + FormatCoins(user.Coins) + @"                                                       ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ");
             string choice = await session.GetInputAsync("Choice:");
             
-            switch (choice)
+            switch (choice.ToLower())
             {
                 case "1":
                     // View owner's pokemon and evolve
                     // Damage calculations for Assignment
                     // Remember Feat's Version and Assignment Details
+                    await ServerPokemon.PokemonMenu(session);
                     break;
                 case "2":
                     await Shop.ShopMenu(session);
@@ -76,13 +75,10 @@ public class Client
                     // Cannot enter if Feat's Version is true
                     break;
                 case "6":
-                    // Pikachu, Charmander and Eevee. Free for only gods
-                    break;
-                case "7":
                     // On Feat's Version or not
                     // Change username, email, password
                     break;
-                case "8":
+                case "7" or "q":
                     await session.SendMessageAsync("Thank you for playing!");
                     exit = true;
                     break;
@@ -92,13 +88,4 @@ public class Client
         }
     }
     
-    // Helper method to format coins display with proper width
-    private static string FormatCoins(int coins)
-    {
-        int totalWidth = 12; // Adjust this value based on the desired total width
-        string coinString = coins.ToString();
-        int padding = totalWidth - coinString.Length;
-        string formattedCoins = coinString.PadRight(padding);
-        return formattedCoins;
-    }
 }

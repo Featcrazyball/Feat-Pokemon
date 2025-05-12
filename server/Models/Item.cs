@@ -21,7 +21,7 @@ namespace Models
             this.Description = Description;
         }
 
-        public void AddFireStone(string ownerId, int count) {
+        public static void AddFireStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 for (int i = 0; i < count; i++)
@@ -33,7 +33,7 @@ namespace Models
             }
         }
 
-        public void RemoveFireStone(string ownerId, int count) {
+        public static void RemoveFireStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 var items = context.Items.Where(i => i.Name == "Fire Stone" && i.OwnerId == ownerId).Take(count).ToList();
@@ -45,7 +45,7 @@ namespace Models
             }
         }
 
-        public void AddWaterStone(string ownerId, int count) {
+        public static void AddWaterStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 for (int i = 0; i < count; i++)
@@ -57,7 +57,7 @@ namespace Models
             }
         }
 
-        public void RemoveWaterStone(string ownerId, int count) {
+        public static void RemoveWaterStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 var items = context.Items.Where(i => i.Name == "Water Stone" && i.OwnerId == ownerId).Take(count).ToList();
@@ -69,7 +69,7 @@ namespace Models
             }
         }
 
-        public void AddThunderStone(string ownerId, int count) {
+        public static void AddThunderStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 for (int i = 0; i < count; i++)
@@ -81,7 +81,7 @@ namespace Models
             }
         }
 
-        public void RemoveThunderStone(string ownerId, int count) {
+        public static void RemoveThunderStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 var items = context.Items.Where(i => i.Name == "Thunder Stone" && i.OwnerId == ownerId).Take(count).ToList();
@@ -93,7 +93,7 @@ namespace Models
             }
         }
 
-        public void AddLeafStone(string ownerId, int count) {
+        public static void AddLeafStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 for (int i = 0; i < count; i++)
@@ -105,7 +105,7 @@ namespace Models
             }
         }
 
-        public void RemoveLeafStone(string ownerId, int count) {
+        public static void RemoveLeafStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 var items = context.Items.Where(i => i.Name == "Leaf Stone" && i.OwnerId == ownerId).Take(count).ToList();
@@ -117,7 +117,7 @@ namespace Models
             }
         }
 
-        public void AddMoonStone(string ownerId, int count) {
+        public static void AddMoonStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 for (int i = 0; i < count; i++)
@@ -129,7 +129,7 @@ namespace Models
             }
         }
 
-        public void RemoveMoonStone(string ownerId, int count) {
+        public static void RemoveMoonStone(string ownerId, int count) {
             using (var context = new DatabaseContext())
             {
                 var items = context.Items.Where(i => i.Name == "Moon Stone" && i.OwnerId == ownerId).Take(count).ToList();

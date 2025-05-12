@@ -84,7 +84,7 @@ namespace Client
         // Receive messages from the server asynchronously
         private static async Task ReceiveMessagesAsync(Socket client)
         {
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[8192];
             
             while (!_cts.Token.IsCancellationRequested && _isConnected)
             {
@@ -154,7 +154,14 @@ namespace Client
                 "✅ Confirm   : ",
                 "👤 Username:",
                 "🔑 Password:",
+                "Input any key to continue...",
+                "Enter the number of the Pokémon to nickname:",
+                "Enter option or Pokémon number:",
+                "Enter a new nickname for",
                 "Please enter your choice:",
+                "Enter the stat to allocate points to (HP, ATK, DEF, SpA, SpD, SPD) or 'done' to finish:",
+                "Enter the number of points to allocate:",
+                "Enter the number of the"
             };
 
             foreach (var str in s) { if (m.Contains(str)) { return true; }}  

@@ -37,6 +37,7 @@ public class Abra : PokemonMaster
                 kadabra.EvolveLevelUp(Level-1);
 
                 // Add the evolved Pokemon to the context
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(kadabra);
                 
                 // Add all skills for the evolved Pokemon
@@ -46,7 +47,6 @@ public class Abra : PokemonMaster
                 }
                 
                 // Remove the original Pokemon
-                context.PokemonMaster.Remove(this);
                 
                 // Save all changes in a single transaction
                 context.SaveChanges();

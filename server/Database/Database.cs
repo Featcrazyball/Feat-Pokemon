@@ -48,7 +48,11 @@ namespace Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=database.db");
+            optionsBuilder
+                .UseSqlite("Data Source=database.db")
+                .EnableSensitiveDataLogging()
+                .LogTo(Console.WriteLine)
+                ;
         }
 
 
