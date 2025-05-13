@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Squirtle : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 16";
+    public override string? EvolvesTo {get;set;} = "Wartortle";
     private Squirtle() { } //For EF Core
     public Squirtle(string nickname, string ownerId) 
     : base("Squirtle", "Water", 44, 48, 65, 50, 64, 43, ownerId, 10, "Torrent")
@@ -45,9 +46,9 @@ public class Squirtle : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Squirtle to a Wartortle!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Squirtle to a Wartortle!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

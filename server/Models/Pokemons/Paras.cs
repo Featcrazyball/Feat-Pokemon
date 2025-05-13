@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Paras : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 24";
+    public override string? EvolvesTo {get;set;} = "Parasect";
     private Paras() { } //For EF Core
     public Paras(string nickname, string ownerId) 
     : base("Paras", "Bug/Grass", 35, 70, 55, 45, 55, 25, ownerId, 12, "Effect Spore")
@@ -45,9 +46,9 @@ public class Paras : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Paras to a Parasect!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Paras to a Parasect!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

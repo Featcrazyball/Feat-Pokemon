@@ -5,6 +5,8 @@ namespace PokemonPocket;
 public class Bulbasaur : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 16";
+    public override string? EvolvesTo {get;set;} = "Ivysaur";
+
     private Bulbasaur() { } //For EF Core
     public Bulbasaur(string nickname, string ownerId) 
     : base("Bulbasaur", "Grass/Poison", 45, 49, 49, 65, 65, 45, ownerId, 10, "Water Burst")
@@ -55,9 +57,9 @@ public class Bulbasaur : PokemonMaster
                 // Save all changes in a single transaction
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Bulbasaur to an Ivysaur!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Bulbasaur to an Ivysaur!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 }

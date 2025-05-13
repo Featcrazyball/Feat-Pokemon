@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Poliwhirl : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Water Stone";
+    public override string? EvolvesTo {get;set;} = "Poliwrath";
     private Poliwhirl() { } //For EF Core
     public Poliwhirl(string nickname, string ownerId) 
     : base("Poliwhirl", "Water", 65, 65, 65, 50, 50, 90, ownerId, 25, "Water Absorb")
@@ -58,7 +59,7 @@ public class Poliwhirl : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Water Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Water Stone to evolve!");
                 return;
             }
 
@@ -80,7 +81,7 @@ public class Poliwhirl : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Poliwhirl to a Poliwrath!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Poliwhirl to a Poliwrath!");
     }
 
     public override float calculateDamage(float SkillDamage) {

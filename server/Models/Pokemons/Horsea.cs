@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Horsea : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 32";
+    public override string? EvolvesTo {get;set;} = "Seadra";
     private Horsea() { } //For EF Core
     public Horsea(string nickname, string ownerId) 
     : base("Horsea", "Water", 30, 40, 70, 70, 25, 60, ownerId, 10, "Swift Swim")
@@ -45,9 +46,9 @@ public class Horsea : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Horsea to a Seadra!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Horsea to a Seadra!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

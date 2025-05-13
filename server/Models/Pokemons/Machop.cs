@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Machop : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 28";
+    public override string? EvolvesTo {get;set;} = "Machoke";
     private Machop() { } //For EF Core
     public Machop(string nickname, string ownerId) 
     : base("Machop", "Fighting", 70, 80, 50, 35, 35, 35, ownerId, 10, "Guts")
@@ -45,9 +46,9 @@ public class Machop : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Machop to a Machoke!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Machop to a Machoke!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

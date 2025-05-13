@@ -66,7 +66,8 @@ $"-----------------------------------------\n"
                                         "[B] Back to Pokémon Menu\n" +
                                         "[N] Nickname Pokémon\n" +
                                         "[P] Allocate Stat Points\n" +
-                                        "[D] Damage Calculator (Assignment)\n" );
+                                        "[D] Damage Calculator (Assignment)\n" +
+                                        "[F] Future Evolutions\n" );
             
         // Handle user input for actions
         string userChoice = await session.GetInputAsync("Choice:");
@@ -199,7 +200,35 @@ $"-----------------------------------------\n"
                     await session.SendMessageAsync("Invalid Pokémon numbers.");
                 }
                 break;
+            
+            case "F":
+                var futureMenu = new StringBuilder();
+                futureMenu.AppendLine(@"
+╔═══════════════════════════════ EVOLUTION MENU ═══════════════════════════════╗
+║                                                                              ║
+║  🔮 The following Pokémon can currently evolve into the following forms:     ║");
 
+                foreach (var pokemon in pokemonList)
+                {
+                    string evolvableFuture  = pokemon.CheckEvolve();
+                    if (evolvableFuture.Contains("true"))
+                    {
+                        string displayName = pokemon.Nickname == "None" ? pokemon.Name! : pokemon.Nickname!;
+                        string evolveName = pokemon.EvolvesTo!;
+
+                        futureMenu.AppendLine($"║                                                                              ║");
+                        futureMenu.AppendLine($"║  {displayName.PadRight(18)} | Evolves to: {evolveName.PadRight(25)}  ║               ║");
+                    }
+                }
+                futureMenu.AppendLine($"║                                                                              ║");
+                futureMenu.AppendLine($"║  💡 Visit the shop to purchase evolutionary stones                           ║");
+                futureMenu.AppendLine($"║                                                                              ║");
+                futureMenu.AppendLine($"╚══════════════════════════════════════════════════════════════════════════════╝");
+                await session.SendMessageAsync(futureMenu.ToString());
+                await session.GetInputAsync("Input any key to continue...");
+
+                break;
+            
             default:
                 break;
         }

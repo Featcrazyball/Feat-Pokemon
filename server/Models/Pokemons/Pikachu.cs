@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Pikachu : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Thunder Stone";
+    public override string? EvolvesTo {get;set;} = "Raichu";
     private Pikachu() { } //For EF Core
     public Pikachu(string nickname, string ownerId) 
     : base("Pikachu", "Electric", 35, 55, 40, 50, 50, 90, ownerId, 30, "Lightning Bolt")
@@ -30,7 +31,7 @@ public class Pikachu : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Thunderstone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Thunderstone to evolve!");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Pikachu : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Pikachu to a Raichu!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Pikachu to a Raichu!");
     }
 
     public override float calculateDamage(float SkillDamage) {

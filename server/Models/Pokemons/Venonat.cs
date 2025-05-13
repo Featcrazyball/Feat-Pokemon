@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Venonat : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 31";
+    public override string? EvolvesTo {get;set;} = "Venomoth";
     private Venonat() { } //For EF Core
     public Venonat(string nickname, string ownerId) 
     : base("Venonat", "Bug/Poison", 60, 55, 50, 40, 55, 45, ownerId, 20, "Compound Eyes")
@@ -45,9 +46,9 @@ public class Venonat : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Venonat to a Venomoth!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Venonat to a Venomoth!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

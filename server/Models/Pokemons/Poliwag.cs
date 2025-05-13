@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Poliwag : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 25";
+    public override string? EvolvesTo {get;set;} = "Poliwhirl";
     private Poliwag() { } //For EF Core
     public Poliwag(string nickname, string ownerId) 
     : base("Poliwag", "Water", 40, 50, 40, 40, 40, 90, ownerId, 16, "Water Absorb")
@@ -45,9 +46,9 @@ public class Poliwag : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Poliwag to a Poliwhirl!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Poliwag to a Poliwhirl!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

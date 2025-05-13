@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Sandshrew : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 22";
+    public override string? EvolvesTo {get;set;} = "Sandslash";
     private Sandshrew() { } //For EF Core
     public Sandshrew(string nickname, string ownerId) 
     : base("Sandshrew", "Ground", 50, 75, 85, 20, 30, 40, ownerId, 25, "Scratch")
@@ -44,9 +45,9 @@ public class Sandshrew : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Sandshrew to a Sandslash!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Sandshrew to a Sandslash!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

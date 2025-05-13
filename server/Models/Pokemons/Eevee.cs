@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Eevee : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Water Stone/Thunder Stone/Fire Stone";
+    public override string? EvolvesTo {get;set;} = "Vaporeon/Jolteon/Flareon";
     private Eevee() { } //For EF Core
     public Eevee(string nickname, string ownerId) 
     : base("Eevee", "Normal", 55, 55, 50, 45, 65, 55, ownerId, 25, "Run Away")
@@ -35,7 +36,7 @@ public class Eevee : PokemonMaster
                     if (item != null) {
                         context.Items.Remove(item);
                     } else {
-                        await session.SendMessageAsync($"{Nickname} needs a Water Stone to evolve!");
+                        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Water Stone to evolve!");
                         return;
                     }
 
@@ -55,7 +56,7 @@ public class Eevee : PokemonMaster
 
                     context.SaveChanges();
                 }
-                await session.SendMessageAsync($"{Nickname} has evolved from an Eevee to a Vaporeon!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from an Eevee to a Vaporeon!");
                 break;
             case "2" or "Jolteon":
                 using (var context = new DatabaseContext())
@@ -64,7 +65,7 @@ public class Eevee : PokemonMaster
                     if (item != null) {
                         context.Items.Remove(item);
                     } else {
-                        await session.SendMessageAsync($"{Nickname} needs a Thunder Stone to evolve!");
+                        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Thunder Stone to evolve!");
                         return;
                     }
 
@@ -85,7 +86,7 @@ public class Eevee : PokemonMaster
 
                     context.SaveChanges();
                 }
-                await session.SendMessageAsync($"{Nickname} has evolved from an Eevee to a Jolteon!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from an Eevee to a Jolteon!");
                 break;
             case "3" or "Flareon":
                 using (var context = new DatabaseContext())
@@ -94,7 +95,7 @@ public class Eevee : PokemonMaster
                     if (item != null) {
                         context.Items.Remove(item);
                     } else {
-                        await session.SendMessageAsync($"{Nickname} needs a Fire Stone to evolve!");
+                        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Fire Stone to evolve!");
                         return;
                     }
 
@@ -115,7 +116,7 @@ public class Eevee : PokemonMaster
 
                     context.SaveChanges();
                 }
-                await session.SendMessageAsync($"{Nickname} has evolved from an Eevee to a Flareon!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from an Eevee to a Flareon!");
                 break;
             default:
                 await session.SendMessageAsync("Invalid choice. Eevee remains unevolved.");

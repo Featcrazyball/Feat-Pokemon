@@ -24,7 +24,7 @@ public class Articuno : PokemonMaster
 
     public override async Task Evolve(ClientSession session)
     {
-        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

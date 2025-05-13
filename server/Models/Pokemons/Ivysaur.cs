@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Ivysaur : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 32";
+    public override string? EvolvesTo {get;set;} = "Venusaur";
     private Ivysaur() { } //For EF Core
     public Ivysaur(string nickname, string ownerId) 
     : base("Ivysaur", "Grass/Poison", 60, 62, 63, 80, 80, 60, ownerId, 20, "Water Burst")
@@ -72,9 +73,9 @@ public class Ivysaur : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Ivysaur to a Venusaur!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Ivysaur to a Venusaur!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

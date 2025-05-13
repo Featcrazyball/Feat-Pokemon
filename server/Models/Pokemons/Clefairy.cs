@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Clefairy : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Moon Stone";
+    public override string? EvolvesTo {get;set;} = "Clefable";
     private Clefairy() { } //For EF Core
     public Clefairy(string nickname, string ownerId) 
     : base("Clefairy", "Fairy", 70, 45, 48, 60, 65, 35, ownerId, 10, "Cute Charm")
@@ -30,7 +31,7 @@ public class Clefairy : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Clefairy : PokemonMaster
             
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Clefairy to a Clefable!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Clefairy to a Clefable!");
     }
 
     public override float calculateDamage(float SkillDamage) {

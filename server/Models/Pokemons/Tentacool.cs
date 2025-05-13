@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Tentacool : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 30";
+    public override string? EvolvesTo {get;set;} = "Tentacruel";
     private Tentacool() { } //For EF Core
     public Tentacool(string nickname, string ownerId) 
     : base("Tentacool", "Water/Poison", 40, 40, 35, 50, 100, 70, ownerId, 10, "Clear Body")
@@ -45,9 +46,9 @@ public class Tentacool : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Tentacool to a Tentacruel!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Tentacool to a Tentacruel!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

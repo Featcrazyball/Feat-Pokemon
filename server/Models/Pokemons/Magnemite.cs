@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Magnemite : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 30";
+    public override string? EvolvesTo {get;set;} = "Magneton";
     private Magnemite() { } //For EF Core
     public Magnemite(string nickname, string ownerId) 
     : base("Magnemite", "Electric/Steel", 25, 35, 70, 95, 55, 45, ownerId, 10, "Magnet Pull")
@@ -45,9 +46,9 @@ public class Magnemite : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Magnemite to a Magnetron!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Magnemite to a Magnetron!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Sandslash : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Unevolvable";
+    
     private Sandslash() { } //For EF Core
     public Sandslash(string nickname, string ownerId) 
     : base("Sandslash", "Ground", 75, 100, 110, 45, 55, 65, ownerId, 25, "Sand Attack")
@@ -51,7 +52,7 @@ public class Sandslash : PokemonMaster
 
     public override async Task Evolve(ClientSession session)
     {
-        await session.SendMessageAsync($"{Nickname} is already at its final evolution stage.");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is already at its final evolution stage.");
     }
 
     public override float calculateDamage(float SkillDamage) {

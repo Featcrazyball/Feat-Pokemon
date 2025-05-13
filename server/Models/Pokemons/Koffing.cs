@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Koffing : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 35";
+    public override string? EvolvesTo {get;set;} = "Weezing";
     private Koffing() { } //For EF Core
     public Koffing(string nickname, string ownerId) 
     : base("Koffing", "Poison", 40, 65, 95, 60, 45, 35, ownerId, 35, "Levitate")
@@ -46,9 +47,9 @@ public class Koffing : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Koffing to a Weezing!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Koffing to a Weezing!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

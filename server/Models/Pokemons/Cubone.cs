@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Cubone : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 28";
+    public override string? EvolvesTo {get;set;} = "Marowak";
     private Cubone() { } //For EF Core
     public Cubone(string nickname, string ownerId) 
     : base("Cubone", "Ground", 50, 50, 95, 40, 50, 35, ownerId, 20, "Lightning Rod")
@@ -48,9 +49,9 @@ public class Cubone : PokemonMaster
                 // Save all changes in a single transaction
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Cubone to a Marowak!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Cubone to a Marowak!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

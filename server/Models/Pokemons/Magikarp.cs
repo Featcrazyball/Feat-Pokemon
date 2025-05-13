@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Magikarp : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 16";
+    public override string? EvolvesTo {get;set;} = "Gyarados";
     private Magikarp() { } //For EF Core
     public Magikarp(string nickname, string ownerId) 
     : base("Magikarp", "Water", 20, 10, 55, 15, 20, 80, ownerId, 5, "Splash")
@@ -45,9 +46,9 @@ public class Magikarp : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Magikarp to a Gyarados!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Magikarp to a Gyarados!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

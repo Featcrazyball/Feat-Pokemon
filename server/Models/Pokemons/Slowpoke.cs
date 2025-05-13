@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Slowpoke : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 37";
+    public override string? EvolvesTo {get;set;} = "Slowbro";
     private Slowpoke() { } //For EF Core
     public Slowpoke(string nickname, string ownerId) 
     : base("Slowpoke", "Water/Psychic", 90, 65, 65, 40, 40, 15, ownerId, 20, "Oblivious")
@@ -45,9 +46,9 @@ public class Slowpoke : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Slowpoke to a Slowbro!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Slowpoke to a Slowbro!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

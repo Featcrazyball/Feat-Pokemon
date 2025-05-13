@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Omanyte : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 40";
+    public override string? EvolvesTo {get;set;} = "Omastar";
     private Omanyte() { } //For EF Core
     public Omanyte(string nickname, string ownerId) 
     : base("Omanyte", "Rock/Water", 35, 40, 100, 90, 55, 35, ownerId, 20, "Swift Swim")
@@ -45,9 +46,9 @@ public class Omanyte : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Omanyte to a Omastar!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Omanyte to a Omastar!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

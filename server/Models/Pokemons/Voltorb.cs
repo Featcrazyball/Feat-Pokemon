@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Voltorb : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 30";
+    public override string? EvolvesTo {get;set;} = "Electrode";
     private Voltorb() { } //For EF Core
     public Voltorb(string nickname, string ownerId) 
     : base("Voltorb", "Electric", 40, 30, 50, 55, 55, 100, ownerId, 20, "Static")
@@ -45,9 +46,9 @@ public class Voltorb : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Voltorb to an Electrode!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Voltorb to an Electrode!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

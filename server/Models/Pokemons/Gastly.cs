@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Gastly : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 25";
+    public override string? EvolvesTo {get;set;} = "Haunter";
     private Gastly() { } //For EF Core
     public Gastly(string nickname, string ownerId) 
     : base("Gastly", "Ghost/Poison", 30, 35, 30, 100, 30, 80, ownerId, 9, "Levitate")
@@ -46,9 +47,9 @@ public class Gastly : PokemonMaster
 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Gastly to a Haunter!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Gastly to a Haunter!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

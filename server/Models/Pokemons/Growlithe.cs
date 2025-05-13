@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Growlithe : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Fire Stone";
+    public override string? EvolvesTo {get;set;} = "Arcanine";
     private Growlithe() { } //For EF Core
     public Growlithe(string nickname, string ownerId) 
     : base("Growlithe", "Fire", 55, 70, 45, 70, 50, 60, ownerId, 10, "Intimidate")
@@ -30,7 +31,7 @@ public class Growlithe : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Fire Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Fire Stone to evolve!");
                 return;
             }
 
@@ -51,7 +52,7 @@ public class Growlithe : PokemonMaster
 
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Growlithe to a Arcanine!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Growlithe to a Arcanine!");
     }
 
     public override float calculateDamage(float SkillDamage) {

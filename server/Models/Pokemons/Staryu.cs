@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Staryu : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Water Stone";
+    public override string? EvolvesTo {get;set;} = "Starmie";
     private Staryu() { } //For EF Core
     public Staryu(string nickname, string ownerId) 
     : base("Staryu", "Water", 30, 45, 55, 70, 55, 85, ownerId, 20, "Illuminate")
@@ -30,7 +31,7 @@ public class Staryu : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Water Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Water Stone to evolve!");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Staryu : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Staryu to a Starmie!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Staryu to a Starmie!");
     }
 
     public override float calculateDamage(float SkillDamage) {

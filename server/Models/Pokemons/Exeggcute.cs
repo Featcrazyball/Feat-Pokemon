@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Exeggcute : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Leaf Stone";
+    public override string? EvolvesTo {get;set;} = "Exeggutor";
     private Exeggcute() { } //For EF Core
     public Exeggcute(string nickname, string ownerId) 
     : base("Exeggcute", "Grass/Psychic", 60, 40, 80, 60, 45, 40, ownerId, 20, "Chlorophyll")
@@ -30,7 +31,7 @@ public class Exeggcute : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Exeggcute : PokemonMaster
             
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from an Exeggcute to an Exeggutor!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from an Exeggcute to an Exeggutor!");
     }
 
     public override float calculateDamage(float SkillDamage) {

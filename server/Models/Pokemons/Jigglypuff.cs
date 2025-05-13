@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Jigglypuff : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Moon Stone";
+    public override string? EvolvesTo {get;set;} = "Wigglytuff";
     private Jigglypuff() { } //For EF Core
     public Jigglypuff(string nickname, string ownerId) 
     : base("Jigglypuff", "Normal/Fairy", 115, 45, 20, 45, 25, 25, ownerId, 20, "Cute Charm")
@@ -30,7 +31,7 @@ public class Jigglypuff : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Jigglypuff : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Jigglypuff to a Wigglytuff!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Jigglypuff to a Wigglytuff!");
     }
 
     public override float calculateDamage(float SkillDamage) {

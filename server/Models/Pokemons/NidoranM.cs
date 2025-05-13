@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class NidoranM : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 16";
+    public override string? EvolvesTo {get;set;} = "Nidorino";
     private NidoranM() { } //For EF Core
     public NidoranM(string nickname, string ownerId) 
     : base("NidoranM", "Poison", 46, 57, 40, 40, 40, 50, ownerId, 10, "Poison Point")
@@ -45,9 +46,9 @@ public class NidoranM : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a NidoranM to a Nidorino!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a NidoranM to a Nidorino!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

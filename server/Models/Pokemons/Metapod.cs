@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Metapod : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 10";
+    public override string? EvolvesTo {get;set;} = "Butterfree";
     private Metapod() { } //For EF Core
     public Metapod(string nickname, string ownerId) 
     : base("Metapod", "Bug", 50, 20, 55, 25, 25, 30, ownerId, 25, "Harden")
@@ -77,9 +78,9 @@ public class Metapod : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Metapod to a Butterfree!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Metapod to a Butterfree!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

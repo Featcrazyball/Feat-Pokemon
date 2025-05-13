@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Ponyta : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 40";
+    public override string? EvolvesTo {get;set;} = "Rapidash";
     private Ponyta() { } //For EF Core
     public Ponyta(string nickname, string ownerId) 
     : base("Ponyta", "Fire", 50, 85, 55, 65, 65, 90, ownerId, 20, "Flame Body")
@@ -45,9 +46,9 @@ public class Ponyta : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Ponyta to a Rapidash!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Ponyta to a Rapidash!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

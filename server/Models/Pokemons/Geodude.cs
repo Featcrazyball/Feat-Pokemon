@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Geodude : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 25";
+    public override string? EvolvesTo {get;set;} = "Graveler";
     private Geodude() { } //For EF Core
     public Geodude(string nickname, string ownerId) 
     : base("Geodude", "Rock/Ground", 40, 80, 100, 30, 30, 20, ownerId, 10, "Sturdy")
@@ -45,9 +46,9 @@ public class Geodude : PokemonMaster
 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Geodude to a Graveler!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Geodude to a Graveler!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

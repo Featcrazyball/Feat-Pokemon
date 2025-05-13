@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Rhyhorn : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 42";
+    public override string? EvolvesTo {get;set;} = "Rhydon";
     private Rhyhorn() { } //For EF Core
     public Rhyhorn(string nickname, string ownerId) 
     : base("Rhyhorn", "Ground/Rock", 80, 85, 95, 30, 30, 25, ownerId, 20, "Lightning Rod")
@@ -45,9 +46,9 @@ public class Rhyhorn : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Rhyhorn to a Rhydon!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Rhyhorn to a Rhydon!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

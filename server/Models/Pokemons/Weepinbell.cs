@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Weepinbell : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Leaf Stone";
+    public override string? EvolvesTo {get;set;} = "Victreebel";
     private Weepinbell() { } //For EF Core
     public Weepinbell(string nickname, string ownerId) 
     : base("Weepinbell", "Grass/Poison", 65, 90, 50, 85, 45, 55, ownerId, 21, "Chlorophyll")
@@ -57,7 +58,7 @@ public class Weepinbell : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -79,7 +80,7 @@ public class Weepinbell : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Weepinbell to a Victreebel!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Weepinbell to a Victreebel!");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Ekans : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 22";
+    public override string? EvolvesTo {get;set;} = "Arbok";
     private Ekans() { } //For EF Core
     public Ekans(string nickname, string ownerId) 
     : base("Ekans", "Poison", 35, 60, 44, 40, 54, 55, ownerId, 25, "Bite")
@@ -45,9 +46,9 @@ public class Ekans : PokemonMaster
                 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from an Ekans to an Arbok!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from an Ekans to an Arbok!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

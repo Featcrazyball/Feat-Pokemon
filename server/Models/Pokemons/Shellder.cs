@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Shellder : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Water Stone";
+    public override string? EvolvesTo {get;set;} = "Cloyster";
     private Shellder() { } //For EF Core
     public Shellder(string nickname, string ownerId) 
     : base("Shellder", "Water", 30, 65, 100, 45, 25, 40, ownerId, 15, "Shell Armor")
@@ -30,7 +31,7 @@ public class Shellder : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Water Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Water Stone to evolve!");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Shellder : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Shellder to a Cloyster!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Shellder to a Cloyster!");
     }
 
     public override float calculateDamage(float SkillDamage) {

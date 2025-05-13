@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Krabby : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 28";
+    public override string? EvolvesTo {get;set;} = "Kingler";
     private Krabby() { } //For EF Core
     public Krabby(string nickname, string ownerId) 
     : base("Krabby", "Water", 30, 105, 90, 25, 25, 50, ownerId, 10, "Hyper Cutter")
@@ -45,9 +46,9 @@ public class Krabby : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Krabby to a Kingler!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Krabby to a Kingler!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

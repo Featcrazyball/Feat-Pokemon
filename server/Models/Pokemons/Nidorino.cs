@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Nidorino : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Moon Stone";
+    public override string? EvolvesTo {get;set;} = "Nidoking";
     private Nidorino() { } //For EF Core
     public Nidorino(string nickname, string ownerId) 
     : base("Nidorino", "Poison", 61, 72, 57, 55, 55, 65, ownerId, 23, "Poison Point")
@@ -57,7 +58,7 @@ public class Nidorino : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -79,7 +80,7 @@ public class Nidorino : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Nidorino to a Nidoking!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Nidorino to a Nidoking!");
     }
 
     public override float calculateDamage(float SkillDamage) {

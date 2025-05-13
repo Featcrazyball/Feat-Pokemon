@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Gloom : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Leaf Stone";
+    public override string? EvolvesTo {get;set;} = "Vileplume";
     private Gloom() { } //For EF Core
     public Gloom(string nickname, string ownerId) 
     : base("Gloom", "Grass/Poison", 60, 65, 70, 85, 75, 40, ownerId, 20, "Chlorophyll")
@@ -57,7 +58,7 @@ public class Gloom : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -78,7 +79,7 @@ public class Gloom : PokemonMaster
 
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Gloom to a Vileplume!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Gloom to a Vileplume!");
     }
 
     public override float calculateDamage(float SkillDamage) {

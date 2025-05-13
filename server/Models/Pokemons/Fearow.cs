@@ -51,7 +51,7 @@ public class Fearow : PokemonMaster
 
     public override async Task Evolve(ClientSession session)
     {
-        await session.SendMessageAsync($"{Nickname} is already at its final form!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is already at its final form!");
     }
 
     public override float calculateDamage(float SkillDamage) {

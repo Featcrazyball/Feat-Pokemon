@@ -4,7 +4,8 @@ namespace PokemonPocket;
 
 public class Pidgey : PokemonMaster
 {
-    public override string? Requirements { get; set; } = "18";
+    public override string? Requirements { get; set; } = "Level 18";
+    public override string? EvolvesTo {get;set;} = "Pidgeotto";
     private Pidgey() { } //For EF Core
     public Pidgey(string nickname, string ownerId) 
     : base("Pidgey", "Normal/Flying", 40, 45, 40, 35, 35, 56, ownerId, 10, "Keen Eye")
@@ -45,9 +46,9 @@ public class Pidgey : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Pidgey to a Pidgeotto!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Pidgey to a Pidgeotto!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

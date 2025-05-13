@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Doduo : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 30";
+    public override string? EvolvesTo {get;set;} = "Dodrio";
     private Doduo() { } //For EF Core
     public Doduo(string nickname, string ownerId) 
     : base("Doduo", "Normal/Flying", 35, 85, 45, 35, 35, 75, ownerId, 20, "Run Away")
@@ -70,9 +71,9 @@ public class Doduo : PokemonMaster
                 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Doduo to a Dodrio!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Doduo to a Dodrio!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

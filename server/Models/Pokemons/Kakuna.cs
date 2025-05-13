@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Kakuna : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 7";
+    public override string? EvolvesTo {get;set;} = "Beedrill";
     private Kakuna() { } //For EF Core
     public Kakuna(string nickname, string ownerId) 
     : base("Kakuna", "Bug/Poison", 45, 25, 50, 25, 25, 35, ownerId, 15, "Shed Skin")
@@ -73,9 +74,9 @@ public class Kakuna : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Kakuna to a Beedrill!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Kakuna to a Beedrill!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

@@ -6,6 +6,7 @@ namespace PokemonPocket;
 public class Abra : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 16";
+    public override string? EvolvesTo {get;set;} = "Kadabra";
 
     private Abra() { } //For EF Core
     public Abra(string nickname, string ownerId) 
@@ -56,9 +57,9 @@ public class Abra : PokemonMaster
                 // Save all changes in a single transaction
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from Abra to Kadabra!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from Abra to Kadabra!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 }

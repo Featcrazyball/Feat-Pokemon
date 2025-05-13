@@ -21,6 +21,7 @@ namespace PokemonPocket
         public int Experience {get;set;}
         public virtual string? Requirements {get;set;}
         public bool Evolvable {get;set;} = false;
+        public virtual string? EvolvesTo {get;set;}
 
         // Feat's Features
         [NotMapped] public float Health {get;set;}

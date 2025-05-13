@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Vulpix : PokemonMaster
 {
     public override string? Requirements { get; set; } = "1 Fire Stone";
+    public override string? EvolvesTo {get;set;} = "Ninetales";
     private Vulpix() { } //For EF Core
     public Vulpix(string nickname, string ownerId) 
     : base("Vulpix", "Fire", 38, 41, 40, 50, 65, 65, ownerId, 10, "Flash Fire")
@@ -30,7 +31,7 @@ public class Vulpix : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname} needs a Fire Stone to evolve!");
+                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Fire Stone to evolve!");
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Vulpix : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname} has evolved from a Vulpix to a Ninetales!");
+        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Vulpix to a Ninetales!");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -276,7 +276,7 @@ public class ServerPokemon
         evolutionMenu.AppendLine("║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║");
         evolutionMenu.AppendLine("║    [2] 💰 ITEM   │ Evolve Pokémon Using Items                                ║");
         evolutionMenu.AppendLine("║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║");
-        evolutionMenu.AppendLine("║    [3] 💬 TRADE  │ Evolve Pokémon Using Trade (100 Coins)                    ║");
+        evolutionMenu.AppendLine("║    [3] 💬 TRADE  │ Check what Pokémon will evolve into                       ║");
         evolutionMenu.AppendLine("║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║");
         evolutionMenu.AppendLine("║    [4] 💬 BACK   │ Return to Pokémon Menu                                    ║");
         evolutionMenu.AppendLine("║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║");
@@ -442,6 +442,7 @@ public class ServerPokemon
                     await session.SendMessageAsync("No Pokémon are ready for item-based evolution.");
                 }
                 break;
+
             case "4":
                 // Return to Pokémon Menu
                 return;

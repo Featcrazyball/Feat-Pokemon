@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Dratini : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 30";
+    public override string? EvolvesTo {get;set;} = "Dragonair";
     private Dratini() { } //For EF Core
     public Dratini(string nickname, string ownerId) 
     : base("Dratini", "Dragon", 41, 64, 45, 50, 50, 50, ownerId, 15, "Shed Skin")
@@ -45,9 +46,9 @@ public class Dratini : PokemonMaster
                 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Dratini to a Dragonair!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Dratini to a Dragonair!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Diglett : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 26";
+    public override string? EvolvesTo {get;set;} = "Dugtrio";
     private Diglett() { } //For EF Core
     public Diglett(string nickname, string ownerId) 
     : base("Diglett", "Ground", 10, 55, 25, 35, 45, 95, ownerId, 10, "Sand Veil")
@@ -45,9 +46,9 @@ public class Diglett : PokemonMaster
                 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Diglett to a Dugtrio!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Diglett to a Dugtrio!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

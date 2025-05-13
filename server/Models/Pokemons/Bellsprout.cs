@@ -5,6 +5,8 @@ namespace PokemonPocket;
 public class Bellsprout : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 21";
+    public override string? EvolvesTo {get;set;} = "Weepinbell";
+
     private Bellsprout() { } //For EF Core
     public Bellsprout(string nickname, string ownerId) 
     : base("Bellsprout", "Grass/Poison", 50, 75, 35, 70, 30, 40, ownerId, 10, "Chlorophyll")
@@ -50,9 +52,9 @@ public class Bellsprout : PokemonMaster
                 // Save all changes in a single transaction
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Bellsprout to a Weepinbell!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Bellsprout to a Weepinbell!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 

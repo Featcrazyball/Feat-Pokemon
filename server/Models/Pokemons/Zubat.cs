@@ -5,6 +5,7 @@ namespace PokemonPocket;
 public class Zubat : PokemonMaster
 {
     public override string? Requirements { get; set; } = "Level 22";
+    public override string? EvolvesTo {get;set;} = "Golbat";
     private Zubat() { } //For EF Core
     public Zubat(string nickname, string ownerId) 
     : base("Zubat", "Poison/Flying", 40, 45, 40, 30, 40, 55, ownerId, 10, "Inner Focus")
@@ -30,6 +31,12 @@ public class Zubat : PokemonMaster
                 var golbat = new Golbat(this);
                 golbat.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(golbat);
                 
                 foreach (var skill in golbat.Skills)
@@ -37,13 +44,12 @@ public class Zubat : PokemonMaster
                     context.Skills.Add(skill);
                 }
                 
-                context.PokemonMaster.Remove(this);
                 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname} has evolved from a Zubat to a Golbat!");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Zubat to a Golbat!");
         } else {
-            await session.SendMessageAsync($"{Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
         }
     }
 
