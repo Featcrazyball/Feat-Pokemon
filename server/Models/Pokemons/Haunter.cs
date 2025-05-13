@@ -73,9 +73,9 @@ public class Haunter : PokemonMaster
 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Haunter to a Gengar!");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Haunter to a Gengar!");
         } else {
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
 

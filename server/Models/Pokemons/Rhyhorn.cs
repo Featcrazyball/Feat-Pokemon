@@ -46,9 +46,9 @@ public class Rhyhorn : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Rhyhorn to a Rhydon!");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Rhyhorn to a Rhydon!");
         } else {
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
 

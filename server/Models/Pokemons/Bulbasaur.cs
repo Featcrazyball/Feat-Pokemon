@@ -57,9 +57,9 @@ public class Bulbasaur : PokemonMaster
                 // Save all changes in a single transaction
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Bulbasaur to an Ivysaur!");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Bulbasaur to an Ivysaur!");
         } else {
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
 }

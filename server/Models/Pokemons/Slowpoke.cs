@@ -46,9 +46,9 @@ public class Slowpoke : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Slowpoke to a Slowbro!");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Slowpoke to a Slowbro!");
         } else {
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
 

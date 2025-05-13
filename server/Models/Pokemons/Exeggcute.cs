@@ -31,7 +31,7 @@ public class Exeggcute : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -53,7 +53,7 @@ public class Exeggcute : PokemonMaster
             
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from an Exeggcute to an Exeggutor!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Exeggcute to an Exeggutor!");
     }
 
     public override float calculateDamage(float SkillDamage) {

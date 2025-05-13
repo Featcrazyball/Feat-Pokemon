@@ -46,9 +46,9 @@ public class Pidgey : PokemonMaster
                 // Remove previous and add new Pokemon
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Pidgey to a Pidgeotto!");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Pidgey to a Pidgeotto!");
         } else {
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
 

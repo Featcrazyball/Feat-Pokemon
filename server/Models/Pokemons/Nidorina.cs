@@ -58,7 +58,7 @@ public class Nidorina : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -80,7 +80,7 @@ public class Nidorina : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Nidorina to a Nidoqueen!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Nidorina to a Nidoqueen!");
     }
 
     public override float calculateDamage(float SkillDamage) {

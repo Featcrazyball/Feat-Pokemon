@@ -59,7 +59,7 @@ public class Poliwhirl : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Water Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Water Stone to evolve!");
                 return;
             }
 
@@ -81,7 +81,7 @@ public class Poliwhirl : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Poliwhirl to a Poliwrath!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Poliwhirl to a Poliwrath!");
     }
 
     public override float calculateDamage(float SkillDamage) {

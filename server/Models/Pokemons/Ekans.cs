@@ -46,9 +46,9 @@ public class Ekans : PokemonMaster
                 
                 context.SaveChanges();
             }
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from an Ekans to an Arbok!");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Ekans to an Arbok!");
         } else {
-            await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} is not ready to evolve yet.");
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
 

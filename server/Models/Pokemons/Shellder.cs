@@ -31,7 +31,7 @@ public class Shellder : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Water Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Water Stone to evolve!");
                 return;
             }
 
@@ -53,7 +53,7 @@ public class Shellder : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Shellder to a Cloyster!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Shellder to a Cloyster!");
     }
 
     public override float calculateDamage(float SkillDamage) {

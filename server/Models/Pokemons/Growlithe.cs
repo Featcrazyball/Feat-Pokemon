@@ -31,7 +31,7 @@ public class Growlithe : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Fire Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Fire Stone to evolve!");
                 return;
             }
 
@@ -52,7 +52,7 @@ public class Growlithe : PokemonMaster
 
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Growlithe to a Arcanine!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Growlithe to a Arcanine!");
     }
 
     public override float calculateDamage(float SkillDamage) {

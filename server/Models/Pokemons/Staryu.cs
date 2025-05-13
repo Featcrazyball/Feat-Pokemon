@@ -31,7 +31,7 @@ public class Staryu : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Water Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Water Stone to evolve!");
                 return;
             }
 
@@ -53,7 +53,7 @@ public class Staryu : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Staryu to a Starmie!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Staryu to a Starmie!");
     }
 
     public override float calculateDamage(float SkillDamage) {

@@ -31,7 +31,7 @@ public class Clefairy : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -53,7 +53,7 @@ public class Clefairy : PokemonMaster
             
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Clefairy to a Clefable!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Clefairy to a Clefable!");
     }
 
     public override float calculateDamage(float SkillDamage) {

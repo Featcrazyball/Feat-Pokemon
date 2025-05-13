@@ -31,7 +31,7 @@ public class Jigglypuff : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Moon Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Moon Stone to evolve!");
                 return;
             }
 
@@ -53,7 +53,7 @@ public class Jigglypuff : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Jigglypuff to a Wigglytuff!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Jigglypuff to a Wigglytuff!");
     }
 
     public override float calculateDamage(float SkillDamage) {

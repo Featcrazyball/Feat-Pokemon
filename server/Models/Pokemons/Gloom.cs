@@ -58,7 +58,7 @@ public class Gloom : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -79,7 +79,7 @@ public class Gloom : PokemonMaster
 
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Gloom to a Vileplume!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Gloom to a Vileplume!");
     }
 
     public override float calculateDamage(float SkillDamage) {

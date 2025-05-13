@@ -58,7 +58,7 @@ public class Weepinbell : PokemonMaster
             if (item != null) {
                 context.Items.Remove(item);
             } else {
-                await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} needs a Leaf Stone to evolve!");
+                await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Leaf Stone to evolve!");
                 return;
             }
 
@@ -80,7 +80,7 @@ public class Weepinbell : PokemonMaster
             // Remove previous and add new Pokemon
             context.SaveChanges();
         }
-        await session.SendMessageAsync($"{Nickname == "None" ? Name : Nickname} has evolved from a Weepinbell to a Victreebel!");
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Weepinbell to a Victreebel!");
     }
 
     public override float calculateDamage(float SkillDamage) {
