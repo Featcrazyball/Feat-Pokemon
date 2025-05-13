@@ -30,6 +30,12 @@ public class Slowpoke : PokemonMaster
                 var slowbro = new Slowbro(this);
                 slowbro.EvolveLevelUp(Level-1); // Level up to current level
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(slowbro);
                 foreach (var skill in slowbro.Skills)
                 {
@@ -37,7 +43,6 @@ public class Slowpoke : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Slowpoke to a Slowbro!");

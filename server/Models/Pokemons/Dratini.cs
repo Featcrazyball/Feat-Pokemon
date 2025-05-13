@@ -30,15 +30,19 @@ public class Dratini : PokemonMaster
                 var dragonair = new Dragonair(this);
                 dragonair.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(dragonair);
                 foreach (var skill in dragonair.Skills)
                 {
                     context.Skills.Add(skill);
                 }
                 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Dratini to a Dragonair!");

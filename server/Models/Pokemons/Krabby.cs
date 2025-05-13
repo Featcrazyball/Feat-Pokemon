@@ -30,6 +30,12 @@ public class Krabby : PokemonMaster
                 var kingler = new Kingler(this);
                 kingler.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(kingler);
                 foreach (var skill in kingler.Skills)
                 {
@@ -37,7 +43,6 @@ public class Krabby : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Krabby to a Kingler!");

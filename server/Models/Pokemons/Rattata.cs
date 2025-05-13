@@ -30,6 +30,12 @@ public class Rattata : PokemonMaster
                 var ratticate = new Raticate(this);
                 ratticate.EvolveLevelUp(Level-1); // Level up to 20
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(ratticate);
                 foreach (var skill in ratticate.Skills)
                 {
@@ -37,7 +43,6 @@ public class Rattata : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Rattata to a Raticate!");

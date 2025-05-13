@@ -37,6 +37,12 @@ public class Jigglypuff : PokemonMaster
             var wigglytuff = new Wigglytuff(this);
             wigglytuff.EvolveLevelUp(Level-1); // Level up to current level
 
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
             context.PokemonMaster.Add(wigglytuff);
             foreach (var skill in wigglytuff.Skills)
             {
@@ -44,7 +50,6 @@ public class Jigglypuff : PokemonMaster
             }
 
             // Remove previous and add new Pokemon
-            context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
         await session.SendMessageAsync($"{Nickname} has evolved from a Jigglypuff to a Wigglytuff!");

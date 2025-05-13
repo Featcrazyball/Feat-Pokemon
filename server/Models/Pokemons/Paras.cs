@@ -30,6 +30,12 @@ public class Paras : PokemonMaster
                 var parasect = new Parasect(this);
                 parasect.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(parasect);
                 foreach (var skill in parasect.Skills)
                 {
@@ -37,7 +43,6 @@ public class Paras : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Paras to a Parasect!");

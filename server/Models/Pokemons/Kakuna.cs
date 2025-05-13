@@ -57,7 +57,13 @@ public class Kakuna : PokemonMaster
                 var beedrill = new Beedrill(this);
                 beedrill.EvolveLevelUp(Level-1); // Level up to 7
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add new skills to Beedrill
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(beedrill);
                 foreach (var skill in beedrill.Skills)
                 {
@@ -65,7 +71,6 @@ public class Kakuna : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Kakuna to a Beedrill!");

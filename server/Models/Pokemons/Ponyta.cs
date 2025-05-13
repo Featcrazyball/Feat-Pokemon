@@ -30,6 +30,12 @@ public class Ponyta : PokemonMaster
                 var rapidash = new Rapidash(this);
                 rapidash.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(rapidash);
                 foreach (var skill in rapidash.Skills)
                 {
@@ -37,7 +43,6 @@ public class Ponyta : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Ponyta to a Rapidash!");

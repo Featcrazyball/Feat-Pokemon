@@ -30,6 +30,12 @@ public class Kabuto : PokemonMaster
                 var kabuto = new Kabutops(this);
                 kabuto.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(kabuto);
                 foreach (var skill in kabuto.Skills)
                 {
@@ -37,7 +43,6 @@ public class Kabuto : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Kabuto to a Kabutops!");

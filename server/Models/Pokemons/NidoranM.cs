@@ -30,6 +30,12 @@ public class NidoranM : PokemonMaster
                 var nidorino = new Nidorino(this);
                 nidorino.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(nidorino);
                 foreach (var skill in nidorino.Skills)
                 {
@@ -37,7 +43,6 @@ public class NidoranM : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a NidoranM to a Nidorino!");

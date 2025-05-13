@@ -30,14 +30,18 @@ public class Grimer : PokemonMaster
                 var muk = new Muk(this);
                 muk.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(muk);
                 foreach (var skill in muk.Skills)
                 {
                     context.Skills.Add(skill);
                 }
 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Grimer to a Muk!");

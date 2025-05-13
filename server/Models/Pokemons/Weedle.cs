@@ -30,6 +30,12 @@ public class Weedle : PokemonMaster
                 var kakuna = new Kakuna(this);
                 kakuna.EvolveLevelUp(Level-1); // Level up to 7
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(kakuna);
                 foreach (var skill in kakuna.Skills)
                 {
@@ -37,7 +43,6 @@ public class Weedle : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Weedle to a Kakuna!");

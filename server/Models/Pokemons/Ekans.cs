@@ -30,15 +30,19 @@ public class Ekans : PokemonMaster
                 var arbok = new Arbok(this);
                 arbok.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(arbok);
                 foreach (var skill in arbok.Skills)
                 {
                     context.Skills.Add(skill);
                 }
                 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from an Ekans to an Arbok!");

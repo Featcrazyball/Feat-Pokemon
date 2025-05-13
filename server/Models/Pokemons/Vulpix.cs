@@ -37,6 +37,12 @@ public class Vulpix : PokemonMaster
             var ninetales = new Ninetales(this);
             ninetales.EvolveLevelUp(Level-1); // Level up to current level
 
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
             context.PokemonMaster.Add(ninetales);
             foreach (var skill in ninetales.Skills)
             {
@@ -44,7 +50,6 @@ public class Vulpix : PokemonMaster
             }
 
             // Remove previous and add new Pokemon
-            context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
         await session.SendMessageAsync($"{Nickname} has evolved from a Vulpix to a Ninetales!");

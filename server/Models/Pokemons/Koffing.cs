@@ -31,6 +31,12 @@ public class Koffing : PokemonMaster
                 var weezing = new Weezing(this);
                 weezing.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(weezing);
                 foreach (var skill in weezing.Skills)
                 {
@@ -38,7 +44,6 @@ public class Koffing : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Koffing to a Weezing!");

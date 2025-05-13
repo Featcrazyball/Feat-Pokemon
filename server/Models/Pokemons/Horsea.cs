@@ -30,6 +30,12 @@ public class Horsea : PokemonMaster
                 var seadra = new Seadra(this);
                 seadra.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(seadra);
                 foreach (var skill in seadra.Skills)
                 {
@@ -37,7 +43,6 @@ public class Horsea : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Horsea to a Seadra!");

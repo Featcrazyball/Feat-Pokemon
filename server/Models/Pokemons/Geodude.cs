@@ -30,15 +30,19 @@ public class Geodude : PokemonMaster
                 var graveler = new Graveler(this);
                 graveler.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(graveler);
                 foreach (var skill in graveler.Skills)
                 {
                     context.Skills.Add(skill);
                 }
 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Geodude to a Graveler!");

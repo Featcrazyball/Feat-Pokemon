@@ -5,6 +5,7 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using PokemonPocket;
+using Microsoft.EntityFrameworkCore;
 
 public class ViewPokemonFunc
 {
@@ -13,6 +14,7 @@ public class ViewPokemonFunc
         // Fetch user's Pokémon from the database with their skills
         using var context = new DatabaseContext();
         var pokemonList = context.PokemonMaster
+            .Include(p => p.Skills)
             .Where(p => p.OwnerId == user.Id)
             .OrderByDescending(p => p.Experience)
             .ToList();
@@ -37,23 +39,24 @@ public class ViewPokemonFunc
 $"Pokémon Number: {pokemonNumber}\n" +
 $"Name: {pokemon.Name}\n" +
 $"Nickname: {pokemon.Nickname}\n" +
-$"Experience: {pokemon.Experience}\n" +
 $"Level: {pokemon.Level}\n" +
+$"Experience: {pokemon.Experience}\n" +
 $"Type: {pokemon.Type}\n" +
 $"HP: {pokemon.MaxHealth}\n" +
 $"Attack: {pokemon.MaxAttack}\n" +
 $"Defense: {pokemon.MaxDefense}\n" +
 $"Sp. Attack: {pokemon.MaxSpecialAttack}\n" +
 $"Sp. Defense: {pokemon.MaxSpecialDefense}\n" +
-$"Crit Rate: {pokemon.CritRate}\n" +
 $"Speed: {pokemon.MaxSpeed}\n" +
+$"Crit Rate: {pokemon.CritRate}\n" +
+$"Stat Points: {pokemon.StatPoints}\n" +
 $"Skills: {string.Join(", ", pokemon.Skills.Select(s => s.Name))}\n"+
 $"Evolve Requirements: {pokemon.Requirements}\n" +
 "---------\n" +
 $"Assignment Skill: {pokemon.Skill}\n" +
 $"Assignment Skill Damage: {pokemon.SkillDamage}\n" +
 $"-----------------------------------------\n"
-                );
+);
         }
 
         await session.SendMessageAsync("Please visit https://pokemondb.net/move/generation/1/ for more information on skills.\n");
@@ -117,11 +120,11 @@ $"-----------------------------------------\n"
 
                     while (true)
                     {
-                        string statChoice = await session.GetInputAsync("Enter the stat to allocate points to (HP, ATK, DEF, SpAtk, SpDef, SPD) or 'done' to finish:\n");
+                        string statChoice = await session.GetInputAsync("Enter the stat to allocate points to (HP, ATK, DEF, SpAtk, SpDef, SPD) or 'done' to finish:");
                         if (statChoice.ToUpper() == "DONE")
                             break;
 
-                        string count = await session.GetInputAsync("Enter the number of points to allocate:");
+                        string count = await session.GetInputAsync("\nEnter the number of points to allocate:");
 
                         int pointsToAllocate = int.Parse(count);
                         try
@@ -163,9 +166,8 @@ $"-----------------------------------------\n"
                                 break;
                         }
 
-                        selectedPokemon.StatPoints--;
                     }
-
+                    context.PokemonMaster.Update(selectedPokemon);
                     context.SaveChanges();
                     await session.SendMessageAsync($"Stat Points have been allocated successfully!");
                 }

@@ -30,16 +30,20 @@ public class Gastly : PokemonMaster
             {
                 var haunter = new Haunter(this);
                 haunter.EvolveLevelUp(Level-1); 
+                
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
 
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(haunter);
                 foreach (var skill in haunter.Skills)
                 {
                     context.Skills.Add(skill);
                 }
 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Gastly to a Haunter!");

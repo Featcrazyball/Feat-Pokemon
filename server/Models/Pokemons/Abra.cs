@@ -36,6 +36,11 @@ public class Abra : PokemonMaster
                 var kadabra = new Kadabra(this);
                 kadabra.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add the evolved Pokemon to the context
                 context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(kadabra);

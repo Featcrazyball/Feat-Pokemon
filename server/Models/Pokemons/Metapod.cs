@@ -62,6 +62,12 @@ public class Metapod : PokemonMaster
                 var butterfree = new Butterfree(this);
                 butterfree.EvolveLevelUp(Level-1); // Level up to 10
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(butterfree);
                 foreach (var skill in butterfree.Skills)
                 {
@@ -69,7 +75,6 @@ public class Metapod : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Metapod to a Butterfree!");

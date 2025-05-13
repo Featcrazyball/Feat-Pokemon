@@ -30,6 +30,12 @@ public class Meowth : PokemonMaster
                 var persian = new Persian(this);
                 persian.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(persian);
                 foreach (var skill in persian.Skills)
                 {
@@ -37,7 +43,6 @@ public class Meowth : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Meowth to a Persian!");

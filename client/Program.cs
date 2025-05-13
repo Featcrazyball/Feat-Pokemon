@@ -15,7 +15,8 @@ namespace Client
             {
                 // Connect to server
                 Console.WriteLine("Connecting to server...");
-                IPAddress ip = IPAddress.Parse("39.109.136.104");
+                // IPAddress ip = IPAddress.Parse("39.109.136.104");
+                IPAddress ip = IPAddress.Parse("172.27.190.81");
                 IPEndPoint iPEndPoint = new(ip, 8000);
 
                 using Socket client = new(
@@ -103,7 +104,7 @@ namespace Client
                     if (message.Contains("2q30-8b6r7-vyq20974ryf-b09qw8r7bq9-28-3v")) {Environment.Exit(0);} 
 
                     Console.WriteLine();
-                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine(message);
                     Console.ResetColor();
                     if (IsMessage(message)) { Console.Write("> "); }
@@ -149,9 +150,9 @@ namespace Client
             string[] s = new[]
             {
                 "👤 Username  : ",
-                "📧 Email     : ",
-                "🔒 Password  : ",
-                "✅ Confirm   : ",
+                "📧 Email:",
+                "🔒 Password:",
+                "✅ Confirm Password:",
                 "👤 Username:",
                 "🔑 Password:",
                 "Input any key to continue...",
@@ -159,9 +160,12 @@ namespace Client
                 "Enter option or Pokémon number:",
                 "Enter a new nickname for",
                 "Please enter your choice:",
-                "Enter the stat to allocate points to (HP, ATK, DEF, SpA, SpD, SPD) or 'done' to finish:",
+                "Enter the stat to allocate points",
+                "Enter the stat to allocate points to (HP, ATK, DEF, SpAtk, SpDef, SPD) or 'done' to finish:",
+                "Enter the number of the",
                 "Enter the number of points to allocate:",
-                "Enter the number of the"
+                "Please choose one to evolve into.",
+                "Choice:"
             };
 
             foreach (var str in s) { if (m.Contains(str)) { return true; }}  

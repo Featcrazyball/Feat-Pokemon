@@ -30,15 +30,19 @@ public class Drowzee : PokemonMaster
                 var hypno = new Hypno(this);
                 hypno.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(hypno);
                 foreach (var skill in hypno.Skills)
                 {
                     context.Skills.Add(skill);
                 }
                 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Drowzee to a Hypno!");

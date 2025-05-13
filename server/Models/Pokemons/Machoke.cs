@@ -62,6 +62,12 @@ public class Machoke : PokemonMaster
                 var machamp = new Machamp(this);
                 machamp.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(machamp);
                 foreach (var skill in machamp.Skills)
                 {
@@ -69,7 +75,6 @@ public class Machoke : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Machoke to a Machamp!");

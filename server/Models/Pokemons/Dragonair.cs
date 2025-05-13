@@ -57,15 +57,18 @@ public class Dragonair : PokemonMaster
                 var dragonite = new Dragonite(this);
                 dragonite.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(dragonite);
                 foreach (var skill in dragonite.Skills)
                 {
                     context.Skills.Add(skill);
                 }
-                
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Dragonair to a Dragonite!");

@@ -30,6 +30,12 @@ public class Magikarp : PokemonMaster
                 var gyarados = new Gyarados(this);
                 gyarados.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(gyarados);
                 foreach (var skill in gyarados.Skills)
                 {
@@ -37,7 +43,6 @@ public class Magikarp : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Magikarp to a Gyarados!");

@@ -77,7 +77,8 @@ namespace Server
 ║                                                                          ║
 ║           Ready to start your journey into the world of Pokémon?         ║
 ║                                                                          ║
-╚══════════════════════════════════════════════════════════════════════════╝");
+╚══════════════════════════════════════════════════════════════════════════╝
+");
                 string choice = await session.GetInputAsync("Choice:");
 
                 string username;
@@ -164,7 +165,7 @@ namespace Server
                             while (true)
                             {
                                 email = await session.GetInputAsync("📧 Email:");
-                                if (email.Contains("@") && email.Contains("."))
+                                if (!email.Contains("@") || !email.Contains(".") || email.Length > 6)
                                     break;
                                 else
                                     await session.SendMessageAsync("Invalid email format. Please try again:");
@@ -219,8 +220,14 @@ namespace Server
                                 List<PokemonMaster> createdPokemon = new List<PokemonMaster>();
 
                                 // Add abra
-                                var abra = new Abra("Abra", newUser.Id!);
+                                var abra = new Abra("None", newUser.Id!);
+                                var nido = new Nidorina("None", newUser.Id!);
+                                var grav = new Graveler("None", newUser.Id!);
+                                var eevee = new Eevee("None", newUser.Id!);
                                 context.PokemonMaster.Add(abra);
+                                context.PokemonMaster.Add(nido);
+                                context.PokemonMaster.Add(eevee);
+                                context.PokemonMaster.Add(grav);
 
                                 while (tempCount < 5 && selectedIndices.Count < ListofStuff.AllPokemon.Count())
                                 {

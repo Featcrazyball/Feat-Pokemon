@@ -382,6 +382,7 @@ namespace PokemonPocket
         // Check if can evolve
         public string CheckEvolve()
         {
+            if (Name == "Eevee") {return "true item | 1 WFT Stone";}
             if (Requirements!.Contains("Level"))
             {
                 int req = int.Parse(Requirements.Split(' ')[1]);
@@ -548,7 +549,35 @@ namespace PokemonPocket
             
             Console.WriteLine($"{Name} has forgotten {skillName}!");
         }
-    
+
+        public void ForgetTillFive()
+        {
+            if (this.Skills.Count > 5)
+            {
+                foreach(var skill in this.Skills)
+                {
+                    // Randomly delete 1 skill
+                    if (this.Skills.Count > 5)
+                    {
+                        Random random = new Random();
+                        int index = random.Next(this.Skills.Count);
+                        var skillToRemove = this.Skills.ElementAt(index);
+                        this.Skills.Remove(skillToRemove);
+                        using (var context = new DatabaseContext())
+                        {
+                            context.Skills.Remove(skillToRemove);
+                            context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                
+            }
+        }
+
         // Skill Pool Management (Complete)
         public List<Skill> LearnSkillFromSkillPool()
         {

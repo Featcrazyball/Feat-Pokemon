@@ -30,6 +30,12 @@ public class Pidgey : PokemonMaster
                 var pidgeotto = new Pidgeotto(this);
                 pidgeotto.EvolveLevelUp(Level-1); // Level up to 18
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(pidgeotto);
                 foreach (var skill in pidgeotto.Skills)
                 {
@@ -37,7 +43,6 @@ public class Pidgey : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Pidgey to a Pidgeotto!");

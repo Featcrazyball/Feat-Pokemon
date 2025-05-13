@@ -30,15 +30,19 @@ public class Diglett : PokemonMaster
                 var dugtrio = new Dugtrio(this);
                 dugtrio.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(dugtrio);
                 foreach (var skill in dugtrio.Skills)
                 {
                     context.Skills.Add(skill);
                 }
                 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Diglett to a Dugtrio!");

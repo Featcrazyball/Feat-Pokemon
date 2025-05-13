@@ -30,6 +30,12 @@ public class Rhyhorn : PokemonMaster
                 var rhydon = new Rhydon(this);
                 rhydon.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(rhydon);
                 foreach (var skill in rhydon.Skills)
                 {
@@ -37,7 +43,6 @@ public class Rhyhorn : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Rhyhorn to a Rhydon!");

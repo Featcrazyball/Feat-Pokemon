@@ -30,6 +30,12 @@ public class Omanyte : PokemonMaster
                 var omastar = new Omastar(this);
                 omastar.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(omastar);
                 foreach (var skill in omastar.Skills)
                 {
@@ -37,7 +43,6 @@ public class Omanyte : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Omanyte to a Omastar!");

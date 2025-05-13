@@ -30,6 +30,12 @@ public class Seel : PokemonMaster
                 var dewgong = new Dewgong(this);
                 dewgong.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(dewgong);
                 foreach (var skill in dewgong.Skills)
                 {
@@ -37,7 +43,6 @@ public class Seel : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Seel to a Dewgong!");

@@ -57,6 +57,12 @@ public class Wartortle : PokemonMaster
                 var blastoise = new Blastoise(this);
                 blastoise.EvolveLevelUp(Level-1); // Level up to 36
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(blastoise);
                 foreach (var skill in blastoise.Skills)
                 {
@@ -64,7 +70,6 @@ public class Wartortle : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Wartortle to a Blastoise!");

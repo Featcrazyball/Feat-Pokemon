@@ -30,6 +30,12 @@ public class Tentacool : PokemonMaster
                 var tentacruel = new Tentacruel(this);
                 tentacruel.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(tentacruel);
                 foreach (var skill in tentacruel.Skills)
                 {
@@ -37,7 +43,6 @@ public class Tentacool : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Tentacool to a Tentacruel!");

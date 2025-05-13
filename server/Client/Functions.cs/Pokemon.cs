@@ -64,9 +64,26 @@ public class ServerPokemon
                         .ToList()
                         .ForEach(p => p.Level = 100);
                     context.PokemonMaster.UpdateRange(context.PokemonMaster);
+                    Item.AddFireStone(user.Id!, 100);
+                    Item.AddWaterStone(user.Id!, 100);
+                    Item.AddThunderStone(user.Id!, 100);
+                    Item.AddLeafStone(user.Id!, 100);
+                    Item.AddMoonStone(user.Id!, 100);
                     context.SaveChanges();
                 }
 
+                break;
+            case "test":
+            if (user.God) { await PokemonMax(session, user); } 
+                using (var context = new DatabaseContext())
+                {
+                    context.PokemonMaster
+                        .Where(p => p.OwnerId == user.Id)
+                        .ToList()
+                        .ForEach(p => p.Level = 100);
+                    context.PokemonMaster.UpdateRange(context.PokemonMaster);
+                    context.SaveChanges();
+                }
                 break;
             default:
                 await session.SendMessageAsync("Invalid choice. Please try again.");
@@ -87,12 +104,6 @@ public class ServerPokemon
             await session.SendMessageAsync("You have no Pokémon in your collection.");
             return;
         }
-
-        Item.AddFireStone(user.Id!, 100);
-        Item.AddWaterStone(user.Id!, 100);
-        Item.AddThunderStone(user.Id!, 100);
-        Item.AddLeafStone(user.Id!, 100);
-        Item.AddMoonStone(user.Id!, 100);
 
         foreach (var pokemon in pokemonList)
         {
@@ -302,20 +313,23 @@ public class ServerPokemon
                                 {
                                     // Track just the evolution, and let the context dispose
                                     string pokemonName = freshPokemon.Name!;
-                                    await session.SendMessageAsync($"Evolving {pokemonName}...");
+                                    await session.SendMessageAsync("------------------------------------------------------");
                                     await freshPokemon.Evolve(session);
-                                    await session.SendMessageAsync($"{pokemonName} evolved successfully!");
+                                    freshPokemon.ForgetTillFive();
+                                    await session.SendMessageAsync("------------------------------------------------------\n");
+                                    context.SaveChanges();
                                 }
                             } // Context is disposed here
+
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            await session.SendMessageAsync($"Error during evolution: {ex.Message}");
-                            Console.WriteLine($"Evolution error: {ex}");
+                            continue;
                         }
                     }
                     
                     await session.SendMessageAsync("Evolution process complete!");
+                    await session.GetInputAsync("\nInput any key to continue...");
                 }
                 else
                 {
@@ -337,8 +351,7 @@ public class ServerPokemon
                         if (foundPair.Key != null)
                         {
                             // Get original info before creating new context
-                            int pokemonDbId = int.Parse(foundPair.Key.Id!);
-                            string requiredItem = foundPair.Value;
+                            string pokemonDbId = foundPair.Key.Id!;
                             
                             // Use a fresh context for evolution
                             using (var freshContext = new DatabaseContext())
@@ -347,7 +360,11 @@ public class ServerPokemon
                                 
                                 if (freshPokemon != null)
                                 {
+                                    await session.SendMessageAsync("------------------------------------------------------");
                                     await freshPokemon.Evolve(session);
+                                    freshPokemon.ForgetTillFive();
+                                    await session.SendMessageAsync("------------------------------------------------------\n");
+                                    await session.GetInputAsync("Input any key to continue...");
                                 }
                                 else
                                 {
@@ -384,7 +401,7 @@ public class ServerPokemon
                         
                         if (foundPair != null)
                         {
-                            int pokemonDbId = int.Parse(foundPair.Id!);
+                            string pokemonDbId = foundPair.Id!;
                             
                             // Use a fresh context for evolution
                             using (var freshContext = new DatabaseContext())
@@ -397,7 +414,12 @@ public class ServerPokemon
                                     UserEvolve.Coins -= 100;
                                     freshContext.Users.Update(UserEvolve);
                                     freshContext.SaveChanges();
+                                    await session.SendMessageAsync("------------------------------------------------------");
                                     await freshPokemon.Evolve(session);
+                                    freshPokemon.ForgetTillFive();
+                                    await session.SendMessageAsync("------------------------------------------------------\n");
+                                    
+                                    await session.GetInputAsync("Input any key to continue...");
                                 }
                                 else
                                 {

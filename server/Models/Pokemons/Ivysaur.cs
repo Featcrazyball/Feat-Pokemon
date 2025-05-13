@@ -57,6 +57,12 @@ public class Ivysaur : PokemonMaster
                 var venusaur = new Venusaur(this);
                 venusaur.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(venusaur);
                 foreach (var skill in venusaur.Skills)
                 {
@@ -64,7 +70,6 @@ public class Ivysaur : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Ivysaur to a Venusaur!");

@@ -64,6 +64,12 @@ public class Weepinbell : PokemonMaster
             var victreebel = new Victreebel(this);
             victreebel.EvolveLevelUp(Level-1); // Level up to current level
 
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
             context.PokemonMaster.Add(victreebel);
             foreach (var skill in victreebel.Skills)
             {
@@ -71,7 +77,6 @@ public class Weepinbell : PokemonMaster
             }
 
             // Remove previous and add new Pokemon
-            context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
         await session.SendMessageAsync($"{Nickname} has evolved from a Weepinbell to a Victreebel!");

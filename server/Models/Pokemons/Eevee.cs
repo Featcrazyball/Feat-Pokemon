@@ -24,7 +24,6 @@ public class Eevee : PokemonMaster
 
     public override async Task Evolve(ClientSession session)
     {
-        await session.SendMessageAsync($"Eevee has 3 Evolution options: \n[1] Vaporeon (Water Stone)\n[2] Jolteon (Thunder Stone)\n[3] Flareon (Fire Stone). \nPlease choose one to evolve into.");
         string choice = await session.GetInputAsync($"Eevee has 3 Evolution options: \n[1] Vaporeon (Water Stone)\n[2] Jolteon (Thunder Stone)\n[3] Flareon (Fire Stone). \nPlease choose one to evolve into.");
 
         switch (choice)
@@ -40,17 +39,20 @@ public class Eevee : PokemonMaster
                         return;
                     }
 
+                    foreach (var skill in this.Skills)
+                    {
+                        context.Skills.Remove(skill);
+                    }
+
                     var vaporeon = new Vaporeon(this);
                     vaporeon.EvolveLevelUp(Level-1); // Level up to current level
-
+                    context.PokemonMaster.Remove(this);
                     context.PokemonMaster.Add(vaporeon);
                     foreach (var skill in vaporeon.Skills)
                     {
                         context.Skills.Add(skill);
                     }
 
-                    // Remove previous and add new Pokemon
-                    context.PokemonMaster.Remove(this);
                     context.SaveChanges();
                 }
                 await session.SendMessageAsync($"{Nickname} has evolved from an Eevee to a Vaporeon!");
@@ -66,17 +68,21 @@ public class Eevee : PokemonMaster
                         return;
                     }
 
+                    foreach (var skill in this.Skills)
+                    {
+                        context.Skills.Remove(skill);
+                    }
+
                     var jolteon = new Jolteon(this);
                     jolteon.EvolveLevelUp(Level-1); // Level up to current level
 
+                    context.PokemonMaster.Remove(this);
                     context.PokemonMaster.Add(jolteon);
                     foreach (var skill in jolteon.Skills)
                     {
                         context.Skills.Add(skill);
                     }
 
-                    // Remove previous and add new Pokemon
-                    context.PokemonMaster.Remove(this);
                     context.SaveChanges();
                 }
                 await session.SendMessageAsync($"{Nickname} has evolved from an Eevee to a Jolteon!");
@@ -92,17 +98,21 @@ public class Eevee : PokemonMaster
                         return;
                     }
 
+                    foreach (var skill in this.Skills)
+                    {
+                        context.Skills.Remove(skill);
+                    }
+
                     var flareon = new Flareon(this);
                     flareon.EvolveLevelUp(Level-1); // Level up to current level
 
+                    context.PokemonMaster.Remove(this);
                     context.PokemonMaster.Add(flareon);
                     foreach (var skill in flareon.Skills)
                     {
                         context.Skills.Add(skill);
                     }
 
-                    // Remove previous and add new Pokemon
-                    context.PokemonMaster.Remove(this);
                     context.SaveChanges();
                 }
                 await session.SendMessageAsync($"{Nickname} has evolved from an Eevee to a Flareon!");

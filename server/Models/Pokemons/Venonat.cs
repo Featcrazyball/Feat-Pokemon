@@ -30,6 +30,12 @@ public class Venonat : PokemonMaster
                 var venomoth = new Venomoth(this);
                 venomoth.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(venomoth);
                 foreach (var skill in venomoth.Skills)
                 {
@@ -37,7 +43,6 @@ public class Venonat : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Venonat to a Venomoth!");

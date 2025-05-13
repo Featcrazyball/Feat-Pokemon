@@ -30,7 +30,13 @@ public class Cubone : PokemonMaster
                 var marowak = new Marowak(this);
                 marowak.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
                 // Add the evolved Pokemon to the context
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(marowak);
                 
                 // Add all skills for the evolved Pokemon
@@ -38,9 +44,6 @@ public class Cubone : PokemonMaster
                 {
                     context.Skills.Add(skill);
                 }
-                
-                // Remove the original Pokemon
-                context.PokemonMaster.Remove(this);
                 
                 // Save all changes in a single transaction
                 context.SaveChanges();

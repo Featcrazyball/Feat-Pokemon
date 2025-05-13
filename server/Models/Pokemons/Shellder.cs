@@ -37,6 +37,12 @@ public class Shellder : PokemonMaster
             var cloyster = new Cloyster(this);
             cloyster.EvolveLevelUp(Level-1); // Level up to current level
 
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
             context.PokemonMaster.Add(cloyster);
             foreach (var skill in cloyster.Skills)
             {
@@ -44,7 +50,6 @@ public class Shellder : PokemonMaster
             }
 
             // Remove previous and add new Pokemon
-            context.PokemonMaster.Remove(this);
             context.SaveChanges();
         }
         await session.SendMessageAsync($"{Nickname} has evolved from a Shellder to a Cloyster!");

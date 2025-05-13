@@ -58,14 +58,18 @@ public class Haunter : PokemonMaster
                 var gengar = new Gengar(this);
                 gengar.EvolveLevelUp(Level-1); 
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(gengar);
                 foreach (var skill in gengar.Skills)
                 {
                     context.Skills.Add(skill);
                 }
 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Haunter to a Gengar!");

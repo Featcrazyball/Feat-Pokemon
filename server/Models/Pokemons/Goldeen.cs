@@ -30,14 +30,18 @@ public class Goldeen : PokemonMaster
                 var seaking = new Seaking(this);
                 seaking.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(seaking);
                 foreach (var skill in seaking.Skills)
                 {
                     context.Skills.Add(skill);
                 }
 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Goldeen to a Seaking!");

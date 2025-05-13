@@ -30,6 +30,12 @@ public class Oddish : PokemonMaster
                 var gloom = new Gloom(this);
                 gloom.EvolveLevelUp(Level-1);
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(gloom);
                 foreach (var skill in gloom.Skills)
                 {
@@ -37,7 +43,6 @@ public class Oddish : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Oddish to a Gloom!");

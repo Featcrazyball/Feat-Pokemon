@@ -56,16 +56,18 @@ public class Doduo : PokemonMaster
             {
                 var dodrio = new Dodrio(this);
                 dodrio.EvolveLevelUp(Level-1);
-
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
                 // Add skills for the evolved Pokemon
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(dodrio);
                 foreach (var skill in dodrio.Skills)
                 {
                     context.Skills.Add(skill);
                 }
                 
-                // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Doduo to a Dodrio!");

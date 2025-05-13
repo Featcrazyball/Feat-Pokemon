@@ -30,6 +30,12 @@ public class Spearow : PokemonMaster
                 var fearow = new Fearow(this);
                 fearow.EvolveLevelUp(Level-1); // Level up to 20
 
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
                 context.PokemonMaster.Add(fearow);
                 foreach (var skill in fearow.Skills)
                 {
@@ -37,7 +43,6 @@ public class Spearow : PokemonMaster
                 }
 
                 // Remove previous and add new Pokemon
-                context.PokemonMaster.Remove(this);
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{Nickname} has evolved from a Spearow to a Fearow!");
