@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using PokemonPocket;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 public class ViewPokemonFunc
 {
@@ -203,6 +204,7 @@ $"-----------------------------------------\n"
             
             case "F":
                 var futureMenu = new StringBuilder();
+                var listPoki = new Dictionary<string, int>();
                 futureMenu.AppendLine(@"
 ╔═══════════════════════════════ EVOLUTION MENU ═══════════════════════════════╗
 ║                                                                              ║
@@ -210,11 +212,17 @@ $"-----------------------------------------\n"
 
                 foreach (var pokemon in pokemonList)
                 {
-                    string evolvableFuture  = pokemon.CheckEvolve();
+                    if (listPoki.ContainsKey(pokemon.Name!))
+                    {
+                        listPoki[pokemon.Name!] += 1;
+                        continue;
+                    }
+                    string evolvableFuture = pokemon.CheckEvolve();
                     if (evolvableFuture.Contains("true"))
                     {
+                        listPoki[pokemon.Name!] = 1;
                         string displayName = pokemon.Nickname == "None" ? pokemon.Name! : pokemon.Nickname!;
-                        string evolveName = pokemon.EvolvesTo!;
+                        string evolveName = pokemon.EvolvesTo ?? "Unknown";
 
                         futureMenu.AppendLine($"║                                                                              ║");
                         futureMenu.AppendLine($"║  {displayName.PadRight(18)} | Evolves to: {evolveName.PadRight(25)}  ║               ║");
@@ -225,14 +233,50 @@ $"-----------------------------------------\n"
                 futureMenu.AppendLine($"║                                                                              ║");
                 futureMenu.AppendLine($"╚══════════════════════════════════════════════════════════════════════════════╝");
                 await session.SendMessageAsync(futureMenu.ToString());
-                await session.GetInputAsync("Input any key to continue...");
 
+                string whetherList = await session.GetInputAsync("Would you like to see a compiled list of all evolveable Pokémon (Assignment)? (Y/N):");
+                switch (whetherList.ToUpper())
+                {
+                    case "Y":
+                        var listMenu = new StringBuilder();
+                        listMenu.AppendLine(@"
+╔═══════════════════════════════ EVOLUTION MENU ═══════════════════════════════╗
+║                                                                              ║
+║  🔮 The following Pokémon can currently evolve into the following forms:     ║");
+
+                        foreach (var pokemonEntry in listPoki)
+                        {
+                            string pokemonName = pokemonEntry.Key;
+                            int count = pokemonEntry.Value;
+
+                            var pokemonInfo = pokemonList.FirstOrDefault(p => p.Name == pokemonName);
+                            if (pokemonInfo != null && pokemonInfo.CheckEvolve().Contains("true"))
+                            {
+                                string displayName = $"{count} {pokemonName}";
+                                string evolveName = pokemonInfo.EvolvesTo ?? "Unknown";
+
+                                listMenu.AppendLine($"║                                                                              ║");
+                                listMenu.AppendLine($"║  {displayName.PadRight(18)} | Evolves to: {evolveName.PadRight(25)}  ║               ║");
+                            }
+                        }
+                        listMenu.AppendLine($"║                                                                              ║");
+                        listMenu.AppendLine($"║  💡 Visit the shop to purchase evolutionary stones                           ║");
+                        listMenu.AppendLine($"║                                                                              ║");
+                        listMenu.AppendLine($"╚══════════════════════════════════════════════════════════════════════════════╝");
+                        await session.SendMessageAsync(listMenu.ToString());
+                        await session.GetInputAsync("Input any key to continue...");
+                        break;
+
+                    default:
+                        await session.GetInputAsync("Input any key to continue...");
+                        break;
+                }
                 break;
-            
+
             default:
+                await session.GetInputAsync("Input any key to continue...");
                 break;
         }
-
 
     }
 }

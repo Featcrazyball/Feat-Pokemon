@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using Models;
 
 namespace Server;
 
@@ -6,18 +8,29 @@ public class Shop
 {
     public static async Task ShopMenu(ClientSession session)
     {
-        await session.SendMessageAsync("Welcome to the Shop!");
-        await session.SendMessageAsync("┌───────────────────────────────────┐\n│         Shop Menu                 │\n└───────────────────────────────────┘");
-        await session.SendMessageAsync("[1] Buy Item");
-        await session.SendMessageAsync("[2] Sell Item");
-        await session.SendMessageAsync("[3] Exit");
+        await session.SendMessageAsync(@"
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║      ✨✨✨✨✨✨✨✨✨    SHOP MENU    ✨✨✨✨✨✨✨✨✨                  ║    
+║                                                                              ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║    [1] 🔥 SHOP   │ Buy Items from Shop                                       ║
+║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
+║    [2] 💰 IVENTORY │ View Your Current Inventory                             ║
+║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
+║    [3] 💬 BACK   │ Return to Trainer Menu                                    ║
+║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+");
 
         string choice = await session.GetInputAsync("Please enter your choice:");
 
         switch (choice)
         {
             case "1":
-                // Buy item logic
+                await ShopBuy.BuyItem(session);
                 break;
             case "2":
                 // Sell item logic
