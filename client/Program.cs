@@ -166,7 +166,8 @@ namespace Client
                 "Enter the number of points to allocate:",
                 "Please choose one to evolve into.",
                 "Choice:",
-                "Would you like to see a compiled list of all evolveable Pokémon (Assignment)? (Y/N):"
+                "Would you like to see a compiled list of all evolveable Pokémon (Assignment)? (Y/N):",
+                "How many XP Bottles would you like to purchase?:"
             };
 
             foreach (var str in s) { if (m.Contains(str)) { return true; }}  

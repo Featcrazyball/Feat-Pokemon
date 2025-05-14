@@ -1,12 +1,10 @@
-namespace Server;
 using Database;
+using PokemonPocket;
 using Models;
 using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using PokemonPocket;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+
+namespace Server;
 
 public class ViewPokemonFunc
 {
@@ -49,7 +47,7 @@ $"Defense: {pokemon.MaxDefense}\n" +
 $"Sp. Attack: {pokemon.MaxSpecialAttack}\n" +
 $"Sp. Defense: {pokemon.MaxSpecialDefense}\n" +
 $"Speed: {pokemon.MaxSpeed}\n" +
-$"Crit Rate: {pokemon.CritRate}\n" +
+$"Crit Rate: {Math.Min(pokemon.CritRate * 100, 99.6f).ToString("F2").TrimEnd('0').TrimEnd('.')}%\n" +
 $"Stat Points: {pokemon.StatPoints}\n" +
 $"Skills: {string.Join(", ", pokemon.Skills.Select(s => s.Name))}\n"+
 $"Evolve Requirements: {pokemon.Requirements}\n" +
@@ -68,9 +66,13 @@ $"-----------------------------------------\n"
                                         "[N] Nickname Pokémon\n" +
                                         "[P] Allocate Stat Points\n" +
                                         "[D] Damage Calculator (Assignment)\n" +
-                                        "[F] Future Evolutions\n" );
+                                        "[F] Future Evolutions\n" +
+                                        "[L] Level Up Pokémon\n"
+                                        );
             
         // Handle user input for actions
+
+
         string userChoice = await session.GetInputAsync("Choice:");
 
         switch (userChoice.ToUpper())
@@ -202,9 +204,33 @@ $"-----------------------------------------\n"
                 }
                 break;
             
+            case "L":
+                // Level up Pokémon
+                string levelUpNumber = await session.GetInputAsync("Enter the number of the Pokémon to level up:");
+                if (int.TryParse(levelUpNumber, out index) && index > 0 && index <= pokemonList.Count)
+                {
+                    var selectedPokemon = pokemonList[index-1];
+
+                    int times = selectedPokemon.Experience / 1000;
+
+                    await session.SendMessageAsync("------------------------------------------------------------------------------------");
+                    await selectedPokemon.LevelUp(times, session);
+                    await session.SendMessageAsync("------------------------------------------------------------------------------------");
+                    context.PokemonMaster.Update(selectedPokemon);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    await session.SendMessageAsync("Invalid Pokémon number.");
+                }
+
+                await session.GetInputAsync("Input any key to continue...");
+                break;
+
             case "F":
                 var futureMenu = new StringBuilder();
                 var listPoki = new Dictionary<string, int>();
+                
                 futureMenu.AppendLine(@"
 ╔═══════════════════════════════ EVOLUTION MENU ═══════════════════════════════╗
 ║                                                                              ║
@@ -274,6 +300,7 @@ $"-----------------------------------------\n"
                 break;
 
             default:
+                await session.SendMessageAsync("Invalid choice. Returning to main menu...");
                 await session.GetInputAsync("Input any key to continue...");
                 break;
         }

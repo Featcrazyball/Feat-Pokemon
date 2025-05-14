@@ -37,9 +37,9 @@ public class Client
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
 ║    [4] 📋 LINEUP       │ Prepare Your Battle Team                            ║
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
-║    [5] ⚔️ ARENA        │ Challenge Trainers Worldwide                         ║
+║    [5] ⚔️ ARENA        │ Challenge Trainers Worldwide                        ║
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
-║    [6] ⚙️ SETTINGS     │ Configure Your Trainer Profile                       ║
+║    [6] ⚙️ SETTINGS     │ Configure Your Trainer Profile                      ║
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
 ║    [7] 🚪 EXIT         │ Save & Return to Real World                         ║
 ║                                                                              ║

@@ -46,8 +46,14 @@ namespace PokemonPocket
         [NotMapped] public int AccuracyStage {get;set;} = 0;
         [NotMapped] public int EvasionStage {get;set;} = 0;
 
-        [NotMapped] public float CritRate {get;set;}
-        [NotMapped] public float CritDmg {get;set;} = 1.5f; // Crit Damage
+        public float CritDmg {get;set;} = 1.5f; // Crit Damage
+
+        private float _critRate {get;set;} // Crit Rate
+        public float CritRate
+        {
+            get => _critRate == 0 ? MaxSpeed / 512 : _critRate;
+            set => _critRate = value; 
+        }
 
         // Extra Info
         public int StatPoints {get;set;}
@@ -190,7 +196,8 @@ namespace PokemonPocket
             Defense = MaxDefense;
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
-            CritRate = MaxSpeed/512;
+
+            _critRate = 0;
         }
 
         public PokemonMaster(PokemonMaster poke)
@@ -225,7 +232,7 @@ namespace PokemonPocket
             SpecialDefenseStage = 0;
             SpeedStage = 0;
 
-            CritRate = MaxSpeed/512;
+            _critRate = 0;
             CritDmg = poke.CritDmg;
         }
 
@@ -322,7 +329,6 @@ namespace PokemonPocket
                 if (Experience > Level * 1000 && Level < 101) {
                     // Stat Upgrades
                     Level += 1;
-                    Experience = 0;
                     MaxHealth += (MaxHealth + HpIV) / 50 + Level + 10;
                     MaxAttack += (MaxAttack + AttackIV) / 8 + 1; 
                     MaxSpecialAttack += (MaxSpecialAttack + SpecialAttackIV) / 8 + 1; 
@@ -343,6 +349,7 @@ namespace PokemonPocket
             Defense = MaxDefense;
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
+            CritRate = MaxSpeed/512;
         }
 
         // For Leveling Up
@@ -353,7 +360,7 @@ namespace PokemonPocket
                 if (Experience > Level * 1000 && Level < 101) {
                     // Stat Upgrades
                     Level += 1;
-                    Experience = 0;
+                    Experience -= 1000;
                     MaxHealth += (MaxHealth + HpIV) / 50 + Level + 10;
                     MaxAttack += (MaxAttack + AttackIV) / 8 + 1; 
                     MaxSpecialAttack += (MaxSpecialAttack + SpecialAttackIV) / 8 + 1; 
@@ -370,7 +377,7 @@ namespace PokemonPocket
 
                     // Max Level Check
                     if (Level >= 100) { await session.SendMessageAsync($"Your {Name} has reached a max level of 100!"); break;}
-                }
+                } 
             }
             Health = MaxHealth;
             Attack = MaxAttack;
@@ -378,6 +385,7 @@ namespace PokemonPocket
             Defense = MaxDefense;
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
+            CritRate = MaxSpeed/512;
         }
 
         // Check if can evolve
