@@ -33,7 +33,7 @@ public class Shop
                 await ShopBuy.BuyItem(session);
                 break;
             case "2":
-                // Sell item logic
+                await ShopInventory.InventoryMenu(session);
                 break;
             case "3":
                 // Exit shop

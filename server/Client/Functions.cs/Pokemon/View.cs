@@ -230,7 +230,7 @@ $"-----------------------------------------\n"
             case "F":
                 var futureMenu = new StringBuilder();
                 var listPoki = new Dictionary<string, int>();
-                
+                int evolvableList = 0;
                 futureMenu.AppendLine(@"
 ╔═══════════════════════════════ EVOLUTION MENU ═══════════════════════════════╗
 ║                                                                              ║
@@ -246,18 +246,33 @@ $"-----------------------------------------\n"
                     string evolvableFuture = pokemon.CheckEvolve();
                     if (evolvableFuture.Contains("true"))
                     {
+                        if (pokemon.Requirements == "Trade")
+                        {
+                            if (user.Coins < 300)
+                            {
+                                continue;
+                            }
+                        }
                         listPoki[pokemon.Name!] = 1;
                         string displayName = pokemon.Nickname == "None" ? pokemon.Name! : pokemon.Nickname!;
                         string evolveName = pokemon.EvolvesTo ?? "Unknown";
 
                         futureMenu.AppendLine($"║                                                                              ║");
-                        futureMenu.AppendLine($"║  {displayName.PadRight(18)} | Evolves to: {evolveName.PadRight(25)}  ║               ║");
+                        futureMenu.AppendLine($"║  {displayName.PadRight(18)} --> Evolves to: {evolveName.PadRight(25)}  ║             ║");
                     }
                 }
                 futureMenu.AppendLine($"║                                                                              ║");
                 futureMenu.AppendLine($"║  💡 Visit the shop to purchase evolutionary stones                           ║");
                 futureMenu.AppendLine($"║                                                                              ║");
                 futureMenu.AppendLine($"╚══════════════════════════════════════════════════════════════════════════════╝");
+                
+                if (evolvableList == 0)
+                {
+                    await session.SendMessageAsync("No Pokémon can evolve at this time.");
+                    await session.GetInputAsync("Input any key to continue...");
+                    break;
+                }
+                
                 await session.SendMessageAsync(futureMenu.ToString());
 
                 string whetherList = await session.GetInputAsync("Would you like to see a compiled list of all evolveable Pokémon (Assignment)? (Y/N):");
@@ -265,6 +280,7 @@ $"-----------------------------------------\n"
                 {
                     case "Y":
                         var listMenu = new StringBuilder();
+                        
                         listMenu.AppendLine(@"
 ╔═══════════════════════════════ EVOLUTION MENU ═══════════════════════════════╗
 ║                                                                              ║
@@ -278,18 +294,67 @@ $"-----------------------------------------\n"
                             var pokemonInfo = pokemonList.FirstOrDefault(p => p.Name == pokemonName);
                             if (pokemonInfo != null && pokemonInfo.CheckEvolve().Contains("true"))
                             {
+                                
                                 string displayName = $"{count} {pokemonName}";
                                 string evolveName = pokemonInfo.EvolvesTo ?? "Unknown";
 
                                 listMenu.AppendLine($"║                                                                              ║");
-                                listMenu.AppendLine($"║  {displayName.PadRight(18)} | Evolves to: {evolveName.PadRight(25)}  ║               ║");
+                                listMenu.AppendLine($"║  {displayName.PadRight(18)} --> Evolves to: {evolveName.PadRight(25)}  ║             ║");
                             }
                         }
                         listMenu.AppendLine($"║                                                                              ║");
                         listMenu.AppendLine($"║  💡 Visit the shop to purchase evolutionary stones                           ║");
                         listMenu.AppendLine($"║                                                                              ║");
                         listMenu.AppendLine($"╚══════════════════════════════════════════════════════════════════════════════╝");
+
                         await session.SendMessageAsync(listMenu.ToString());
+
+                        string evolveChoice = await session.GetInputAsync("Would you like to evolve ALL the pokemon in the list? (Assignment) (Y/N):");
+
+                        if (evolveChoice.ToUpper() == "Y")
+                        {
+                            List<string> evolvablePokemonIds = new List<string>();
+                            foreach (var pokemonEntry in pokemonList)
+                            {
+                                if (pokemonEntry.CheckEvolve().Contains("true"))
+                                {
+                                    evolvablePokemonIds.Add(pokemonEntry.Id!);
+                                }
+                            }
+
+                            foreach (var pokemonId in evolvablePokemonIds)
+                            {
+                                var pokemonToEvolve = context.PokemonMaster.FirstOrDefault(p => p.Id == pokemonId);
+
+                                if (pokemonToEvolve == null)
+                                {
+                                    await session.SendMessageAsync($"Pokémon with ID {pokemonId} not found.");
+                                    continue;
+                                }
+
+                                if (pokemonToEvolve.Requirements == "Trade")
+                                {
+                                    if (user.Coins > 300)
+                                    {
+                                        user.Coins -= 300;
+                                        context.Users.Update(user);
+                                        context.SaveChanges();
+                                    }
+                                    else
+                                    {
+                                        await session.SendMessageAsync($"You do not have enough coins to evolve {(pokemonToEvolve.Nickname == "None" ? pokemonToEvolve.Name : pokemonToEvolve.Nickname)}.");
+                                        continue;
+                                    }
+                                }
+
+                                pokemonToEvolve.Evolve(session).Wait();
+                            }
+                        }
+                        else
+                        {
+                            await session.SendMessageAsync("No Pokémon were evolved.");
+                        }
+
                         await session.GetInputAsync("Input any key to continue...");
                         break;
 

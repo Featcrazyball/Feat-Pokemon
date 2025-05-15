@@ -265,21 +265,22 @@ public class ShopBuy
                         }
                     }
 
-                    await session.SendMessageAsync("╔══════════════════════════════════════════════════════════════════════════════╗");
-                    await session.SendMessageAsync("║                              YOUR POKÉMON                                    ║");
-                    await session.SendMessageAsync("╠══════════════════════════════════════════════════════════════════════════════╣");
-                    await session.SendMessageAsync("║   #   │ Name                          │ Level   │ XP                         ║");
-                    await session.SendMessageAsync("╠═══════╪═══════════════════════════════╪═════════╪════════════════════════════╣");
+                    StringBuilder sendMessage = new StringBuilder();
+                    sendMessage.AppendLine("╔══════════════════════════════════════════════════════════════════════════════╗");
+                    sendMessage.AppendLine("║                              YOUR POKÉMON                                    ║");
+                    sendMessage.AppendLine("╠══════════════════════════════════════════════════════════════════════════════╣");
+                    sendMessage.AppendLine("║   #   │ Name                          │ Level   │ XP                         ║");
+                    sendMessage.AppendLine("╠═══════╪═══════════════════════════════╪═════════╪════════════════════════════╣");
 
                     for (int i = 0; i < UserPokemonList.Count; i++)
                     {
                         var pokemon = UserPokemonList[i];
                         var displayName = pokemon.Nickname == "None" ? pokemon.Name : pokemon.Nickname;
-                        await session.SendMessageAsync($"║   {i + 1,-3} │ {displayName,-30} │ {pokemon.Level,-7} │ {pokemon.Experience,-25} ║");
+                        sendMessage.AppendLine($"║   {i + 1,-3} │ {displayName,-29} │ {pokemon.Level,-7} │ {pokemon.Experience,-26} ║");
                     }
 
-                    await session.SendMessageAsync("╚══════════════════════════════════════════════════════════════════════════════╝");
-                    
+                    sendMessage.AppendLine("╚══════════════════════════════════════════════════════════════════════════════╝");
+                    await session.SendMessageAsync(sendMessage.ToString());
 
                     while (true)
                     {
@@ -291,9 +292,14 @@ public class ShopBuy
                             var selectedPokemon = UserPokemonList[index - 1];
                             selectedPokemon.Experience += parsedNumber * 1000;
                             var displayName = selectedPokemon.Nickname == "None" ? selectedPokemon.Name : selectedPokemon.Nickname;
-                            await session.SendMessageAsync("\n----------------------------------------------------------------------\n");
-                            await session.SendMessageAsync($"You have used {parsedNumber} XP Bottles on {displayName}.\n");
-                            await session.SendMessageAsync("----------------------------------------------------------------------\n");
+
+                            StringBuilder stringBuilder = new StringBuilder();
+
+
+                            stringBuilder.AppendLine("----------------------------------------------------------------------\n");
+                            stringBuilder.AppendLine($"You have used {parsedNumber} XP Bottles on {displayName}.\n");
+                            stringBuilder.AppendLine("----------------------------------------------------------------------\n");
+                            await session.SendMessageAsync(stringBuilder.ToString());
 
                             // Update the user's coins
                             user.Coins -= 500 * parsedNumber;

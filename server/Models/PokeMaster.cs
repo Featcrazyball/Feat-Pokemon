@@ -207,12 +207,12 @@ namespace PokemonPocket
             Nickname = poke.Nickname;
             Type = poke.Type;
             Level = poke.Level;
-            Experience = poke.Experience;
+            Experience = 0; // Assignment
             Requirements = poke.Requirements;
             Evolvable = poke.Evolvable;
 
             // Feat's Features
-            Health = poke.Health;
+            Health = 100; //Assignment
             Attack = poke.Attack;
             SpecialAttack = poke.SpecialAttack;
             Defense = poke.Defense;
@@ -391,7 +391,21 @@ namespace PokemonPocket
         // Check if can evolve
         public string CheckEvolve()
         {
-            if (Name == "Eevee") {return "true item | 1 WFT Stone";}
+            if (Name == "Eevee")
+            {
+                using var context = new DatabaseContext();
+
+                var item1 = context.Items.Where(i => i.Name == "Water Stone" && i.OwnerId == OwnerId);
+                var item2 = context.Items.Where(i => i.Name == "Fire Stone" && i.OwnerId == OwnerId);
+                var item3 = context.Items.Where(i => i.Name == "Leaf Stone" && i.OwnerId == OwnerId);
+
+                if (item1.Any() || item2.Any() || item3.Any())
+                {
+                    return "true item | 1 WFT Stone";
+                } else {
+                    return "false item";
+                }
+            }
             if (Requirements!.Contains("Level"))
             {
                 int req = int.Parse(Requirements.Split(' ')[1]);

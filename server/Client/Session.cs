@@ -8,12 +8,21 @@ namespace Server
     {
         private Socket _client;
         public string PlayerId { get; private set; }
-        public string? Username { get; set; } 
+        public string? Username { get; set; }
+        public bool InChat { get; set; } = false;
         
+        // All Clients
+        public static readonly List<ClientSession> _allClients = new List<ClientSession>();
+
         public ClientSession(Socket client, string playerId)
         {
             _client = client;
             PlayerId = playerId;
+
+            lock (_allClients)
+            {
+                _allClients.Add(this);
+            }
         }
         
         // Replace Console.WriteLine - sends messages to the client
@@ -42,5 +51,10 @@ namespace Server
             return Encoding.UTF8.GetString(buffer, 0, received);
         }
         
+        // Get all clients connected to the server
+        public static List<ClientSession> GetAllClients()
+        {
+            return _allClients.ToList();
+        }
     }
 }

@@ -206,6 +206,9 @@ namespace Server
                                 {
                                     newUser.God = true;
                                     newUser.Coins = 1000000;
+                                } else{
+                                    newUser.God = false;
+                                    newUser.Coins = 100;
                                 }
                                 
                                 // Save the user FIRST to get a valid database ID
@@ -299,7 +302,15 @@ namespace Server
             catch (Exception ex)
             {
                 Console.WriteLine($"Error handling client: {ex.Message}");
+                
+                _activeSessions.TryRemove(playerId, out _);
+                
+                if (!string.IsNullOrEmpty(session.Username))
+                {
+                    RemoveUsername(session.Username);
+                }
                 await session.SendMessageAsync("An error occurred. Disconnecting...");
+                
                 try
                 {
                     client.Shutdown(SocketShutdown.Both);

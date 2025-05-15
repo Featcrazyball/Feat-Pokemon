@@ -167,7 +167,12 @@ namespace Client
                 "Please choose one to evolve into.",
                 "Choice:",
                 "Would you like to see a compiled list of all evolveable Pokémon (Assignment)? (Y/N):",
-                "How many XP Bottles would you like to purchase?:"
+                "How many XP Bottles would you like to purchase?:",
+                "Would you like to evolve ALL the pokemon in the list? (Y/N):",
+                "Would you like to evolve ALL the pokemon in the list? (Assignment) (Y/N):",
+                "Message:",
+                "Choose a Pokémon to use the XP Bottle on:"
+                
             };
 
             foreach (var str in s) { if (m.Contains(str)) { return true; }}  

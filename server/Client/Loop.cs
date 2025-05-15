@@ -57,11 +57,9 @@ public class Client
                     break;
                 case "2":
                     await Shop.ShopMenu(session);
-                    // Shop (using coins/Stats) (god gets stuff for free)
-                    // Coins can be used to buy items for xp which can also be used to buy items
-                    // Coins can be earned via p2w or by winning battles
                     break;
                 case "3":
+                    await Chat.ChatMenu(session);
                     // Chat Area
                     break;
                 case "4":
