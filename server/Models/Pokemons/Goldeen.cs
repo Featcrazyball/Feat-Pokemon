@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Goldeen : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 45;
     public override string? Requirements { get; set; } = "Level 33";
     public override string? EvolvesTo {get;set;} = "Seaking";
     private Goldeen() { } //For EF Core

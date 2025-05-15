@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Caterpie : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 45;
     public override string? Requirements { get; set; } = "Level 7";
     public override string? EvolvesTo {get;set;} = "Metapod";
     private Caterpie() { } //For EF Core

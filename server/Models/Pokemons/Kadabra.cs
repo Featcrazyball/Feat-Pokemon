@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Kadabra : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 40;
     public override string? Requirements { get; set; } = "Trade";
     public override string? EvolvesTo {get;set;} = "Alakazam";
     private Kadabra() { } //For EF Core

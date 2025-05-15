@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Pidgeot : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 83;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Pidgeot() { } //For EF Core
     public Pidgeot(string nickname, string ownerId) 

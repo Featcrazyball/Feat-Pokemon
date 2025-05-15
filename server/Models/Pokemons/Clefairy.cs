@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Clefairy : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 70;
     public override string? Requirements { get; set; } = "1 Moon Stone";
     public override string? EvolvesTo {get;set;} = "Clefable";
     private Clefairy() { } //For EF Core

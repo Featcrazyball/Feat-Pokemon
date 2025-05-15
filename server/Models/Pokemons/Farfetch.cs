@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Farfetch : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 52;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Farfetch() { } //For EF Core
     public Farfetch(string nickname, string ownerId) 

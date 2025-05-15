@@ -4,6 +4,7 @@ using Database;
 namespace PokemonPocket;
 public class Gyarados : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 95;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Gyarados() { } //For EF Core
     public Gyarados(string nickname, string ownerId) 

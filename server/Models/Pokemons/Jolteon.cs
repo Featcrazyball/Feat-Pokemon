@@ -5,6 +5,7 @@ namespace PokemonPocket;
 
 public class Jolteon : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 65;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Jolteon() { } //For EF Core
     public Jolteon(string nickname, string ownerId) 

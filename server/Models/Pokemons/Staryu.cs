@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Staryu : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 30;
     public override string? Requirements { get; set; } = "1 Water Stone";
     public override string? EvolvesTo {get;set;} = "Starmie";
     private Staryu() { } //For EF Core

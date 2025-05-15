@@ -23,6 +23,9 @@ namespace PokemonPocket
         public bool Evolvable {get;set;} = false;
         public virtual string? EvolvesTo {get;set;}
 
+        // To overwrite Assignment
+        public virtual float HealthOverride {get;set;} = 0;
+
         // Feat's Features
         [NotMapped] public float Health {get;set;}
         [NotMapped] public float Attack {get;set;}
@@ -200,6 +203,7 @@ namespace PokemonPocket
             _critRate = 0;
         }
 
+        // Evolution
         public PokemonMaster(PokemonMaster poke)
         {
             Id = poke.Id;

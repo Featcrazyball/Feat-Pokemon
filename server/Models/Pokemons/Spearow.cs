@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Spearow : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 40;
     public override string? Requirements { get; set; } = "Level 20";
     public override string? EvolvesTo {get;set;} = "Fearow";
     private Spearow() { } //For EF Core

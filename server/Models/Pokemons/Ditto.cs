@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Ditto : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 48;
     public override string? Requirements { get; set; } = "Unevolvable";
     
     private Ditto() { } //For EF Core

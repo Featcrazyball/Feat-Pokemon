@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Poliwrath : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 90;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Poliwrath() { } //For EF Core
     public Poliwrath(string nickname, string ownerId) 

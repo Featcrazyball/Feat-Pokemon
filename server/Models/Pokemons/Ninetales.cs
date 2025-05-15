@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Ninetales : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 73;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Ninetales() { } //For EF Core
     public Ninetales(string nickname, string ownerId) 

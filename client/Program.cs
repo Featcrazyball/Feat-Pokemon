@@ -16,7 +16,7 @@ namespace Client
                 // Connect to server
                 Console.WriteLine("Connecting to server...");
                 // IPAddress ip = IPAddress.Parse("39.109.136.104");
-                IPAddress ip = IPAddress.Parse("172.27.190.81");
+                IPAddress ip = IPAddress.Parse("192.168.86.250");
                 IPEndPoint iPEndPoint = new(ip, 8000);
 
                 using Socket client = new(
@@ -172,7 +172,11 @@ namespace Client
                 "Would you like to evolve ALL the pokemon in the list? (Assignment) (Y/N):",
                 "Message:",
                 "Choose a Pokémon to use the XP Bottle on:",
-                "Enter your new email address (\"cancel\" to return to Settings):"
+                "Enter your new email address (\"cancel\" to return to Settings):",
+                "Enter your old password (\"cancel\" to return to Settings):",
+                "Enter your new password:",
+                "Confirm your new password:",
+                "Enter your new username (\"cancel\" to return to Settings):",
                 
             };
 

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Clefable : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 95;
     public override string? Requirements { get; set; } = "Unevolvable";
 
     private Clefable() { } //For EF Core

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Poliwag : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 40;
     public override string? Requirements { get; set; } = "Level 25";
     public override string? EvolvesTo {get;set;} = "Poliwhirl";
     private Poliwag() { } //For EF Core

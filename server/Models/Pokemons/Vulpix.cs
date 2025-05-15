@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Vulpix : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 38;
     public override string? Requirements { get; set; } = "1 Fire Stone";
     public override string? EvolvesTo {get;set;} = "Ninetales";
     private Vulpix() { } //For EF Core

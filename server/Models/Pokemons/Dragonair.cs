@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Dragonair : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 61;
     public override string? Requirements { get; set; } = "Level 55";
     public override string? EvolvesTo {get;set;} = "Dragonite";
     private Dragonair() { } //For EF Core

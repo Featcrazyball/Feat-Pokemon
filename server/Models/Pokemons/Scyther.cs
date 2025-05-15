@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Scyther : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 70;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Scyther() { } //For EF Core
     public Scyther(string nickname, string ownerId) 

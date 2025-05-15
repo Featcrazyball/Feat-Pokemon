@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Zapdos : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 90;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Zapdos() { } //For EF Core
     public Zapdos(string nickname, string ownerId) 

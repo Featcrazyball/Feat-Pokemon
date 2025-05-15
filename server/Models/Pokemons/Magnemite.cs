@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Magnemite : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 25;
     public override string? Requirements { get; set; } = "Level 30";
     public override string? EvolvesTo {get;set;} = "Magneton";
     private Magnemite() { } //For EF Core

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Slowbro : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 95;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Slowbro() { } //For EF Core
     public Slowbro(string nickname, string ownerId) 

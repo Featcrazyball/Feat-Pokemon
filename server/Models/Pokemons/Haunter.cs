@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Haunter : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 45;
     public override string? Requirements { get; set; } = "Trade";
     public override string? EvolvesTo {get;set;} = "Gengar";
     private Haunter() { } //For EF Core

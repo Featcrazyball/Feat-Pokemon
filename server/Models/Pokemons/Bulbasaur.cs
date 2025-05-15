@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Bulbasaur : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 45;
     public override string? Requirements { get; set; } = "Level 16";
     public override string? EvolvesTo {get;set;} = "Ivysaur";
 

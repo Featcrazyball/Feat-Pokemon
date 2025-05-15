@@ -4,7 +4,9 @@ namespace PokemonPocket;
 
 public class Aerodactyl : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 80;
     public override string? Requirements { get; set; } = "Unevolvable";
+    
     private Aerodactyl() { } //For EF Core
     public Aerodactyl(string nickname, string ownerId) 
     : base("Aerodactyl", "Rock/Flying", 80, 105, 65, 60, 75, 130, ownerId, 20, "Pressure")

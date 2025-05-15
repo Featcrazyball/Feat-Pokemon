@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Lapras : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 130;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Lapras() { } //For EF Core
     public Lapras(string nickname, string ownerId) 

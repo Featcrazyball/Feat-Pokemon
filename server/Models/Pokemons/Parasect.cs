@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Parasect : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 60;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Parasect() { } //For EF Core
     public Parasect(string nickname, string ownerId) 

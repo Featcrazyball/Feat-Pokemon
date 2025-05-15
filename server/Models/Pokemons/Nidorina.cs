@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Nidorina : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 70;
     public override string? Requirements { get; set; } = "1 Moon Stone";
     public override string? EvolvesTo {get;set;} = "Nidoqueen";
     private Nidorina() { } //For EF Core

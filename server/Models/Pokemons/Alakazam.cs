@@ -4,7 +4,9 @@ namespace PokemonPocket;
 
 public class Alakazam : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 55;
     public override string? Requirements { get; set; } = "Unevolvable";
+
     private Alakazam() { } //For EF Core
     public Alakazam(string nickname, string ownerId) 
     : base("Alakazam", "Psychic", 55, 50, 45, 135, 95, 120, ownerId, 20, "Synchronize")

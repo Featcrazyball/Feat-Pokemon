@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Krabby : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 30;
     public override string? Requirements { get; set; } = "Level 28";
     public override string? EvolvesTo {get;set;} = "Kingler";
     private Krabby() { } //For EF Core

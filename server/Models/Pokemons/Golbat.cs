@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Golbat : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 75;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Golbat() { } //For EF Core
     public Golbat(string nickname, string ownerId) 

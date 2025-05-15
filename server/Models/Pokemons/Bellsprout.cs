@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Bellsprout : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 50;
     public override string? Requirements { get; set; } = "Level 21";
     public override string? EvolvesTo {get;set;} = "Weepinbell";
 

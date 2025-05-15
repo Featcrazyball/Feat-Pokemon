@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Eevee : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 55;
     public override string? Requirements { get; set; } = "1 Water Stone/Thunder Stone/Fire Stone";
     public override string? EvolvesTo {get;set;} = "Vaporeon/Jolteon/Flareon";
     private Eevee() { } //For EF Core

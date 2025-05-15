@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Diglett : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 10;
     public override string? Requirements { get; set; } = "Level 26";
     public override string? EvolvesTo {get;set;} = "Dugtrio";
     private Diglett() { } //For EF Core

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Hypno : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 85;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Hypno() { } //For EF Core
     public Hypno(string nickname, string ownerId) 

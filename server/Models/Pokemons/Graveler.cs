@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Graveler : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 55;
     public override string? Requirements { get; set; } = "Trade";
     public override string? EvolvesTo {get;set;} = "Golem";
     private Graveler() { } //For EF Core

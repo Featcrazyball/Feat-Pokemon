@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Kabutops : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 60;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Kabutops() { } //For EF Core
     public Kabutops(string nickname, string ownerId) 

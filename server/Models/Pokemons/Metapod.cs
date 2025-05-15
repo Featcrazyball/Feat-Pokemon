@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Metapod : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 50;
     public override string? Requirements { get; set; } = "Level 10";
     public override string? EvolvesTo {get;set;} = "Butterfree";
     private Metapod() { } //For EF Core

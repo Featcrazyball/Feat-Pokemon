@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Seel : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 65;
     public override string? Requirements { get; set; } = "Level 34";
     public override string? EvolvesTo {get;set;} = "Dewgong";
     private Seel() { } //For EF Core

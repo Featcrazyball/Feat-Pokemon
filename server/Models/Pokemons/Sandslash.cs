@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Sandslash : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 75;
     public override string? Requirements { get; set; } = "Unevolvable";
     
     private Sandslash() { } //For EF Core

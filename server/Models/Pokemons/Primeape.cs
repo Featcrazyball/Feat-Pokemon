@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Primeape : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 65;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Primeape() { } //For EF Core
     public Primeape(string nickname, string ownerId) 

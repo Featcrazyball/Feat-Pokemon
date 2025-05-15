@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Omastar : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 70;
     public override string? Requirements { get; set; } = "Unevolvable";
     
     private Omastar() { } //For EF Core

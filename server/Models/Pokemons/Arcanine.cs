@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Arcanine : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 90;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Arcanine() { } //For EF Core
     public Arcanine(string nickname, string ownerId) 

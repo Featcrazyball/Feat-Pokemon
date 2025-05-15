@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Rapidash : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 65;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Rapidash() { } //For EF Core
     public Rapidash(string nickname, string ownerId) 

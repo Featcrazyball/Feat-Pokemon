@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Butterfree : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 60;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Butterfree() { } //For EF Core
     public Butterfree(string nickname, string ownerId) 

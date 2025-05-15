@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Rhyhorn : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 80;
     public override string? Requirements { get; set; } = "Level 42";
     public override string? EvolvesTo {get;set;} = "Rhydon";
     private Rhyhorn() { } //For EF Core

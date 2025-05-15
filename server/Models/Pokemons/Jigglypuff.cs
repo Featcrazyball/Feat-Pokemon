@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Jigglypuff : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 115;
     public override string? Requirements { get; set; } = "1 Moon Stone";
     public override string? EvolvesTo {get;set;} = "Wigglytuff";
     private Jigglypuff() { } //For EF Core

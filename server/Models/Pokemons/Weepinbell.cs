@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Weepinbell : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 65;
     public override string? Requirements { get; set; } = "1 Leaf Stone";
     public override string? EvolvesTo {get;set;} = "Victreebel";
     private Weepinbell() { } //For EF Core

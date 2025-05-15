@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Grimer : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 80;
     public override string? Requirements { get; set; } = "Level 38";
     public override string? EvolvesTo {get;set;} = "Muk";
     private Grimer() { } //For EF Core

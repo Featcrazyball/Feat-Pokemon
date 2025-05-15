@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Drowzee : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 60;
     public override string? Requirements { get; set; } = "Level 26";
     public override string? EvolvesTo {get;set;} = "Hypno";
     private Drowzee() { } //For EF Core

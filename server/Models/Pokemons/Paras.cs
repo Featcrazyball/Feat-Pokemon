@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Paras : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 35;
     public override string? Requirements { get; set; } = "Level 24";
     public override string? EvolvesTo {get;set;} = "Parasect";
     private Paras() { } //For EF Core

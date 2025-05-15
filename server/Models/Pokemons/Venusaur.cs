@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Venusaur : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 80;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Venusaur() { } //For EF Core
     public Venusaur(string nickname, string ownerId) 

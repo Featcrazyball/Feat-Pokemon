@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Tentacool : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 40;
     public override string? Requirements { get; set; } = "Level 30";
     public override string? EvolvesTo {get;set;} = "Tentacruel";
     private Tentacool() { } //For EF Core

@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Growlithe : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 55;
     public override string? Requirements { get; set; } = "Fire Stone";
     public override string? EvolvesTo {get;set;} = "Arcanine";
     private Growlithe() { } //For EF Core

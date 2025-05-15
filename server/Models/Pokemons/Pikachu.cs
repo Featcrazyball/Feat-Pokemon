@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Pikachu : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 35;
     public override string? Requirements { get; set; } = "1 Thunder Stone";
     public override string? EvolvesTo {get;set;} = "Raichu";
     private Pikachu() { } //For EF Core

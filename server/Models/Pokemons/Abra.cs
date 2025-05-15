@@ -5,6 +5,7 @@ namespace PokemonPocket;
 
 public class Abra : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 25;
     public override string? Requirements { get; set; } = "Level 16";
     public override string? EvolvesTo {get;set;} = "Kadabra";
 

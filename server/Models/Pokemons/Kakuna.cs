@@ -4,6 +4,7 @@ namespace PokemonPocket;
     
 public class Kakuna : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 45;
     public override string? Requirements { get; set; } = "Level 7";
     public override string? EvolvesTo {get;set;} = "Beedrill";
     private Kakuna() { } //For EF Core

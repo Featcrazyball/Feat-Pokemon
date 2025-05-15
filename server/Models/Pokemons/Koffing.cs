@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Koffing : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 40;
     public override string? Requirements { get; set; } = "Level 35";
     public override string? EvolvesTo {get;set;} = "Weezing";
     private Koffing() { } //For EF Core

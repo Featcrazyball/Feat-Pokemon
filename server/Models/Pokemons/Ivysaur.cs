@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Ivysaur : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 60;
     public override string? Requirements { get; set; } = "Level 32";
     public override string? EvolvesTo {get;set;} = "Venusaur";
     private Ivysaur() { } //For EF Core

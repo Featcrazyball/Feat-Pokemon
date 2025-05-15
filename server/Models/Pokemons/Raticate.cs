@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Raticate : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 55;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Raticate() { } //For EF Core
     public Raticate(string nickname, string ownerId) 

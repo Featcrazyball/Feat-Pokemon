@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Nidoqueen : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 90;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Nidoqueen() { } //For EF Core
     public Nidoqueen(string nickname, string ownerId)

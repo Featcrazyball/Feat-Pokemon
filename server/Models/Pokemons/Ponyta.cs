@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Ponyta : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 50;
     public override string? Requirements { get; set; } = "Level 40";
     public override string? EvolvesTo {get;set;} = "Rapidash";
     private Ponyta() { } //For EF Core

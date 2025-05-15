@@ -48,19 +48,19 @@ public class Settings
             switch (choice)
             {
                 case "1":
-                    await ChangeUsername(session, user);
+                    await ChangeUsername.Username(session);
                     break;
                 case "2":
                     await ChangeEmail.Email(session);
                     break;
                 case "3":
-                    await ChangePassword(session, user);
+                    await ChangePassword.Password(session);
                     break;
                 case "4":
                     if (user.God)
-                        await EnterNewRealm(session, user);
+                        await God.EnterNewRealm(session);
                     else
-                        continue;
+                        break;
                     break;
                 case "5":
                     return;

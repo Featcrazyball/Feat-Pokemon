@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Wartortle : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 59;
     public override string? Requirements { get; set; } = "Level 36";
     public override string? EvolvesTo {get;set;} = "Blastoise";
     private Wartortle() { } //For EF Core

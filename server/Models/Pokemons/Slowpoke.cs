@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Slowpoke : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 90;
     public override string? Requirements { get; set; } = "Level 37";
     public override string? EvolvesTo {get;set;} = "Slowbro";
     private Slowpoke() { } //For EF Core

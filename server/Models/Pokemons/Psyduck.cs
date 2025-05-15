@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Psyduck : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 50;
     public override string? Requirements { get; set; } = "Level 33";
     public override string? EvolvesTo {get;set;} = "Golduck";
     private Psyduck() { } //For EF Core

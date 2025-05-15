@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Shellder : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 30;
     public override string? Requirements { get; set; } = "1 Water Stone";
     public override string? EvolvesTo {get;set;} = "Cloyster";
     private Shellder() { } //For EF Core

@@ -5,6 +5,7 @@ namespace PokemonPocket;
 
 public class Gengar : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 60;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Gengar() { } //For EF Core
     public Gengar(string nickname, string ownerId) 

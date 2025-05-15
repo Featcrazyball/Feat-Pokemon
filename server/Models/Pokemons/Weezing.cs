@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Weezing : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 65;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Weezing() { } //For EF Core
     public Weezing(string nickname, string ownerId) 

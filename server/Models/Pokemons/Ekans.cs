@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Ekans : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 35;
     public override string? Requirements { get; set; } = "Level 22";
     public override string? EvolvesTo {get;set;} = "Arbok";
     private Ekans() { } //For EF Core

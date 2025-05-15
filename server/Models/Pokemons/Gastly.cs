@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Gastly : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 30;
     public override string? Requirements { get; set; } = "Level 25";
     public override string? EvolvesTo {get;set;} = "Haunter";
     private Gastly() { } //For EF Core

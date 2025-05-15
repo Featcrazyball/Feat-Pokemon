@@ -4,6 +4,7 @@ namespace PokemonPocket;
 
 public class Machop : PokemonMaster
 {
+    public override float HealthOverride {get;set;} = 70;
     public override string? Requirements { get; set; } = "Level 28";
     public override string? EvolvesTo {get;set;} = "Machoke";
     private Machop() { } //For EF Core
