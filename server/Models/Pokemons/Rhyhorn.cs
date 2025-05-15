@@ -24,12 +24,30 @@ public class Rhyhorn : PokemonMaster
         }
     }
 
+    public Rhyhorn(float HP, string nickname, string ownerId, int exp)
+    : base("Rhyhorn", "Ground/Rock", HP, 85, 95, 30, 30, 25, ownerId, 20, "Lightning Rod")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Horn Attack, Stomp, Tail Whip, Fury Attack, Horn Drill, Leer, Take Down, Earthquake, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 42) {
             using (var context = new DatabaseContext())
             {
                 var rhydon = new Rhydon(this);
+                rhydon.MaxHealth = rhydon.HealthOverride;
                 rhydon.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

@@ -23,13 +23,30 @@ public class Nidoking : PokemonMaster
         }
     }
 
+    public Nidoking(float HP, string nickname, string ownerId, int exp)
+    : base("Nidoking", "Poison/Ground", HP, 102, 77, 85, 75, 85, ownerId, 30, "Poison Point")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Horn Attack, Tackle, Poison Sting, Focus Energy, Fury Attack, Horn Drill, Double Kick, Earthquake, Toxic, Body Slam, Take Down, Double-Edge, Ice Beam, Blizzard, Hyper Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Fire Blast, Skull Bash, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Nidoking(Nidorino nidorino)
-    : base("Nidoking", "Poison/Ground", 81, 102, 77, 85, 75, 85, nidorino.OwnerId ?? "Unknown", 30, "Poison Point")
+    : base("Nidoking", "Poison/Ground", 100, 102, 77, 85, 75, 85, nidorino.OwnerId ?? "Unknown", 30, "Poison Point")
     {
         Id = nidorino.Id;
         Level = 1;
         Nickname = nidorino.Nickname;
-        Experience = nidorino.Experience;
+        Experience = 0;
         HpIV = nidorino.HpIV;
         AttackIV = nidorino.AttackIV;
         SpecialAttackIV = nidorino.SpecialAttackIV;

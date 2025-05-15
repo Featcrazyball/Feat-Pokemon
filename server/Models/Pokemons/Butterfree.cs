@@ -23,13 +23,30 @@ public class Butterfree : PokemonMaster
         }
     }
 
+    public Butterfree(float HP, string nickname, string ownerId, int exp)
+    : base("Butterfree", "Bug/Flying", HP, 45, 50, 90, 80, 70, ownerId, 25, "Confusion")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Confusion, Poison Powder, Stun Spore, Sleep Powder, Psybeam, Supersonic, Whirlwind, Toxic, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Butterfree(Metapod caterpie)
-    : base("Butterfree", "Bug/Flying", 60, 45, 50, 90, 80, 70, caterpie.OwnerId ?? "Unknown", 25, "Confusion")
+    : base("Butterfree", "Bug/Flying", 100, 45, 50, 90, 80, 70, caterpie.OwnerId ?? "Unknown", 25, "Confusion")
     {
         Id = caterpie.Id;
         Level = 1;
         Nickname = caterpie.Nickname;
-        Experience = caterpie.Experience;
+        Experience = 0;
         HpIV = caterpie.HpIV;
         AttackIV = caterpie.AttackIV;
         SpecialAttackIV = caterpie.SpecialAttackIV;

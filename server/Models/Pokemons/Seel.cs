@@ -24,12 +24,30 @@ public class Seel : PokemonMaster
         }
     }
 
+    public Seel(float HP, string nickname, string ownerId, int exp)
+    : base("Seel", "Water", HP, 45, 55, 45, 70, 45, ownerId, 15, "Thick Fat")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Headbutt, Growl, Aurora Beam, Rest, Take Down, Ice Beam, Surf, Body Slam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 34) {
             using (var context = new DatabaseContext())
             {
                 var dewgong = new Dewgong(this);
+                dewgong.MaxHealth = dewgong.HealthOverride;
                 dewgong.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

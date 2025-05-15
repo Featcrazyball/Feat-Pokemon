@@ -24,13 +24,30 @@ public class Gloom : PokemonMaster
         }
     }
 
+    public Gloom(float HP, string nickname, string ownerId, int exp)
+    : base("Gloom", "Grass/Poison", HP, 65, 70, 85, 75, 40, ownerId, 20, "Chlorophyll")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Absorb, Poison Powder, Stun Spore, Sleep Powder, Acid, Petal Dance, Solar Beam, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Gloom(Oddish oddish)
-    : base("Gloom", "Grass/Poison", 60, 65, 70, 85, 75, 40, oddish.OwnerId ?? "Unknown", 20, "Chlorophyll")
+    : base("Gloom", "Grass/Poison", 100, 65, 70, 85, 75, 40, oddish.OwnerId ?? "Unknown", 20, "Chlorophyll")
     {
         Id = oddish.Id;
         Level = 1;
         Nickname = oddish.Nickname;
-        Experience = oddish.Experience;
+        Experience = 0;
         HpIV = oddish.HpIV;
         AttackIV = oddish.AttackIV;
         SpecialAttackIV = oddish.SpecialAttackIV;
@@ -64,6 +81,7 @@ public class Gloom : PokemonMaster
             }
 
             var Vileplume = new Vileplume(this);
+                Vileplume.MaxHealth = Vileplume.HealthOverride;
             Vileplume.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

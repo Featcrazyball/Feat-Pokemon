@@ -24,13 +24,30 @@ public class Jolteon : PokemonMaster
         }
     }
 
+    public Jolteon(float HP, string nickname, string ownerId, int exp)
+    : base("Jolteon", "Electric", HP, 65, 60, 110, 95, 130, ownerId, 29, "Volt Absorb")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Sand Attack, Growl, Quick Attack, Thunder Shock, Thunder Wave, Double Kick, Agility, Pin Missile, Thunder, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Jolteon(Eevee eevee)
-    : base("Jolteon", "Electric", 65, 65, 60, 110, 95, 130, eevee.OwnerId?? "Unknown", 29, "Volt Absorb")
+    : base("Jolteon", "Electric", 100, 65, 60, 110, 95, 130, eevee.OwnerId?? "Unknown", 29, "Volt Absorb")
     {
         Id = eevee.Id;
         Level = 1;
         Nickname = eevee.Nickname;
-        Experience = eevee.Experience;
+        Experience = 0;
         HpIV = eevee.HpIV;
         AttackIV = eevee.AttackIV;
         SpecialAttackIV = eevee.SpecialAttackIV;

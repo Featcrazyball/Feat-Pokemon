@@ -23,6 +23,23 @@ public class Magmar : PokemonMaster
         }
     }
 
+    public Magmar(float HP, string nickname, string ownerId, int exp)
+    : base("Magmar", "Fire", HP, 95, 57, 100, 85, 93, ownerId, 30, "Flame Body")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Ember, Leer, Confuse Ray, Fire Punch, Smokescreen, Smog, Flamethrower, Psychic, Fire Blast, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

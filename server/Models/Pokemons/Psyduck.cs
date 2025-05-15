@@ -24,12 +24,30 @@ public class Psyduck : PokemonMaster
         }
     }
 
+    public Psyduck(float HP, string nickname, string ownerId, int exp)
+    : base("Psyduck", "Water", HP, 52, 48, 65, 50, 55, ownerId, 33, "Damp")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Tail Whip, Disable, Confusion, Fury Swipes, Hydro Pump, Seismic Toss, Counter, Strength, Surf, Toxic, Body Slam, Take Down, Double-Edge, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 33) {
             using (var context = new DatabaseContext())
             {
                 var golduck = new Golduck(this);
+                golduck.MaxHealth = golduck.HealthOverride;
                 golduck.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

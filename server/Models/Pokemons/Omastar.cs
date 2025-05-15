@@ -24,13 +24,30 @@ public class Omastar : PokemonMaster
         }
     }
 
+    public Omastar(float HP, string nickname, string ownerId, int exp)
+    : base("Omastar", "Rock/Water", HP, 60, 125, 115, 70, 55, ownerId, 40, "Swift Swim")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Water Gun, Withdraw, Horn Attack, Leer, Spike Cannon, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Omastar(Omanyte omanyte)
-    : base("Omastar", "Rock/Water", 70, 60, 125, 115, 70, 55, omanyte.OwnerId?? "Unknown", 40, "Swift Swim")
+    : base("Omastar", "Rock/Water", 100, 60, 125, 115, 70, 55, omanyte.OwnerId?? "Unknown", 40, "Swift Swim")
     {
         Id = omanyte.Id;
         Level = 1;
         Nickname = omanyte.Nickname;
-        Experience = omanyte.Experience;
+        Experience = 0;
         HpIV = omanyte.HpIV;
         AttackIV = omanyte.AttackIV;
         SpecialAttackIV = omanyte.SpecialAttackIV;

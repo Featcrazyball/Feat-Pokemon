@@ -23,6 +23,23 @@ public class Snorlax : PokemonMaster
         }
     }
 
+    public Snorlax(float HP, string nickname, string ownerId, int exp)
+    : base("Snorlax", "Normal", HP, 110, 65, 65, 110, 30, ownerId, 30, "Immunity")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Headbutt, Amnesia, Rest, Body Slam, Hyper Beam, Earthquake, Surf, Strength, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

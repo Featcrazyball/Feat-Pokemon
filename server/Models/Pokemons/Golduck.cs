@@ -23,13 +23,30 @@ public class Golduck : PokemonMaster
         }
     }
 
+    public Golduck(float HP, string nickname, string ownerId, int exp)
+    : base("Golduck", "Water", HP, 82, 78, 95, 80, 85, ownerId, 55, "Damp")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Tail Whip, Disable, Confusion, Screech, Fury Swipes, Hydro Pump, Psychic, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Golduck(Psyduck psyduck)
-    : base("Venomoth", "Bug/Poison", 80, 82, 78, 95, 80, 85, psyduck.OwnerId ?? "Unknown", 55, "Damp")
+    : base("Venomoth", "Bug/Poison", 100, 82, 78, 95, 80, 85, psyduck.OwnerId ?? "Unknown", 55, "Damp")
     {
         Id = psyduck.Id;
         Level = 1;
         Nickname = psyduck.Nickname;
-        Experience = psyduck.Experience;
+        Experience = 0;
         HpIV = psyduck.HpIV;
         AttackIV = psyduck.AttackIV;
         SpecialAttackIV = psyduck.SpecialAttackIV;

@@ -24,12 +24,30 @@ public class Meowth : PokemonMaster
         }
     }
 
+    public Meowth(float HP, string nickname, string ownerId, int exp)
+    : base("Meowth", "Normal", HP, 45, 35, 40, 40, 90, ownerId, 10, "Pickup")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Growl, Bite, Pay Day, Screech, Fury Swipes, Slash, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 28) {
             using (var context = new DatabaseContext())
             {
                 var persian = new Persian(this);
+                persian.MaxHealth = persian.HealthOverride;
                 persian.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

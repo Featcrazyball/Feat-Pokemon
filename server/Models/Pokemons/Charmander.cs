@@ -24,12 +24,30 @@ public class Charmander : PokemonMaster
         }
     }
 
+    public Charmander(float HP, string nickname, string ownerId, int exp)
+    : base("Charmander", "Fire", HP, 52, 43, 60, 50, 65, ownerId, 10, "Solar Power")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Growl, Ember, Leer, Rage, Slash, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Counter, Dragon Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {  // Charmander evolves at level 16
             using (var context = new DatabaseContext())
             {
                 var charmeleon = new Charmeleon(this);
+                charmeleon.MaxHealth = charmeleon.HealthOverride;
                 charmeleon.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

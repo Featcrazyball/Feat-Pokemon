@@ -24,12 +24,30 @@ public class Squirtle : PokemonMaster
         }
     }
 
+    public Squirtle(float HP, string nickname, string ownerId, int exp)
+    : base("Squirtle", "Water", HP, 48, 65, 50, 64, 43, ownerId, 10, "Torrent")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Tail Whip, Bubble, Water Gun, Bite, Withdraw, Skull Bash, Hydro Pump, Surf, Ice Beam, Blizzard, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {
             using (var context = new DatabaseContext())
             {
                 var wartortle = new Wartortle(this);
+                wartortle.MaxHealth = wartortle.HealthOverride;
                 wartortle.EvolveLevelUp(Level-1); // Level up to 16
 
                 foreach (var skill in this.Skills)

@@ -24,12 +24,30 @@ public class Magnemite : PokemonMaster
         }
     }
 
+    public Magnemite(float HP, string nickname, string ownerId, int exp)
+    : base("Magnemite", "Electric/Steel", HP, 35, 70, 95, 55, 45, ownerId, 10, "Magnet Pull")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Sonic Boom, ThunderShock, Supersonic, Thunder Wave, Thunderbolt, Reflect, Toxic, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 30) {
             using (var context = new DatabaseContext())
             {
                 var magnetron = new Magneton(this);
+                magnetron.MaxHealth = magnetron.HealthOverride;
                 magnetron.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

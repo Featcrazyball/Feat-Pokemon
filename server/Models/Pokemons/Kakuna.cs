@@ -24,13 +24,30 @@ public class Kakuna : PokemonMaster
         }
     }
 
+    public Kakuna(float HP, string nickname, string ownerId, int exp)
+    : base("Kakuna", "Bug/Poison", HP, 25, 50, 25, 25, 35, ownerId, 15, "Shed Skin")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Harden";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Kakuna(Weedle weedle)
-    : base("Kakuna", "Bug/Poison", 45, 25, 50, 25, 25, 35, weedle.OwnerId ?? "Unknown", 15, "Shed Skin")
+    : base("Kakuna", "Bug/Poison", 100, 25, 50, 25, 25, 35, weedle.OwnerId ?? "Unknown", 15, "Shed Skin")
     {
         Id = weedle.Id;
         Level = 1;
         Nickname = weedle.Nickname;
-        Experience = weedle.Experience;
+        Experience = 0;
         HpIV = weedle.HpIV;
         AttackIV = weedle.AttackIV;
         SpecialAttackIV = weedle.SpecialAttackIV;
@@ -57,6 +74,7 @@ public class Kakuna : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var beedrill = new Beedrill(this);
+                beedrill.MaxHealth = beedrill.HealthOverride;
                 beedrill.EvolveLevelUp(Level-1); // Level up to 7
 
                 foreach (var skill in this.Skills)

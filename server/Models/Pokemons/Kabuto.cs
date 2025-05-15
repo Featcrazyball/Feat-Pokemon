@@ -24,12 +24,30 @@ public class Kabuto : PokemonMaster
         }
     }
 
+    public Kabuto(float HP, string nickname, string ownerId, int exp)
+    : base("Kabuto", "Rock/Water", HP, 80, 90, 55, 45, 55, ownerId, 20, "Battle Armor")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Harden, Absorb, Slash, Leer, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, BubbleBeam, Ice Beam, Blizzard, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 40) {
             using (var context = new DatabaseContext())
             {
                 var kabuto = new Kabutops(this);
+                kabuto.MaxHealth = kabuto.HealthOverride;
                 kabuto.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

@@ -23,13 +23,30 @@ public class Hypno : PokemonMaster
         }
     }
 
+    public Hypno(float HP, string nickname, string ownerId, int exp)
+    : base("Hypno", "Psychic", HP, 73, 70, 73, 115, 67, ownerId, 30, "Insomnia")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Pound, Hypnosis, Disable, Confusion, Headbutt, Poison Gas, Psychic, Meditate, Seismic Toss, Body Slam, Take Down, Double-Edge, Submission, Counter, Rage, Thunder Wave, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Hypno(Drowzee drowzee)
-    : base("Hypno", "Psychic", 85, 73, 70, 73, 115, 67, drowzee.OwnerId ?? "Unknown", 30, "Insomnia")
+    : base("Hypno", "Psychic", 100, 73, 70, 73, 115, 67, drowzee.OwnerId ?? "Unknown", 30, "Insomnia")
     {
         Id = drowzee.Id;
         Level = 1;
         Nickname = drowzee.Nickname;
-        Experience = drowzee.Experience;
+        Experience = 0;
         HpIV = drowzee.HpIV;
         AttackIV = drowzee.AttackIV;
         SpecialAttackIV = drowzee.SpecialAttackIV;

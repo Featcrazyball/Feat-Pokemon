@@ -23,13 +23,30 @@ public class Golem : PokemonMaster
         }
     }
 
+    public Golem(float HP, string nickname, string ownerId, int exp)
+    : base("Golem", "Rock/Ground", HP, 120, 130, 55, 65, 45, ownerId, 43, "Sturdy")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Defense Curl, Rock Throw, Self-Destruct, Harden, Earthquake, Explosion, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Rest, Substitute, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Golem(Graveler graveler)
-    : base("Golem", "Rock/Ground", 80, 120, 130, 55, 65, 45, graveler.OwnerId ?? "Unknown", 43, "Sturdy")
+    : base("Golem", "Rock/Ground", 100, 120, 130, 55, 65, 45, graveler.OwnerId ?? "Unknown", 43, "Sturdy")
     {
         Id = graveler.Id;
         Level = 1;
         Nickname = graveler.Nickname;
-        Experience = graveler.Experience;
+        Experience = 0;
         HpIV = graveler.HpIV;
         AttackIV = graveler.AttackIV;
         SpecialAttackIV = graveler.SpecialAttackIV;

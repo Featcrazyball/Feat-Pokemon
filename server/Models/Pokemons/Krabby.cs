@@ -24,12 +24,30 @@ public class Krabby : PokemonMaster
         }
     }
 
+    public Krabby(float HP, string nickname, string ownerId, int exp)
+    : base("Krabby", "Water", HP, 105, 90, 25, 25, 50, ownerId, 10, "Hyper Cutter")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Bubble, Leer, Guillotine, Stomp, Crabhammer, Harden, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 28) {
             using (var context = new DatabaseContext())
             {
                 var kingler = new Kingler(this);
+                kingler.MaxHealth = kingler.HealthOverride;
                 kingler.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

@@ -24,6 +24,23 @@ public class Exeggcute : PokemonMaster
         }
     }
 
+    public Exeggcute(float HP, string nickname, string ownerId, int exp)
+    : base("Exeggcute", "Grass/Psychic", HP, 40, 80, 60, 45, 40, ownerId, 20, "Chlorophyll")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Barrage, Hypnosis, Reflect, Leech Seed, Stun Spore, Poison Powder, Solar Beam, Toxic, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
@@ -37,6 +54,7 @@ public class Exeggcute : PokemonMaster
             }
 
             var exeggutor = new Exeggutor(this);
+                exeggutor.MaxHealth = exeggutor.HealthOverride;
             exeggutor.EvolveLevelUp(Level-1);
 
             foreach (var skill in this.Skills)

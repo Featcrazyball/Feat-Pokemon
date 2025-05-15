@@ -23,13 +23,30 @@ public class Golbat : PokemonMaster
         }
     }
 
+    public Golbat(float HP, string nickname, string ownerId, int exp)
+    : base("Golbat", "Poison/Flying", HP, 80, 70, 65, 75, 90, ownerId, 20, "Inner Focus")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Leech Life, Screech, Bite, Supersonic, Confuse Ray, Wing Attack, Haze, Toxic, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Golbat(Zubat zubat)
-    : base("Golbat", "Poison/Flying", 75, 80, 70, 65, 75, 90, zubat.OwnerId ?? "Unknown", 20, "Inner Focus")
+    : base("Golbat", "Poison/Flying", 100, 80, 70, 65, 75, 90, zubat.OwnerId ?? "Unknown", 20, "Inner Focus")
     {
         Id = zubat.Id;
         Level = 1;
         Nickname = zubat.Nickname;
-        Experience = zubat.Experience;
+        Experience = 0;
         HpIV = zubat.HpIV;
         AttackIV = zubat.AttackIV;
         SpecialAttackIV = zubat.SpecialAttackIV;

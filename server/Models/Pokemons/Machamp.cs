@@ -23,13 +23,30 @@ public class Machamp : PokemonMaster
         }
     }
 
+    public Machamp(float HP, string nickname, string ownerId, int exp)
+    : base("Machamp", "Fighting", HP, 130, 80, 65, 85, 55, ownerId, 20, "No Guard")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Machamp(Machoke machoke)
-    : base("Machamp", "Fighting", 90, 130, 80, 65, 85, 55, machoke.OwnerId ?? "Unknown", 20, "No Guard")
+    : base("Machamp", "Fighting", 100, 130, 80, 65, 85, 55, machoke.OwnerId ?? "Unknown", 20, "No Guard")
     {
         Id = machoke.Id;
         Level = 1;
         Nickname = machoke.Nickname;
-        Experience = machoke.Experience;
+        Experience = 0;
         HpIV = machoke.HpIV;
         AttackIV = machoke.AttackIV;
         SpecialAttackIV = machoke.SpecialAttackIV;

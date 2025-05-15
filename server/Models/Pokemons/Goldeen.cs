@@ -24,12 +24,30 @@ public class Goldeen : PokemonMaster
         }
     }
 
+    public Goldeen(float HP, string nickname, string ownerId, int exp)
+    : base("Goldeen", "Water", HP, 67, 60, 35, 50, 63, ownerId, 20, "Swift Swim")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Tail Whip, Supersonic, Horn Attack, Fury Attack, Waterfall, Horn Drill, Agility, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 33) {
             using (var context = new DatabaseContext())
             {
                 var seaking = new Seaking(this);
+                seaking.MaxHealth = seaking.HealthOverride;
                 seaking.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

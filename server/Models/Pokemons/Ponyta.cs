@@ -24,12 +24,30 @@ public class Ponyta : PokemonMaster
         }
     }
 
+    public Ponyta(float HP, string nickname, string ownerId, int exp)
+    : base("Ponyta", "Fire", HP, 85, 55, 65, 65, 90, ownerId, 20, "Flame Body")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Ember, Tail Whip, Stomp, Growl, Fire Spin, Agility, Fire Blast, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 40) {
             using (var context = new DatabaseContext())
             {
                 var rapidash = new Rapidash(this);
+                rapidash.MaxHealth = rapidash.HealthOverride;
                 rapidash.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

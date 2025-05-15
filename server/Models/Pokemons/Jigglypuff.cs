@@ -24,6 +24,23 @@ public class Jigglypuff : PokemonMaster
         }
     }
 
+    public Jigglypuff(float HP, string nickname, string ownerId, int exp)
+    : base("Jigglypuff", "Normal/Fairy", HP, 45, 20, 45, 25, 25, ownerId, 20, "Cute Charm")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Sing, Disable, Defense Curl, Double Slap, Rest, Body Slam, Take Down, Double-Edge, Seismic Toss, Counter, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Thunderbolt, Thunder, Psychic, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
@@ -37,6 +54,7 @@ public class Jigglypuff : PokemonMaster
             }
 
             var wigglytuff = new Wigglytuff(this);
+                wigglytuff.MaxHealth = wigglytuff.HealthOverride;
             wigglytuff.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

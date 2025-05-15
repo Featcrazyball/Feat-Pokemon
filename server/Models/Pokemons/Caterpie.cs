@@ -24,12 +24,30 @@ public class Caterpie : PokemonMaster
         }
     }
 
+    public Caterpie(float HP, string nickname, string ownerId, int exp)
+    : base("Caterpie", "Bug", HP, 30, 35, 20, 20, 45, ownerId,  10, "Shield Dust")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, String Shot";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 7) {  // Caterpie evolves at level 7
             using (var context = new DatabaseContext())
             {
                 var metapod = new Metapod(this);
+                metapod.MaxHealth = metapod.HealthOverride;
                 metapod.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

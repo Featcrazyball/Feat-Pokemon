@@ -23,13 +23,30 @@ public class Pidgeot : PokemonMaster
         }
     }
 
+    public Pidgeot(float HP, string nickname, string ownerId, int exp)
+    : base("Pidgeot", "Normal/Flying", HP, 80, 75, 70, 70, 101, ownerId, 25, "Keen Eye")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Agility, Sky Attack, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Pidgeot(Pidgeotto pidgeotto)
-    : base("Pidgeot", "Normal/Flying", 83, 80, 75, 70, 70, 101, pidgeotto.OwnerId ?? "Unknown", 25, "Keen Eye")
+    : base("Pidgeot", "Normal/Flying", 100, 80, 75, 70, 70, 101, pidgeotto.OwnerId ?? "Unknown", 25, "Keen Eye")
     {
         Id = pidgeotto.Id;
         Level = 1;
         Nickname = pidgeotto.Nickname;
-        Experience = pidgeotto.Experience;
+        Experience = 0;
         HpIV = pidgeotto.HpIV;
         AttackIV = pidgeotto.AttackIV;
         SpecialAttackIV = pidgeotto.SpecialAttackIV;

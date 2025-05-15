@@ -23,13 +23,30 @@ public class Dragonite : PokemonMaster
         }
     }
 
+    public Dragonite(float HP, string nickname, string ownerId, int exp)
+    : base("Dragonite", "Dragon", HP, 134, 95, 100, 100, 80, ownerId, 60, "Inner Focus")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Wrap, Leer, Thunder Wave, Agility, Slam, Dragon Rage, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Rage, Thunderbolt, Thunder, Surf, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Dragonite(Dragonair dragonair)
-    : base("Dragonite", "Dragon", 91, 134, 95, 100, 100, 80, dragonair.OwnerId?? "Unknown", 60, "Inner Focus")
+    : base("Dragonite", "Dragon", 100, 134, 95, 100, 100, 80, dragonair.OwnerId?? "Unknown", 60, "Inner Focus")
     {
         Id = dragonair.Id;
         Level = 1;
         Nickname = dragonair.Nickname;
-        Experience = dragonair.Experience;
+        Experience = 0;
         HpIV = dragonair.HpIV;
         AttackIV = dragonair.AttackIV;
         SpecialAttackIV = dragonair.SpecialAttackIV;

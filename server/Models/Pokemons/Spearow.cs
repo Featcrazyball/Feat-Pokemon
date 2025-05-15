@@ -24,12 +24,30 @@ public class Spearow : PokemonMaster
         }
     }
 
+    public Spearow(float HP, string nickname, string ownerId, int exp)
+    : base("Spearow", "Normal/Flying", HP, 60, 30, 31, 31, 70, ownerId, 25, "Peck")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Growl, Leer, Fury Attack, Agility, Drill Peck, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 20) {
             using (var context = new DatabaseContext())
             {
                 var fearow = new Fearow(this);
+                fearow.MaxHealth = fearow.HealthOverride;
                 fearow.EvolveLevelUp(Level-1); // Level up to 20
 
                 foreach (var skill in this.Skills)

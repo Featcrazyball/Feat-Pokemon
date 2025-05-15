@@ -23,13 +23,30 @@ public class Poliwrath : PokemonMaster
         }
     }
 
+    public Poliwrath(float HP, string nickname, string ownerId, int exp)
+    : base("Poliwrath", "Water", HP, 95, 95, 70, 90, 70, ownerId, 60, "Water Absorb")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Hypnosis, Water Gun, DoubleSlap, Body Slam, Amnesia, Hydro Pump, Submission, Counter, Seismic Toss, Strength, Earthquake, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Poliwrath(Poliwhirl poliwhirl)
-    : base("Poliwrath", "Water", 90, 95, 95, 70, 90, 70, poliwhirl.OwnerId ?? "Unknown", 60, "Water Absorb")
+    : base("Poliwrath", "Water", 100, 95, 95, 70, 90, 70, poliwhirl.OwnerId ?? "Unknown", 60, "Water Absorb")
     {
         Id = poliwhirl.Id;
         Level = 1;
         Nickname = poliwhirl.Nickname;
-        Experience = poliwhirl.Experience;
+        Experience = 0;
         HpIV = poliwhirl.HpIV;
         AttackIV = poliwhirl.AttackIV;
         SpecialAttackIV = poliwhirl.SpecialAttackIV;

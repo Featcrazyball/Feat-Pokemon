@@ -24,12 +24,30 @@ public class Omanyte : PokemonMaster
         }
     }
 
+    public Omanyte(float HP, string nickname, string ownerId, int exp)
+    : base("Omanyte", "Rock/Water", HP, 40, 100, 90, 55, 35, ownerId, 20, "Swift Swim")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Water Gun, Withdraw, Horn Attack, Leer, Spike Cannon, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 40) {
             using (var context = new DatabaseContext())
             {
                 var omastar = new Omastar(this);
+                omastar.MaxHealth = omastar.HealthOverride;
                 omastar.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

@@ -11,12 +11,16 @@ public class ViewPokemonFunc
     public static async Task ViewPokemon(ClientSession session, User user)
     {
         // Fetch user's Pokémon from the database with their skills
-        using var context = new DatabaseContext();
-        var pokemonList = context.PokemonMaster
-            .Include(p => p.Skills)
-            .Where(p => p.OwnerId == user.Id)
-            .OrderByDescending(p => p.Experience)
-            .ToList();
+        var pokemonList = new List<PokemonMaster>();
+
+        using (var context = new DatabaseContext())
+        {
+            pokemonList = context.PokemonMaster
+                .Include(p => p.Skills)
+                .Where(p => p.OwnerId == user.Id)
+                .OrderByDescending(p => p.Experience)
+                .ToList();
+        }
 
         if (pokemonList.Count == 0)
         {
@@ -47,7 +51,7 @@ $"Defense: {pokemon.MaxDefense}\n" +
 $"Sp. Attack: {pokemon.MaxSpecialAttack}\n" +
 $"Sp. Defense: {pokemon.MaxSpecialDefense}\n" +
 $"Speed: {pokemon.MaxSpeed}\n" +
-$"Crit Rate: {Math.Min(pokemon.CritRate * 100, 99.6f).ToString("F2").TrimEnd('0').TrimEnd('.')}%\n" +
+$"Crit Rate: {Math.Min(pokemon.CritRate * 100, 100f).ToString("F2").TrimEnd('0').TrimEnd('.')}%\n" +
 $"Stat Points: {pokemon.StatPoints}\n" +
 $"Skills: {string.Join(", ", pokemon.Skills.Select(s => s.Name))}\n"+
 $"Evolve Requirements: {pokemon.Requirements}\n" +
@@ -99,8 +103,13 @@ $"-----------------------------------------\n"
                         }
                     }
                     
-                    selectedPokemon.Nickname = newNickname;
-                    context.SaveChanges();
+                    using (var context = new DatabaseContext())
+                    {
+                        selectedPokemon.Nickname = newNickname;
+                        context.PokemonMaster.Update(selectedPokemon);
+                        context.SaveChanges();
+                    }
+
                     await session.SendMessageAsync($"{selectedPokemon.Name} is now known as {newNickname}!");
                 }
                 else
@@ -171,8 +180,13 @@ $"-----------------------------------------\n"
                         }
 
                     }
-                    context.PokemonMaster.Update(selectedPokemon);
-                    context.SaveChanges();
+
+                    using (var context = new DatabaseContext())
+                    {
+                        context.PokemonMaster.Update(selectedPokemon);
+                        context.SaveChanges();
+                    }
+
                     await session.SendMessageAsync($"Stat Points have been allocated successfully!");
                 }
                 else
@@ -213,11 +227,27 @@ $"-----------------------------------------\n"
 
                     int times = selectedPokemon.Experience / 1000;
 
+                    if (times == 0)
+                    {
+                        await session.SendMessageAsync($"{selectedPokemon.Name} does not have enough experience to level up.");
+                        await session.GetInputAsync("Input any key to continue...");
+                        break;
+                    }
+
+                    if (times > 100)
+                        {
+                            times = 100;
+                        }
+
                     await session.SendMessageAsync("------------------------------------------------------------------------------------");
                     await selectedPokemon.LevelUp(times, session);
-                    await session.SendMessageAsync("------------------------------------------------------------------------------------");
-                    context.PokemonMaster.Update(selectedPokemon);
-                    context.SaveChanges();
+                    await session.SendMessageAsync("\n------------------------------------------------------------------------------------");
+
+                    using (var context = new DatabaseContext())
+                    {
+                        context.PokemonMaster.Update(selectedPokemon);
+                        context.SaveChanges();
+                    }
                 }
                 else
                 {
@@ -256,7 +286,7 @@ $"-----------------------------------------\n"
                         listPoki[pokemon.Name!] = 1;
                         string displayName = pokemon.Nickname == "None" ? pokemon.Name! : pokemon.Nickname!;
                         string evolveName = pokemon.EvolvesTo ?? "Unknown";
-
+                        evolvableList++;
                         futureMenu.AppendLine($"║                                                                              ║");
                         futureMenu.AppendLine($"║  {displayName.PadRight(18)} --> Evolves to: {evolveName.PadRight(25)}  ║             ║");
                     }
@@ -324,7 +354,11 @@ $"-----------------------------------------\n"
 
                             foreach (var pokemonId in evolvablePokemonIds)
                             {
-                                var pokemonToEvolve = context.PokemonMaster.FirstOrDefault(p => p.Id == pokemonId);
+                                PokemonMaster pokemonToEvolve;
+                                using (var context = new DatabaseContext())
+                                {
+                                    pokemonToEvolve = context.PokemonMaster.FirstOrDefault(p => p.Id == pokemonId)!;
+                                }
 
                                 if (pokemonToEvolve == null)
                                 {
@@ -336,9 +370,13 @@ $"-----------------------------------------\n"
                                 {
                                     if (user.Coins > 300)
                                     {
-                                        user.Coins -= 300;
-                                        context.Users.Update(user);
-                                        context.SaveChanges();
+
+                                        using (var context = new DatabaseContext())
+                                        {
+                                            user.Coins -= 300;
+                                            context.Users.Update(user);
+                                            context.SaveChanges();
+                                        }
                                     }
                                     else
                                     {
@@ -346,8 +384,7 @@ $"-----------------------------------------\n"
                                         continue;
                                     }
                                 }
-
-                                pokemonToEvolve.Evolve(session).Wait();
+                                await pokemonToEvolve.Evolve(session);
                             }
                         }
                         else

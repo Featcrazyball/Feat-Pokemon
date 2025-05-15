@@ -24,6 +24,23 @@ public class Shellder : PokemonMaster
         }
     }
 
+    public Shellder(float HP, string nickname, string ownerId, int exp)
+    : base("Shellder", "Water", HP, 65, 100, 45, 25, 40, ownerId, 15, "Shell Armor")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Withdraw, Supersonic, Clamp, Aurora Beam, Leer, Ice Beam, Surf, Body Slam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
@@ -37,6 +54,7 @@ public class Shellder : PokemonMaster
             }
 
             var cloyster = new Cloyster(this);
+                cloyster.MaxHealth = cloyster.HealthOverride;
             cloyster.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

@@ -24,13 +24,30 @@ public class Metapod : PokemonMaster
         }
     }
 
+    public Metapod(float HP, string nickname, string ownerId, int exp)
+    : base("Metapod", "Bug", HP, 20, 55, 25, 25, 30, ownerId, 25, "Harden")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Harden";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Metapod(Caterpie caterpie)
-    : base("Metapod", "Bug", 50, 20, 55, 25, 25, 30, caterpie.OwnerId ?? "Unknown", 25, "Harden")
+    : base("Metapod", "Bug", 100, 20, 55, 25, 25, 30, caterpie.OwnerId ?? "Unknown", 25, "Harden")
     {
         Id = caterpie.Id;
         Level = 1;
         Nickname = caterpie.Nickname;
-        Experience = caterpie.Experience;
+        Experience = 0;
         HpIV = caterpie.HpIV;
         AttackIV = caterpie.AttackIV;
         SpecialAttackIV = caterpie.SpecialAttackIV;
@@ -62,6 +79,7 @@ public class Metapod : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var butterfree = new Butterfree(this);
+                butterfree.MaxHealth = butterfree.HealthOverride;
                 butterfree.EvolveLevelUp(Level-1); // Level up to 10
 
                 foreach (var skill in this.Skills)

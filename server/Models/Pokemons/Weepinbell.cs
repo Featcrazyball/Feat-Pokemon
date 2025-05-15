@@ -24,13 +24,30 @@ public class Weepinbell : PokemonMaster
         }
     }
 
+    public Weepinbell(float HP, string nickname, string ownerId, int exp)
+    : base("Weepinbell", "Grass/Poison", HP, 90, 50, 85, 45, 55, ownerId, 21, "Chlorophyll")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Vine Whip, Sleep Powder, Stun Spore, Acid, Razor Leaf, Growth, Wrap, PoisonPowder, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Weepinbell(Bellsprout bellsprout)
-    : base("Weepinbell", "Grass/Poison", 65, 90, 50, 85, 45, 55, bellsprout.OwnerId ?? "Unknown", 21, "Chlorophyll")
+    : base("Weepinbell", "Grass/Poison", 100, 90, 50, 85, 45, 55, bellsprout.OwnerId ?? "Unknown", 21, "Chlorophyll")
     {
         Id = bellsprout.Id;
         Level = 1;
         Nickname = bellsprout.Nickname;
-        Experience = bellsprout.Experience;
+        Experience = 0;
         HpIV = bellsprout.HpIV;
         AttackIV = bellsprout.AttackIV;
         SpecialAttackIV = bellsprout.SpecialAttackIV;
@@ -64,6 +81,7 @@ public class Weepinbell : PokemonMaster
             }
 
             var victreebel = new Victreebel(this);
+                victreebel.MaxHealth = victreebel.HealthOverride;
             victreebel.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

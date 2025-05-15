@@ -24,12 +24,30 @@ public class Paras : PokemonMaster
         }
     }
 
+    public Paras(float HP, string nickname, string ownerId, int exp)
+    : base("Paras", "Bug/Grass", HP, 70, 55, 45, 55, 25, ownerId, 12, "Effect Spore")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Stun Spore, Leech Life, Spore, Slash, Growth, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 24) {
             using (var context = new DatabaseContext())
             {
                 var parasect = new Parasect(this);
+                parasect.MaxHealth = parasect.HealthOverride;
                 parasect.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

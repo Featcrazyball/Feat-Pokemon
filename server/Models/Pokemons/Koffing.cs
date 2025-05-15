@@ -25,12 +25,30 @@ public class Koffing : PokemonMaster
         }
     }
 
+    public Koffing(float HP, string nickname, string ownerId, int exp)
+    : base("Koffing", "Poison", HP, 65, 95, 60, 45, 35, ownerId, 35, "Levitate")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Smog, Sludge, SmokeScreen, Self-Destruct, Haze, Explosion, Toxic, Body Slam, Double-Edge, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Fire Blast, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 35) {
             using (var context = new DatabaseContext())
             {
                 var weezing = new Weezing(this);
+                weezing.MaxHealth = weezing.HealthOverride;
                 weezing.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

@@ -23,6 +23,23 @@ public class Vulpix : PokemonMaster
             };
         }
     }
+
+    public Vulpix(float HP, string nickname, string ownerId, int exp)
+    : base("Vulpix", "Fire", HP, 41, 40, 50, 65, 65, ownerId, 10, "Flash Fire")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Ember, Tail Whip, Quick Attack, Roar, Confuse Ray, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
     
     public override async Task Evolve(ClientSession session)
     {
@@ -37,6 +54,7 @@ public class Vulpix : PokemonMaster
             }
 
             var ninetales = new Ninetales(this);
+            ninetales.MaxHealth = ninetales.HealthOverride;
             ninetales.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

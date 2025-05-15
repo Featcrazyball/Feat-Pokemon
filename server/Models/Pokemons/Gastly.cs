@@ -25,12 +25,30 @@ public class Gastly : PokemonMaster
         }
     }
 
+    public Gastly(float HP, string nickname, string ownerId, int exp)
+    : base("Gastly", "Ghost/Poison", HP, 35, 30, 100, 30, 80, ownerId, 9, "Levitate")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Lick, Confuse Ray, Night Shade, Hypnosis, Dream Eater, Toxic, Psychic, Rage, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 25) {
             using (var context = new DatabaseContext())
             {
                 var haunter = new Haunter(this);
+                haunter.MaxHealth = haunter.HealthOverride;
                 haunter.EvolveLevelUp(Level-1); 
                 
                 foreach (var skill in this.Skills)

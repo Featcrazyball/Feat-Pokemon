@@ -24,13 +24,30 @@ public class Clefable : PokemonMaster
         }
     }
 
+    public Clefable(float HP, string nickname, string ownerId, int exp)
+    : base("Clefable", "Fairy", HP, 70, 73, 95, 90, 60, ownerId, 35, "Cute Charm")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Sing, Double Slap, Minimize, Metronome, Defense Curl, Light Screen, Solar Beam, Thunderbolt, Thunder, Psychic, Teleport, Seismic Toss, Counter, Toxic, Body Slam, Take Down, Double-Edge, Submission, Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Clefable(Clefairy clefairy)
-    : base("Clefable", "Fairy", 95, 70, 73, 95, 90, 60, clefairy.OwnerId ?? "Unknown", 35, "Cute Charm")
+    : base("Clefable", "Fairy", 100, 70, 73, 95, 90, 60, clefairy.OwnerId ?? "Unknown", 35, "Cute Charm")
     {
         Id = clefairy.Id;
         Level = 1;
         Nickname = clefairy.Nickname;
-        Experience = clefairy.Experience;
+        Experience = 0;
         HpIV = clefairy.HpIV;
         AttackIV = clefairy.AttackIV;
         SpecialAttackIV = clefairy.SpecialAttackIV;

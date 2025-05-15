@@ -23,13 +23,30 @@ public class Starmie : PokemonMaster
         }
     }
 
+    public Starmie(float HP, string nickname, string ownerId, int exp)
+    : base("Starmie", "Water/Psychic", HP, 75, 85, 100, 85, 115, ownerId, 30, "Illuminate")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Harden, Recover, Swift, Minimize, Light Screen, Hydro Pump, Surf, Thunderbolt, Ice Beam, Blizzard, Psychic, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Flash";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Starmie(Staryu staryu)
-    : base("Starmie", "Water/Psychic", 60, 75, 85, 100, 85, 115, staryu.OwnerId ?? "Unknown", 30, "Illuminate")
+    : base("Starmie", "Water/Psychic", 100, 75, 85, 100, 85, 115, staryu.OwnerId ?? "Unknown", 30, "Illuminate")
     {
         Id = staryu.Id;
         Level = 1;
         Nickname = staryu.Nickname;
-        Experience = staryu.Experience;
+        Experience = 0;
         HpIV = staryu.HpIV;
         AttackIV = staryu.AttackIV;
         SpecialAttackIV = staryu.SpecialAttackIV;

@@ -23,13 +23,30 @@ public class Fearow : PokemonMaster
         }
     }
 
+    public Fearow(float HP, string nickname, string ownerId, int exp)
+    : base("Fearow", "Normal/Flying", HP, 90, 65, 61, 61, 100, ownerId, 25, "Peck")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Growl, Leer, Fury Attack, Drill Peck, Agility, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Fearow(Spearow spearow)
-    : base("Fearow", "Normal/Flying", 65, 90, 65, 61, 61, 100, spearow.OwnerId ?? "Unknown", 25, "Peck")
+    : base("Fearow", "Normal/Flying", 100, 90, 65, 61, 61, 100, spearow.OwnerId ?? "Unknown", 25, "Peck")
     {
         Id= spearow.Id;
         Level = 1;
         Nickname = spearow.Nickname;
-        Experience = spearow.Experience;
+        Experience = 0;
         HpIV = spearow.HpIV;
         AttackIV = spearow.AttackIV;
         SpecialAttackIV = spearow.SpecialAttackIV;

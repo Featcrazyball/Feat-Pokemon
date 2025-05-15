@@ -23,6 +23,23 @@ public class Lickitung : PokemonMaster
         }
     }
 
+    public Lickitung(float HP, string nickname, string ownerId, int exp)
+    : base("Lickitung", "Normal", HP, 55, 75, 60, 75, 30, ownerId, 20, "Oblivious")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Wrap, Supersonic, Stomp, Disable, Defense Curl, Slam, Screech, Body Slam, Earthquake, Hyper Beam, Surf, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

@@ -25,6 +25,23 @@ public class Bulbasaur : PokemonMaster
         }
     }
 
+    public Bulbasaur(float HP, string nickname, string ownerId, int exp)
+    : base("Bulbasaur", "Grass/Poison", HP, 49, 49, 65, 65, 45, ownerId, 10, "Water Burst")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Growl, Leech Seed, Vine Whip, Poison Powder, Sleep Powder, Razor Leaf, Growth, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     // Ask Teacher
     public override float calculateDamage(float SkillDamage) {
         return 2*SkillDamage;
@@ -36,6 +53,7 @@ public class Bulbasaur : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var ivysaur = new Ivysaur(this);
+                ivysaur.MaxHealth = ivysaur.HealthOverride;
                 ivysaur.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

@@ -23,13 +23,30 @@ public class Raticate : PokemonMaster
         }
     }
 
+    public Raticate(float HP, string nickname, string ownerId, int exp)
+    : base("Raticate", "Normal", HP, 81, 60, 50, 70, 97, ownerId, 25, "Run Away")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Tail Whip, Quick Attack, Hyper Fang, Focus Energy, Super Fang, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Raticate(Rattata rattata)
-    : base("Raticate", "Normal", 55, 81, 60, 50, 70, 97, rattata.OwnerId ?? "Unknown", 25, "Run Away")
+    : base("Raticate", "Normal", 100, 81, 60, 50, 70, 97, rattata.OwnerId ?? "Unknown", 25, "Run Away")
     {
         Id = rattata.Id;
         Level = 1;
         Nickname = rattata.Nickname;
-        Experience = rattata.Experience;
+        Experience = 0;
         HpIV = rattata.HpIV;
         AttackIV = rattata.AttackIV;
         SpecialAttackIV = rattata.SpecialAttackIV;

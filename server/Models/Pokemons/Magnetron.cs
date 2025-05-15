@@ -23,6 +23,23 @@ public class Magneton : PokemonMaster
         }
     }
 
+    public Magneton(float HP, string nickname, string ownerId, int exp)
+    : base("Magnetron", "Electric/Steel", HP, 60, 95, 120, 70, 70, ownerId, 20, "Magnet Pull")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Sonic Boom, ThunderShock, Supersonic, Thunder Wave, Thunderbolt, Reflect, Hyper Beam, Toxic, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Magneton(Magnemite magnemite)
     : base("Magneton", "Electric/Steel", 50, 60, 95, 120, 70, 70, magnemite.OwnerId ?? "Unknown", 20, "Magnet Pull")
     {

@@ -24,12 +24,30 @@ public class Mankey : PokemonMaster
         }
     }
 
+    public Mankey(float HP, string nickname, string ownerId, int exp)
+    : base("Mankey", "Fighting", HP, 80, 35, 35, 45, 70, ownerId, 14, "Vital Spirit")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Leer, Low Kick, Karate Chop, Fury Swipes, Focus Energy, Seismic Toss, Thrash, Screech, Earthquake, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 28) {
             using (var context = new DatabaseContext())
             {
                 var primeape = new Primeape(this);
+                primeape.MaxHealth = primeape.HealthOverride;
                 primeape.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

@@ -24,12 +24,30 @@ public class Oddish : PokemonMaster
         }
     }
 
+    public Oddish(float HP, string nickname, string ownerId, int exp)
+    : base("Oddish", "Grass/Poison", HP, 50, 55, 75, 65, 30, ownerId, 10, "Chlorophyll")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Absorb, PoisonPowder, Stun Spore, Sleep Powder, Acid, SolarBeam, Toxic, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 21) {
             using (var context = new DatabaseContext())
             {
                 var gloom = new Gloom(this);
+                gloom.MaxHealth = gloom.HealthOverride;
                 gloom.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

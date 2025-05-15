@@ -23,6 +23,23 @@ public class Onix : PokemonMaster
         }
     }
 
+    public Onix(float HP, string nickname, string ownerId, int exp)
+    : base("Onix", "Rock/Ground", HP, 45, 160, 30, 45, 70, ownerId, 20, "Rock Head")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Screech, Bind, Rock Throw, Rage, Slam, Harden, Earthquake, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has reached its final evolution stage.");

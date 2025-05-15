@@ -23,13 +23,30 @@ public class Primeape : PokemonMaster
         }
     }
 
+    public Primeape(float HP, string nickname, string ownerId, int exp)
+    : base("Primeape", "Fighting", HP, 105, 60, 60, 70, 95, ownerId, 27, "Vital Spirit")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Leer, Low Kick, Karate Chop, Fury Swipes, Focus Energy, Seismic Toss, Thrash, Screech, Submission, Counter, Strength, Earthquake, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Primeape(Mankey mankey)
-    : base("Primeape", "Fighting", 65, 105, 60, 60, 70, 95, mankey.OwnerId ?? "Unknown", 27, "Vital Spirit")
+    : base("Primeape", "Fighting", 100, 105, 60, 60, 70, 95, mankey.OwnerId ?? "Unknown", 27, "Vital Spirit")
     {
         Id = mankey.Id;
         Level = 1;
         Nickname = mankey.Nickname;
-        Experience = mankey.Experience; 
+        Experience = 0;
         HpIV = mankey.HpIV;
         AttackIV = mankey.AttackIV;
         SpecialAttackIV = mankey.SpecialAttackIV;

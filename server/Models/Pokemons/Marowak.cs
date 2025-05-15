@@ -23,13 +23,30 @@ public class Marowak : PokemonMaster
         }
     }
 
+    public Marowak(float HP, string nickname, string ownerId, int exp)
+    : base("Marowak", "Ground", HP, 80, 110, 50, 80, 45, ownerId, 20, "Lightning Rod")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Bone Club, Growl, Tail Whip, Headbutt, Leer, Focus Energy, Bonemerang, Rage, Earthquake, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Marowak(Cubone cubone)
-    : base("Marowak", "Ground", 60, 80, 110, 50, 80, 45, cubone.OwnerId ?? "Unknown", 20, "Lightning Rod")
+    : base("Marowak", "Ground", 100, 80, 110, 50, 80, 45, cubone.OwnerId ?? "Unknown", 20, "Lightning Rod")
     {
         Id = cubone.Id;
         Level = 1;
         Nickname = cubone.Nickname;
-        Experience = cubone.Experience;
+        Experience = 0;
         HpIV = cubone.HpIV;
         AttackIV = cubone.AttackIV;
         SpecialAttackIV = cubone.SpecialAttackIV;

@@ -23,6 +23,23 @@ public class Articuno : PokemonMaster
         }
     }
 
+    public Articuno(float HP, string nickname, string ownerId, int exp)
+    : base("Articuno", "Ice/Flying", HP, 85, 100, 95, 125, 85, ownerId, 25, "Pressure")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Ice Beam, Blizzard, Agility, Mist, Toxic, Rage, Mimic, Double Team, Reflect, Bide, Swift, Sky Attack, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

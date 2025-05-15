@@ -24,12 +24,30 @@ public class Tentacool : PokemonMaster
         }
     }
 
+    public Tentacool(float HP, string nickname, string ownerId, int exp)
+    : base("Tentacool", "Water/Poison", HP, 40, 35, 50, 100, 70, ownerId, 10, "Clear Body")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Acid, Supersonic, Wrap, Poison Sting, Water Gun, Constrict, Barrier, Screech, Toxic, Bubble Beam, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 30) {
             using (var context = new DatabaseContext())
             {
                 var tentacruel = new Tentacruel(this);
+                tentacruel.MaxHealth = tentacruel.HealthOverride;
                 tentacruel.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

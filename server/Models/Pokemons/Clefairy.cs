@@ -24,6 +24,23 @@ public class Clefairy : PokemonMaster
         }
     }
 
+    public Clefairy(float HP, string nickname, string ownerId, int exp)
+    : base("Clefairy", "Fairy", HP, 45, 48, 60, 65, 35, ownerId, 10, "Cute Charm")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Pound, Growl, Sing, Double Slap, Minimize, Metronome, Defense Curl, Light Screen, Solar Beam, Thunderbolt, Thunder, Psychic, Teleport, Seismic Toss, Counter, Toxic, Body Slam, Take Down, Double-Edge, Submission, Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
@@ -37,6 +54,7 @@ public class Clefairy : PokemonMaster
             }
 
             var clefable = new Clefable(this);
+                clefable.MaxHealth = clefable.HealthOverride;
             clefable.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

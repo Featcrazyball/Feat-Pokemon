@@ -23,13 +23,30 @@ public class Venomoth : PokemonMaster
         }
     }
 
+    public Venomoth(float HP, string nickname, string ownerId, int exp)
+    : base("Venomoth", "Bug/Poison", HP, 65, 60, 90, 75, 90, ownerId, 31, "Shield Dust")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Disable, Supersonic, Confusion, Poison Powder, Leech Life, Stun Spore, Psybeam, Sleep Powder, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Venomoth(Venonat venonat)
-    : base("Venomoth", "Bug/Poison", 70, 65, 60, 90, 75, 90, venonat.OwnerId ?? "Unknown", 31, "Shield Dust")
+    : base("Venomoth", "Bug/Poison", 100, 65, 60, 90, 75, 90, venonat.OwnerId ?? "Unknown", 31, "Shield Dust")
     {
         Id = venonat.Id;
         Level = 1;
         Nickname = venonat.Nickname;
-        Experience = venonat.Experience;
+        Experience = 0;
         HpIV = venonat.HpIV;
         AttackIV = venonat.AttackIV;
         SpecialAttackIV = venonat.SpecialAttackIV;

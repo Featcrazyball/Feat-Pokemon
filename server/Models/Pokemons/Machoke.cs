@@ -24,13 +24,30 @@ public class Machoke : PokemonMaster
         }
     }
 
+    public Machoke(float HP, string nickname, string ownerId, int exp)
+    : base("Machoke", "Fighting", HP, 100, 70, 50, 60, 45, ownerId, 20, "Guts")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Machoke(Machop machop)
-    : base("Machoke", "Fighting", 80, 100, 70, 50, 60, 45, machop.OwnerId ?? "Unknown", 20, "Guts")
+    : base("Machoke", "Fighting", 100, 100, 70, 50, 60, 45, machop.OwnerId ?? "Unknown", 20, "Guts")
     {
         Id = machop.Id;
         Level = 1;
         Nickname = machop.Nickname;
-        Experience = machop.Experience;
+        Experience = 0;
         HpIV = machop.HpIV;
         AttackIV = machop.AttackIV;
         SpecialAttackIV = machop.SpecialAttackIV;
@@ -62,6 +79,7 @@ public class Machoke : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var machamp = new Machamp(this);
+                machamp.MaxHealth = machamp.HealthOverride;
                 machamp.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

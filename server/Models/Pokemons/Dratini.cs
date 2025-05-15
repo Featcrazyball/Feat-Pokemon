@@ -24,12 +24,30 @@ public class Dratini : PokemonMaster
         }
     }
 
+    public Dratini(float HP, string nickname, string ownerId, int exp)
+    : base("Dratini", "Dragon", HP, 64, 45, 50, 50, 50, ownerId, 15, "Shed Skin")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Wrap, Leer, Thunder Wave, Agility, Slam, Dragon Rage, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Rage, Thunderbolt, Thunder, Surf, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 30) {
             using (var context = new DatabaseContext())
             {
                 var dragonair = new Dragonair(this);
+                dragonair.MaxHealth = dragonair.HealthOverride;
                 dragonair.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

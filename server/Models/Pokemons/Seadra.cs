@@ -23,13 +23,30 @@ public class Seadra : PokemonMaster
         }
     }
 
+    public Seadra(float HP, string nickname, string ownerId, int exp)
+    : base("Seadra", "Water", HP, 65, 95, 95, 45, 85, ownerId, 25, "Poison Point")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Bubble, Smokescreen, Leer, Water Gun, Agility, Hydro Pump, Surf, Ice Beam, Blizzard, Body Slam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Seadra(Horsea horsea)
-    : base("Seadra", "Water", 55, 65, 95, 95, 45, 85, horsea.OwnerId ?? "Unknown", 25, "Poison Point")
+    : base("Seadra", "Water", 100, 65, 95, 95, 45, 85, horsea.OwnerId ?? "Unknown", 25, "Poison Point")
     {
         Id = horsea.Id;
         Level = 1;
         Nickname = horsea.Nickname;
-        Experience = horsea.Experience;
+        Experience = 0;
         HpIV = horsea.HpIV;
         AttackIV = horsea.AttackIV;
         SpecialAttackIV = horsea.SpecialAttackIV;

@@ -24,13 +24,30 @@ public class Raichu : PokemonMaster
         }
     }
 
+    public Raichu(float HP, string nickname, string ownerId, int exp)
+    : base("Raichu", "Electric", HP, 90, 55, 90, 80, 110, ownerId, 25, "Thunderbolt")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "ThunderShock, Thunderbolt, Thunder, Quick Attack, Agility, Slam, Surf, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Raichu(Pikachu pikachu)
-    : base("Raichu", "Electric", 60, 90, 55, 90, 80, 110, pikachu.OwnerId ?? "Unknown", 25, "Thunderbolt")
+    : base("Raichu", "Electric", 100, 90, 55, 90, 80, 110, pikachu.OwnerId ?? "Unknown", 25, "Thunderbolt")
     {
         Id = pikachu.Id;
         Level = 1;
         Nickname = pikachu.Nickname;
-        Experience = pikachu.Experience;
+        Experience = 0;
         HpIV = pikachu.HpIV;
         AttackIV = pikachu.AttackIV;
         SpecialAttackIV = pikachu.SpecialAttackIV;

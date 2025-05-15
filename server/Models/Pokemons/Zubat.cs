@@ -24,12 +24,30 @@ public class Zubat : PokemonMaster
         }
     }
 
+    public Zubat(float HP, string nickname, string ownerId, int exp)
+    : base("Zubat", "Poison/Flying", HP, 45, 40, 30, 40, 55, ownerId, 10, "Inner Focus")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Leech Life, Supersonic, Bite, Confuse Ray, Wing Attack, Haze, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 22) {
             using (var context = new DatabaseContext())
             {
                 var golbat = new Golbat(this);
+                golbat.MaxHealth = golbat.HealthOverride;
                 golbat.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

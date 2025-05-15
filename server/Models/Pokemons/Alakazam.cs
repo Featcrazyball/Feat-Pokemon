@@ -24,13 +24,30 @@ public class Alakazam : PokemonMaster
         }
     }
 
+    public Alakazam(float HP, string nickname, string ownerId, int exp)
+    : base("Alakazam", "Psychic", HP, 50, 45, 135, 95, 120, ownerId, 20, "Synchronize")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Kinesis, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Alakazam(Kadabra kadabra) 
-    : base("Kadabra", "Psychic", 55, 50, 45, 135, 95, 120, kadabra.OwnerId ?? "Unknown", 50, "Synchronize")
+    : base("Kadabra", "Psychic", 100, 50, 45, 135, 95, 120, kadabra.OwnerId ?? "Unknown", 50, "Synchronize")
     {
         Id = kadabra.Id;
         Level = 1;
         Nickname = kadabra.Nickname;
-        Experience = kadabra.Experience;
+        Experience = 0;
         HpIV = kadabra.HpIV;
         AttackIV = kadabra.AttackIV;
         SpecialAttackIV = kadabra.SpecialAttackIV;

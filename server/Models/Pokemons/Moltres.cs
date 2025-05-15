@@ -23,6 +23,23 @@ public class Moltres : PokemonMaster
         }
     }
 
+    public Moltres(float HP, string nickname, string ownerId, int exp)
+    : base("Moltres", "Fire/Flying", HP, 100, 90, 125, 85, 90, ownerId, 30, "Flame Body")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Fire Spin, Leer, Agility, Sky Attack, Hyper Beam, Fire Blast, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

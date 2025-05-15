@@ -23,13 +23,30 @@ public class Kabutops : PokemonMaster
         }
     }
 
+    public Kabutops(float HP, string nickname, string ownerId, int exp)
+    : base("Kabutops", "Rock/Water", HP, 115, 105, 65, 70, 80, ownerId, 40, "Swift Swim")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Harden, Absorb, Slash, Leer, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Kabutops(Kabuto kabuto)
-    : base("Kabutops", "Rock/Water", 60, 115, 105, 65, 70, 80, kabuto.OwnerId?? "Unknown", 40, "Swift Swim")
+    : base("Kabutops", "Rock/Water", 100, 115, 105, 65, 70, 80, kabuto.OwnerId?? "Unknown", 40, "Swift Swim")
     {
         Id = kabuto.Id;
         Level = 1;
         Nickname = kabuto.Nickname;
-        Experience = kabuto.Experience;
+        Experience = 0;
         HpIV = kabuto.HpIV;
         AttackIV = kabuto.AttackIV;
         SpecialAttackIV = kabuto.SpecialAttackIV;

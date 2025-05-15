@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to add HealthOverride property to Pokémon classes
+# Script to add a parameterized constructor to each PokemonMaster subclass
 
 # Path to Pokémon classes directory
 POKEMON_DIR="c:/Users/yangx/OneDrive/Desktop/Feat Pokemon/Feat-Pokemon/server/Models/Pokemons"
@@ -8,35 +8,101 @@ POKEMON_DIR="c:/Users/yangx/OneDrive/Desktop/Feat Pokemon/Feat-Pokemon/server/Mo
 for file in "$POKEMON_DIR"/*.cs; do
   echo "Processing $file..."
   
-  # Check if file already has HealthOverride property
-  if grep -q "HealthOverride" "$file"; then
-    echo "  HealthOverride already exists, skipping..."
+  # Extract the class name from the file
+  CLASS_NAME=$(grep -o "public class [A-Za-z]* : PokemonMaster" "$file" | awk '{print $3}')
+  if [ -z "$CLASS_NAME" ]; then
+    echo "  Could not find class name in $file, skipping..."
     continue
   fi
   
-  # Extract the base HP value from the constructor
-  BASE_HP=$(grep -o "base(.*)" "$file" | head -1 | sed -E 's/.*"[^"]+", "[^"]+", ([0-9]+).*/\1/')
-  
-  if [ -z "$BASE_HP" ]; then
-    echo "  Could not find HP value, skipping..."
+  # Check if file already has the HP constructor
+  if grep -q "public $CLASS_NAME(float HP, string nickname, string ownerId, int exp)" "$file"; then
+    echo "  HP constructor already exists in $CLASS_NAME, fixing if needed..."
+    
+    # Fix missing comma after HP
+    sed -i 's/: base("\([^"]*\)", "\([^"]*\)", HP \([0-9]\)/: base("\1", "\2", HP, \3/g' "$file"
+    echo "  Fixed constructor if needed"
     continue
   fi
+  
+  # Extract the base constructor call parameters
+  BASE_PARAMS=$(grep -o ": base(.*)" "$file" | head -1 | sed 's/: base(//' | sed 's/)//')
+  if [ -z "$BASE_PARAMS" ]; then
+    echo "  Could not find base constructor parameters in $file, skipping..."
+    continue
+  fi
+  
+  # Extract the name, type and all parameters in order
+  NAME=$(echo "$BASE_PARAMS" | awk -F', ' '{print $1}')
+  TYPE=$(echo "$BASE_PARAMS" | awk -F', ' '{print $2}')
+  HP=$(echo "$BASE_PARAMS" | awk -F', ' '{print $3}')
+  ATTACK=$(echo "$BASE_PARAMS" | awk -F', ' '{print $4}')
+  DEFENSE=$(echo "$BASE_PARAMS" | awk -F', ' '{print $5}')
+  SP_ATTACK=$(echo "$BASE_PARAMS" | awk -F', ' '{print $6}')
+  SP_DEFENSE=$(echo "$BASE_PARAMS" | awk -F', ' '{print $7}')
+  SPEED=$(echo "$BASE_PARAMS" | awk -F', ' '{print $8}')
+  OWNER_ID=$(echo "$BASE_PARAMS" | awk -F', ' '{print $9}')
+  SKILL_DAMAGE=$(echo "$BASE_PARAMS" | awk -F', ' '{print $10}')
+  ABILITY=$(echo "$BASE_PARAMS" | awk -F', ' '{print $11}')
+  
+  # Extract the SkillPool assignment from the first constructor
+  SKILL_POOL=$(grep -o "SkillPool = \".*\";" "$file" | head -1)
+  if [ -z "$SKILL_POOL" ]; then
+    echo "  Could not find SkillPool in $file, will use empty skillpool..."
+    SKILL_POOL="SkillPool = \"\";"
+  fi
+  
+  # Create the new constructor with comma after HP
+  NEW_CONSTRUCTOR=$(cat <<EOF
+
+    public $CLASS_NAME(float HP, string nickname, string ownerId, int exp)
+    : base($NAME, $TYPE, HP, $ATTACK, $DEFENSE, $SP_ATTACK, $SP_DEFENSE, $SPEED, ownerId, $SKILL_DAMAGE, $ABILITY)
+    {
+        Nickname = nickname;
+        Experience = exp;
+        $SKILL_POOL
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+EOF
+)
   
   # Create temporary file
   TMP_FILE=$(mktemp)
   
-  # Modified approach: find the position right after the opening brace of the class
-  awk -v hp="$BASE_HP" '
-    /public class .* : PokemonMaster/ {print; inclass=1; next}
-    inclass && /^{/ {print; print "    public override float HealthOverride {get;set;} = " hp ";"; inclass=0; next}
-    inclass && /{/ {print; print "    public override float HealthOverride {get;set;} = " hp ";"; inclass=0; next}
-    {print}
+  # Find the end of the first constructor to insert our new constructor there
+  awk -v class="$CLASS_NAME" -v new_constructor="$NEW_CONSTRUCTOR" '
+    BEGIN { in_constructor = 0; brace_count = 0; }
+    /public '"$CLASS_NAME"'\(string nickname, string ownerId\)/ { in_constructor = 1; }
+    in_constructor && /{/ { brace_count++; }
+    in_constructor && /}/ { 
+      brace_count--;
+      if (brace_count == 0) {
+        in_constructor = 0;
+        print $0;
+        print new_constructor;
+        next;
+      }
+    }
+    { print; }
   ' "$file" > "$TMP_FILE"
   
-  # Replace original with modified file
+  # Replace original file with modified one
   mv "$TMP_FILE" "$file"
   
-  echo "  Added HealthOverride = $BASE_HP to $(basename "$file")"
+  echo "  Added HP constructor to $CLASS_NAME"
 done
 
-echo "Done processing all Pokémon files!"
+# Fix all existing constructors with missing commas
+for file in "$POKEMON_DIR"/*.cs; do
+  sed -i 's/: base("\([^"]*\)", "\([^"]*\)", HP \([0-9]\)/: base("\1", "\2", HP, \3/g' "$file"
+done
+
+echo "All files processed and constructors fixed!"

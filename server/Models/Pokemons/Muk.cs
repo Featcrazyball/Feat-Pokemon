@@ -23,13 +23,30 @@ public class Muk : PokemonMaster
         }
     }
 
+    public Muk(float HP, string nickname, string ownerId, int exp)
+    : base("Muk", "Poison", HP, 105, 75, 65, 100, 50, ownerId, 35, "Poison Touch")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Pound, Poison Gas, Harden, Minimize, Sludge, Acid Armor, Screech, Toxic, Body Slam, Hyper Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Fire Blast, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Muk(Grimer grimer)
-    : base("Muk", "Poison", 105, 105, 75, 65, 100, 50, grimer.OwnerId ?? "Unknown", 35, "Poison Touch")
+    : base("Muk", "Poison", 100, 105, 75, 65, 100, 50, grimer.OwnerId ?? "Unknown", 35, "Poison Touch")
     {
         Id = grimer.Id;
         Level = 1;
         Nickname = grimer.Nickname;
-        Experience = grimer.Experience;
+        Experience = 0;
         HpIV = grimer.HpIV;
         AttackIV = grimer.AttackIV;
         SpecialAttackIV = grimer.SpecialAttackIV;

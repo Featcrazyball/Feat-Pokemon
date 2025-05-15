@@ -24,12 +24,30 @@ public class NidoranM : PokemonMaster
         }
     }
 
+    public NidoranM(float HP, string nickname, string ownerId, int exp)
+    : base("NidoranM", "Poison", HP, 57, 40, 40, 40, 50, ownerId, 10, "Poison Point")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Leer, Tackle, Horn Attack, Poison Sting, Focus Energy, Fury Attack, Horn Drill, Double Kick, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {
             using (var context = new DatabaseContext())
             {
                 var nidorino = new Nidorino(this);
+                nidorino.MaxHealth = nidorino.HealthOverride;
                 nidorino.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

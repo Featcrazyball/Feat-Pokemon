@@ -24,12 +24,30 @@ public class Machop : PokemonMaster
         }
     }
 
+    public Machop(float HP, string nickname, string ownerId, int exp)
+    : base("Machop", "Fighting", HP, 80, 50, 35, 35, 35, ownerId, 10, "Guts")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 28) {
             using (var context = new DatabaseContext())
             {
                 var machoke = new Machoke(this);
+                machoke.MaxHealth = machoke.HealthOverride;
                 machoke.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

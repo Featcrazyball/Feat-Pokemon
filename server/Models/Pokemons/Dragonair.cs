@@ -24,13 +24,30 @@ public class Dragonair : PokemonMaster
         }
     }
 
+    public Dragonair(float HP, string nickname, string ownerId, int exp)
+    : base("Dragonair", "Dragon", HP, 84, 65, 70, 70, 70, ownerId, 30, "Shed Skin")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Wrap, Leer, Thunder Wave, Agility, Slam, Dragon Rage, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Rage, Thunderbolt, Thunder, Surf, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Dragonair(Dratini dratini)
-    : base("Dragonair", "Dragon", 61, 84, 65, 70, 70, 70, dratini.OwnerId?? "Unknown", 30, "Shed Skin")
+    : base("Dragonair", "Dragon", 100, 84, 65, 70, 70, 70, dratini.OwnerId?? "Unknown", 30, "Shed Skin")
     {
         Id = dratini.Id;
         Level = 1;
         Nickname = dratini.Nickname;
-        Experience = dratini.Experience;
+        Experience = 0;
         HpIV = dratini.HpIV;
         AttackIV = dratini.AttackIV;
         SpecialAttackIV = dratini.SpecialAttackIV;
@@ -57,6 +74,7 @@ public class Dragonair : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var dragonite = new Dragonite(this);
+                dragonite.MaxHealth = dragonite.HealthOverride;
                 dragonite.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

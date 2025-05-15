@@ -23,13 +23,30 @@ public class Cloyster : PokemonMaster
         }
     }
 
+    public Cloyster(float HP, string nickname, string ownerId, int exp)
+    : base("Cloyster", "Water/Ice", HP, 95, 180, 85, 45, 70, ownerId, 30, "Shell Armor")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Clamp, Supersonic, Aurora Beam, Withdraw, Leer, Ice Beam, Spike Cannon, Toxic, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Cloyster(Shellder shellder)
-    : base("Cloyster", "Water/Ice", 50, 95, 180, 85, 45, 70, shellder.OwnerId ?? "Unknown", 30, "Shell Armor")
+    : base("Cloyster", "Water/Ice", 100, 95, 180, 85, 45, 70, shellder.OwnerId ?? "Unknown", 30, "Shell Armor")
     {
         Id = shellder.Id;
         Level = 1;
         Nickname = shellder.Nickname;
-        Experience = shellder.Experience;
+        Experience = 0;
         HpIV = shellder.HpIV;
         AttackIV = shellder.AttackIV;
         SpecialAttackIV = shellder.SpecialAttackIV;

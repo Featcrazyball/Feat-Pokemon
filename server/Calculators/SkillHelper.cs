@@ -191,6 +191,7 @@ public static class SkillHelper
 
     public static async Task<float> FeatCalculateDamage(int basePower, PokemonMaster user, PokemonMaster target, float typeEffectiveness, ClientSession UserSession, ClientSession TargetSession) {
         float damage = ((2 * user.Level / 5 + 2) * basePower * user.Attack / target.Defense / 50 + 2) * typeEffectiveness;
+        
         if (Random.Shared.NextDouble() <= user.CritRate)
         {
             await UserSession.SendMessageAsync("CRITICAL HIT!");

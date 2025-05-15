@@ -23,13 +23,30 @@ public class Dugtrio : PokemonMaster
         }
     }
 
+    public Dugtrio(float HP, string nickname, string ownerId, int exp)
+    : base("Dugtrio", "Ground", HP, 100, 50, 50, 70, 120, ownerId, 26, "Sand Veil")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Growl, Dig, Sand Attack, Slash, Earthquake, Fissure, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Dugtrio(Diglett diglett)
-    : base("Dugtrio", "Ground", 35, 100, 50, 50, 70, 120, diglett.OwnerId ?? "Unknown", 26, "Sand Veil")
+    : base("Dugtrio", "Ground", 100, 100, 50, 50, 70, 120, diglett.OwnerId ?? "Unknown", 26, "Sand Veil")
     {
         Id = diglett.Id;
         Level = 1;
         Nickname = diglett.Nickname;
-        Experience = diglett.Experience;
+        Experience = 0;
         HpIV = diglett.HpIV;
         AttackIV = diglett.AttackIV;
         SpecialAttackIV = diglett.SpecialAttackIV;

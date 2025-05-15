@@ -24,12 +24,30 @@ public class Pidgey : PokemonMaster
         }
     }
 
+    public Pidgey(float HP, string nickname, string ownerId, int exp)
+    : base("Pidgey", "Normal/Flying", HP, 45, 40, 35, 35, 56, ownerId, 10, "Keen Eye")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 18) {
             using (var context = new DatabaseContext())
             {
                 var pidgeotto = new Pidgeotto(this);
+                pidgeotto.MaxHealth = pidgeotto.HealthOverride;
                 pidgeotto.EvolveLevelUp(Level-1); // Level up to 18
 
                 foreach (var skill in this.Skills)

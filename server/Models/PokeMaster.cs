@@ -377,7 +377,7 @@ namespace PokemonPocket
                     {
                         if (StatsEarned < 251) {StatPoints += 1; StatsEarned += 1;}
                     }
-                    await session.SendMessageAsync($"Your {Name} has leveled up to level {Level}!\nYou have {StatPoints} Stat Points left.");
+                    await session.SendMessageAsync($"Your {Name} has leveled up to level {Level}! You have {StatPoints} Stat Points left.");
 
                     // Max Level Check
                     if (Level >= 100) { await session.SendMessageAsync($"Your {Name} has reached a max level of 100!"); break;}

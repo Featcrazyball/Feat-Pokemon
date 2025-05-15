@@ -25,13 +25,30 @@ public class Charmeleon : PokemonMaster
         }
     }
 
+    public Charmeleon(float HP, string nickname, string ownerId, int exp)
+    : base("Charmeleon", "Fire", HP, 64, 58, 80, 65, 80, ownerId, 25, "Fire Burst")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Growl, Ember, Leer, Rage, Slash, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Counter, Dragon Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Charmeleon(Charmander charm)
-    : base("Charmeleon", "Fire", 58, 64, 58, 80, 65, 80, charm.OwnerId ?? "Unknown", 25, "Fire Burst")
+    : base("Charmeleon", "Fire", 100, 64, 58, 80, 65, 80, charm.OwnerId ?? "Unknown", 25, "Fire Burst")
     {
         Id = charm.Id;
         Level = 1;
         Nickname = charm.Nickname;
-        Experience = charm.Experience;
+        Experience = 0;
         HpIV = charm.HpIV;
         AttackIV = charm.AttackIV;
         SpecialAttackIV = charm.SpecialAttackIV;
@@ -58,6 +75,7 @@ public class Charmeleon : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var charizard = new Charizard(this);
+                charizard.MaxHealth = charizard.HealthOverride;
                 charizard.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

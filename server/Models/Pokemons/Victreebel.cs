@@ -23,13 +23,30 @@ public class Victreebel : PokemonMaster
         }
     }
 
+    public Victreebel(float HP, string nickname, string ownerId, int exp)
+    : base("Victreebel", "Grass/Poison", HP, 105, 65, 100, 70, 70, ownerId, 20, "Chlorophyll")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Vine Whip, Sleep Powder, Stun Spore, Acid, Razor Leaf, Growth, Wrap, Poison Powder, Solar Beam, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Victreebel(Weepinbell weepinbell)
-    : base("Victreebel", "Grass/Poison", 80, 105, 65, 100, 70, 70, weepinbell.OwnerId ?? "Unknown", 20, "Chlorophyll")
+    : base("Victreebel", "Grass/Poison", 100, 105, 65, 100, 70, 70, weepinbell.OwnerId ?? "Unknown", 20, "Chlorophyll")
     {
         Id = weepinbell.Id;
         Level = 1;
         Nickname = weepinbell.Nickname;
-        Experience = weepinbell.Experience;
+        Experience = 0;
         HpIV = weepinbell.HpIV;
         AttackIV = weepinbell.AttackIV;
         SpecialAttackIV = weepinbell.SpecialAttackIV;

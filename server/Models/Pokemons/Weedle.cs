@@ -24,12 +24,30 @@ public class Weedle : PokemonMaster
         }
     }
 
+    public Weedle(float HP, string nickname, string ownerId, int exp)
+    : base("Weedle", "Bug/Poison", HP, 35, 30, 20, 20, 50, ownerId, 10, "Shield Dust")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Poison Sting, String Shot";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 7) {
             using (var context = new DatabaseContext())
             {
                 var kakuna = new Kakuna(this);
+                kakuna.MaxHealth = kakuna.HealthOverride;
                 kakuna.EvolveLevelUp(Level-1); // Level up to 7
 
                 foreach (var skill in this.Skills)

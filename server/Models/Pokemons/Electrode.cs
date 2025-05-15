@@ -23,13 +23,30 @@ public class Electrode : PokemonMaster
         }
     }
 
+    public Electrode(float HP, string nickname, string ownerId, int exp)
+    : base("Electrode", "Electric", HP, 50, 70, 80, 80, 150, ownerId, 26, "Static")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Screech, Sonic Boom, Self-Destruct, Light Screen, Swift, Explosion, Toxic, Take Down, Double-Edge, Rage, Thunderbolt, Thunder, Thunder Wave, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Electrode(Voltorb voltorb)
-    : base("Electrode", "Electric", 60, 50, 70, 80, 80, 150, voltorb.OwnerId ?? "Unknown", 30, "Hyper Cutter")
+    : base("Electrode", "Electric", 100, 50, 70, 80, 80, 150, voltorb.OwnerId ?? "Unknown", 30, "Hyper Cutter")
     {
         Id = voltorb.Id;
         Level = 1;
         Nickname = voltorb.Nickname;
-        Experience = voltorb.Experience;
+        Experience = 0;
         HpIV = voltorb.HpIV;
         AttackIV = voltorb.AttackIV;
         SpecialAttackIV = voltorb.SpecialAttackIV;

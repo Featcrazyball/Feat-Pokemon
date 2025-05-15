@@ -24,12 +24,30 @@ public class Cubone : PokemonMaster
         }
     }
 
+    public Cubone(float HP, string nickname, string ownerId, int exp)
+    : base("Cubone", "Ground", HP, 50, 95, 40, 50, 35, ownerId, 20, "Lightning Rod")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Bone Club, Growl, Tail Whip, Headbutt, Leer, Focus Energy, Bonemerang, Rage, Thrash, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Earthquake, Fissure, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 28) {
             using (var context = new DatabaseContext())
             {
                 var marowak = new Marowak(this);
+                marowak.MaxHealth = marowak.HealthOverride;
                 marowak.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

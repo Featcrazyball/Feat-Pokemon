@@ -22,14 +22,31 @@ public class Weezing : PokemonMaster
             };
         }
     }
+
+    public Weezing(float HP, string nickname, string ownerId, int exp)
+    : base("Weezing", "Poison", HP, 90, 120, 85, 70, 60, ownerId, 35, "Levitate")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Smog, Sludge, SmokeScreen, Self-Destruct, Haze, Explosion, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
     
     public Weezing(Koffing koffing)
-    : base("Weezing", "Poison", 65, 90, 120, 85, 70, 60, koffing.OwnerId ?? "Unknown", 35, "Levitate")
+    : base("Weezing", "Poison", 100, 90, 120, 85, 70, 60, koffing.OwnerId ?? "Unknown", 35, "Levitate")
     {
         Id = koffing.Id;
         Level = 1;
         Nickname = koffing.Nickname;
-        Experience = koffing.Experience;
+        Experience = 0;
         HpIV = koffing.HpIV;
         AttackIV = koffing.AttackIV;
         SpecialAttackIV = koffing.SpecialAttackIV;

@@ -26,7 +26,25 @@ public class Abra : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public Abra(float HP, string nickname, string ownerId, int exp)
+    : base ("Abra", "Psychic", HP, 20, 15, 105, 55, 90, ownerId, 10, "Synchronize")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Toxic, Rage, Hyper Beam, SolarBeam, Psychic, Mimic, Double Team, Bide, Swift, Dream Eater, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 
@@ -36,6 +54,7 @@ public class Abra : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var kadabra = new Kadabra(this);
+                kadabra.MaxHealth = kadabra.HealthOverride;
                 kadabra.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

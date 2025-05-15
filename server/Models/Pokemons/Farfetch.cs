@@ -23,6 +23,23 @@ public class Farfetch : PokemonMaster
         }
     }
 
+    public Farfetch(float HP, string nickname, string ownerId, int exp)
+    : base("Farfetch", "Normal/Flying", HP, 90, 55, 58, 62, 60, ownerId, 20, "Keen Eye")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Sand Attack, Leer, Fury Attack, Swords Dance, Agility, Slash, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

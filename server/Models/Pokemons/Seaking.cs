@@ -23,13 +23,30 @@ public class Seaking : PokemonMaster
         }
     }
 
+    public Seaking(float HP, string nickname, string ownerId, int exp)
+    : base("Seaking", "Water", HP, 92, 65, 65, 80, 68, ownerId, 30, "Swift Swim")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Tail Whip, Supersonic, Horn Attack, Fury Attack, Waterfall, Horn Drill, Agility, Surf, Ice Beam, Blizzard, Body Slam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Seaking(Goldeen goldeen)
-    : base("Seaking", "Water", 80, 92, 65, 65, 80, 68, goldeen.OwnerId ?? "Unknown", 30, "Swift Swim")
+    : base("Seaking", "Water", 100, 92, 65, 65, 80, 68, goldeen.OwnerId ?? "Unknown", 30, "Swift Swim")
     {
         Id = goldeen.Id;
         Level = 1;
         Nickname = goldeen.Nickname;
-        Experience = goldeen.Experience;
+        Experience = 0;
         HpIV = goldeen.HpIV;
         AttackIV = goldeen.AttackIV;
         SpecialAttackIV = goldeen.SpecialAttackIV;

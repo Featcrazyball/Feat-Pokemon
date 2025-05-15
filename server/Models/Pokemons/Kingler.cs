@@ -23,13 +23,30 @@ public class Kingler : PokemonMaster
         }
     }
 
+    public Kingler(float HP, string nickname, string ownerId, int exp)
+    : base("Kingler", "Water", HP, 130, 115, 50, 50, 75, ownerId, 30, "Hyper Cutter")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Bubble, Leer, ViceGrip, Guillotine, Stomp, Crabhammer, Harden, Toxic, Body Slam, Take Down, Double-Edge, BubbleBeam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Kingler(Krabby krabby)
-    : base("Kingler", "Water", 55, 130, 115, 50, 50, 75, krabby.OwnerId ?? "Unknown", 30, "Hyper Cutter")
+    : base("Kingler", "Water", 100, 130, 115, 50, 50, 75, krabby.OwnerId ?? "Unknown", 30, "Hyper Cutter")
     {
         Id = krabby.Id;
         Level = 1;
         Nickname = krabby.Nickname;
-        Experience = krabby.Experience;
+        Experience = 0;
         HpIV = krabby.HpIV;
         AttackIV = krabby.AttackIV;
         SpecialAttackIV = krabby.SpecialAttackIV;

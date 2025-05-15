@@ -23,6 +23,23 @@ public class Tangela : PokemonMaster
         }
     }
 
+    public Tangela(float HP, string nickname, string ownerId, int exp)
+    : base("Tangela", "Grass", HP, 55, 115, 100, 40, 60, ownerId, 20, "Chlorophyll")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Constrict, Bind, Absorb, Stun Spore, Sleep Powder, Slam, Growth, Solar Beam, Toxic, Body Slam, Double-Edge, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

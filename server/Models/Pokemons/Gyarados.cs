@@ -23,13 +23,30 @@ public class Gyarados : PokemonMaster
         }
     }
 
+    public Gyarados(float HP, string nickname, string ownerId, int exp)
+    : base("Gyarados", "Water/Ice", HP, 125, 79, 60, 100, 81, ownerId, 30, "Intimidate")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Bite, Dragon Rage, Leer, Hydro Pump, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Hyper Beam, Rage, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Fire Blast, Skull Bash, Rest, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Gyarados(Magikarp magikarp)
-    : base("Gyarados", "Water/Ice", 95, 125, 79, 60, 100, 81, magikarp.OwnerId?? "Unknown", 30, "Intimidate")
+    : base("Gyarados", "Water/Ice", 100, 125, 79, 60, 100, 81, magikarp.OwnerId?? "Unknown", 30, "Intimidate")
     {
         Id = magikarp.Id;
         Level = 1;
         Nickname = magikarp.Nickname;
-        Experience = magikarp.Experience;
+        Experience = 0;
         HpIV = magikarp.HpIV;
         AttackIV = magikarp.AttackIV;
         SpecialAttackIV = magikarp.SpecialAttackIV;

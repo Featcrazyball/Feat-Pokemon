@@ -24,12 +24,30 @@ public class Drowzee : PokemonMaster
         }
     }
 
+    public Drowzee(float HP, string nickname, string ownerId, int exp)
+    : base("Drowzee", "Psychic", HP, 48, 45, 43, 90, 42, ownerId, 20, "Insomnia")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Pound, Hypnosis, Disable, Confusion, Headbutt, Poison Gas, Psychic, Meditate, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Thunder Wave, Mimic, Double Team, Reflect, Bide, Metronome, Skull Bash, Dream Eater, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 26) {
             using (var context = new DatabaseContext())
             {
                 var hypno = new Hypno(this);
+                hypno.MaxHealth = hypno.HealthOverride;
                 hypno.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

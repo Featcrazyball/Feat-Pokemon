@@ -24,6 +24,23 @@ public class Eevee : PokemonMaster
         }
     }
 
+    public Eevee(float HP, string nickname, string ownerId, int exp)
+    : base("Eevee", "Normal", HP, 55, 50, 45, 65, 55, ownerId, 25, "Run Away")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Sand Attack, Growl, Quick Attack, Bite, Tail Whip, Take Down, Double-Edge, Reflect, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         string choice = await session.GetInputAsync($"Eevee has 3 Evolution options: \n[1] Vaporeon (Water Stone)\n[2] Jolteon (Thunder Stone)\n[3] Flareon (Fire Stone). \nPlease choose one to evolve into.");
@@ -47,6 +64,7 @@ public class Eevee : PokemonMaster
                     }
 
                     var vaporeon = new Vaporeon(this);
+                    vaporeon.MaxHealth = vaporeon.HealthOverride;
                     vaporeon.EvolveLevelUp(Level-1); // Level up to current level
                     context.PokemonMaster.Remove(this);
                     context.PokemonMaster.Add(vaporeon);
@@ -76,6 +94,7 @@ public class Eevee : PokemonMaster
                     }
 
                     var jolteon = new Jolteon(this);
+                    jolteon.MaxHealth = jolteon.HealthOverride;
                     jolteon.EvolveLevelUp(Level-1); // Level up to current level
 
                     context.PokemonMaster.Remove(this);
@@ -106,6 +125,7 @@ public class Eevee : PokemonMaster
                     }
 
                     var flareon = new Flareon(this);
+                    flareon.MaxHealth = flareon.HealthOverride;
                     flareon.EvolveLevelUp(Level-1); // Level up to current level
 
                     context.PokemonMaster.Remove(this);

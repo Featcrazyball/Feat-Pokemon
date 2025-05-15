@@ -23,13 +23,30 @@ public class Slowbro : PokemonMaster
         }
     }
 
+    public Slowbro(float HP, string nickname, string ownerId, int exp)
+    : base("Slowbro", "Water/Psychic", HP, 75, 110, 100, 80, 30, ownerId, 36, "Oblivious")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Confusion, Disable, Headbutt, Growl, Water Gun, Withdraw, Amnesia, Psychic, Surf, Ice Beam, Blizzard, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Slowbro(Slowpoke slowpoke)
-    : base("Slowbro", "Water/Psychic", 95, 75, 110, 100, 80, 30, slowpoke.OwnerId ?? "Unknown", 36, "Oblivious")
+    : base("Slowbro", "Water/Psychic", 100, 75, 110, 100, 80, 30, slowpoke.OwnerId ?? "Unknown", 36, "Oblivious")
     {
         Id = slowpoke.Id;
         Level = 1;
         Nickname = slowpoke.Nickname;
-        Experience = slowpoke.Experience;
+        Experience = 0;
         HpIV = slowpoke.HpIV;
         AttackIV = slowpoke.AttackIV;
         SpecialAttackIV = slowpoke.SpecialAttackIV;

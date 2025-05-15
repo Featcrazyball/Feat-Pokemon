@@ -24,13 +24,30 @@ public class Haunter : PokemonMaster
         }
     }
 
+    public Haunter(float HP, string nickname, string ownerId, int exp)
+    : base("Haunter", "Ghost/Poison", HP, 50, 45, 115, 55, 95, ownerId, 25, "Levitate")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Lick, Confuse Ray, Night Shade, Hypnosis, Dream Eater, Toxic, Psychic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Haunter(Gastly gastly)
-    : base("Haunter", "Ghost/Poison", 45, 50, 45, 115, 55, 95, gastly.OwnerId ?? "Unknown", 25, "Levitate")
+    : base("Haunter", "Ghost/Poison", 100, 50, 45, 115, 55, 95, gastly.OwnerId ?? "Unknown", 25, "Levitate")
     {
         Id = gastly.Id;
         Level = 1;
         Nickname = gastly.Nickname;
-        Experience = gastly.Experience;
+        Experience = 0;
         HpIV = gastly.HpIV;
         AttackIV = gastly.AttackIV;
         SpecialAttackIV = gastly.SpecialAttackIV;
@@ -58,6 +75,7 @@ public class Haunter : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var gengar = new Gengar(this);
+                gengar.MaxHealth = gengar.HealthOverride;
                 gengar.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

@@ -23,13 +23,30 @@ public class Persian : PokemonMaster
         }
     }
 
+    public Persian(float HP, string nickname, string ownerId, int exp)
+    : base("Persian", "Normal", HP, 70, 60, 65, 65, 115, ownerId, 34, "Limber")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Scratch, Growl, Bite, Screech, Slash, Hyper Beam, Body Slam, Take Down, Double-Edge, Bubble Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Persian(Meowth meowth)
-    : base("Persian", "Normal", 65, 70, 60, 65, 65, 115, meowth.OwnerId ?? "Unknown", 34, "Limber")
+    : base("Persian", "Normal", 100, 70, 60, 65, 65, 115, meowth.OwnerId ?? "Unknown", 34, "Limber")
     {
         Id = meowth.Id;
         Level = 1;
         Nickname = meowth.Nickname;
-        Experience = meowth.Experience;
+        Experience = 0;
         HpIV = meowth.HpIV;
         AttackIV = meowth.AttackIV;
         SpecialAttackIV = meowth.SpecialAttackIV;

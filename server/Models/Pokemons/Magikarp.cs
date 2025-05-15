@@ -24,12 +24,30 @@ public class Magikarp : PokemonMaster
         }
     }
 
+    public Magikarp(float HP, string nickname, string ownerId, int exp)
+    : base("Magikarp", "Water", HP, 10, 55, 15, 20, 80, ownerId, 5, "Splash")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Splash, Tackle";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {
             using (var context = new DatabaseContext())
             {
                 var gyarados = new Gyarados(this);
+                gyarados.MaxHealth = gyarados.HealthOverride;
                 gyarados.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

@@ -24,13 +24,30 @@ public class Kadabra : PokemonMaster
         }
     }
 
+    public Kadabra(float HP, string nickname, string ownerId, int exp)
+    : base("Kadabrah", "Psychic", HP, 35, 30, 120, 70, 105, ownerId, 50, "Synchronize")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Teleport, Confusion, Disable, Psybeam, Recover, Psychic, Reflect, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Counter, Rage, Thunder Wave, Mimic, Double Team, Bide, Metronome, Skull Bash, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Kadabra(Abra abra) 
-    : base("Kadabra", "Psychic", 40, 35, 30, 120, 70, 105, abra.OwnerId ?? "Unknown", 50, "Synchronize")
+    : base("Kadabra", "Psychic", 100, 35, 30, 120, 70, 105, abra.OwnerId ?? "Unknown", 50, "Synchronize")
     {
         Id = abra.Id;
         Level = 1;
         Nickname = abra.Nickname;
-        Experience = abra.Experience;
+        Experience = 0;
         HpIV = abra.HpIV;
         AttackIV = abra.AttackIV;
         SpecialAttackIV = abra.SpecialAttackIV;
@@ -56,6 +73,7 @@ public class Kadabra : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var alakazam = new Alakazam(this);
+                alakazam.MaxHealth = alakazam.HealthOverride;
                 alakazam.EvolveLevelUp(Level-1); // Level up to current level
 
                 foreach (var skill in this.Skills)

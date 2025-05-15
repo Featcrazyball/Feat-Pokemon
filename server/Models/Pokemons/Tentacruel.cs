@@ -23,13 +23,30 @@ public class Tentacruel : PokemonMaster
         }
     }
 
+    public Tentacruel(float HP, string nickname, string ownerId, int exp)
+    : base("Tentacruel", "Water/Poison", HP, 70, 65, 80, 120, 100, ownerId, 30, "Liquid Ooze")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Acid, Supersonic, Wrap, Poison Sting, Water Gun, Constrict, Barrier, Screech, Toxic, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Tentacruel(Tentacool tentacool)
-    : base("Tentacruel", "Water/Poison", 80, 70, 65, 80, 120, 100, tentacool.OwnerId ?? "Unknown", 30, "Liquid Ooze")
+    : base("Tentacruel", "Water/Poison", 100, 70, 65, 80, 120, 100, tentacool.OwnerId ?? "Unknown", 30, "Liquid Ooze")
     {
         Id = tentacool.Id;
         Level = 1;
         Nickname = tentacool.Nickname;
-        Experience = tentacool.Experience;
+        Experience = 0;
         HpIV = tentacool.HpIV;
         AttackIV = tentacool.AttackIV;
         SpecialAttackIV = tentacool.SpecialAttackIV;

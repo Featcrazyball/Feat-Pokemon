@@ -23,13 +23,30 @@ public class Rapidash : PokemonMaster
         }
     }
 
+    public Rapidash(float HP, string nickname, string ownerId, int exp)
+    : base("Rapidash", "Fire", HP, 100, 70, 80, 80, 105, ownerId, 40, "Flame Body")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Ember, Stomp, Fire Spin, Agility, Fire Blast, Hyper Beam, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Rapidash(Ponyta ponyta)
-    : base("Rapidash", "Fire", 65, 100, 70, 80, 80, 105, ponyta.OwnerId ?? "Unknown", 40, "Flame Body")
+    : base("Rapidash", "Fire", 100, 100, 70, 80, 80, 105, ponyta.OwnerId ?? "Unknown", 40, "Flame Body")
     {
         Id = ponyta.Id;
         Level = 1;
         Nickname = ponyta.Nickname;
-        Experience = ponyta.Experience;
+        Experience = 0;
         HpIV = ponyta.HpIV;
         AttackIV = ponyta.AttackIV;
         SpecialAttackIV = ponyta.SpecialAttackIV;

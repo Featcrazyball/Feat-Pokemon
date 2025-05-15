@@ -24,6 +24,23 @@ public class Pikachu : PokemonMaster
         }
     }
 
+    public Pikachu(float HP, string nickname, string ownerId, int exp)
+    : base("Pikachu", "Electric", HP, 55, 40, 50, 50, 90, ownerId, 30, "Lightning Bolt")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Thunder Shock, Growl, Thunder Wave, Quick Attack, Swift, Agility, Thunder, Body Slam, Take Down, Double-Edge, Seismic Toss, Thunderbolt, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
@@ -37,6 +54,7 @@ public class Pikachu : PokemonMaster
             }
 
             var raichu = new Raichu(this);
+                raichu.MaxHealth = raichu.HealthOverride;
             raichu.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

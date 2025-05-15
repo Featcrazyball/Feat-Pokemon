@@ -24,12 +24,30 @@ public class Horsea : PokemonMaster
         }
     }
 
+    public Horsea(float HP, string nickname, string ownerId, int exp)
+    : base("Horsea", "Water", HP, 40, 70, 70, 25, 60, ownerId, 10, "Swift Swim")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Bubble, Smokescreen, Leer, Water Gun, Agility, Hydro Pump, Toxic, Blizzard, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 32) {
             using (var context = new DatabaseContext())
             {
                 var seadra = new Seadra(this);
+                seadra.MaxHealth = seadra.HealthOverride;
                 seadra.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

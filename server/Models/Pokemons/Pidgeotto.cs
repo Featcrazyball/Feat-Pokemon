@@ -24,13 +24,30 @@ public class Pidgeotto : PokemonMaster
         }
     }
 
+    public Pidgeotto(float HP, string nickname, string ownerId, int exp)
+    : base("Pidgeotto", "Normal/Flying", HP, 60, 55, 50, 50, 71, ownerId, 25, "Gust")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Agility, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Pidgeotto(Pidgey pidgey)
-    : base("Pidgeotto", "Normal/Flying", 63, 60, 55, 50, 50, 71, pidgey.OwnerId ?? "Unknown", 25, "Gust")
+    : base("Pidgeotto", "Normal/Flying", 100, 60, 55, 50, 50, 71, pidgey.OwnerId ?? "Unknown", 25, "Gust")
     {
         Id = pidgey.Id;
         Level = 1;
         Nickname = pidgey.Nickname;
-        Experience = pidgey.Experience;
+        Experience = 0;
         HpIV = pidgey.HpIV;
         AttackIV = pidgey.AttackIV;
         SpecialAttackIV = pidgey.SpecialAttackIV;
@@ -57,6 +74,7 @@ public class Pidgeotto : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var pidgeot = new Pidgeot(this);
+                pidgeot.MaxHealth = pidgeot.HealthOverride;
                 pidgeot.EvolveLevelUp(Level-1); // Level up to 36
 
                 foreach (var skill in this.Skills)

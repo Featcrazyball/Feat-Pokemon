@@ -25,12 +25,31 @@ public class Bellsprout : PokemonMaster
         }
     }
 
+    public Bellsprout(float HP, string nickname, string ownerId, int exp)
+    : base("Bellsprout", "Grass/Poison", HP, 75, 35, 70, 30, 40, ownerId, 10, "Chlorophyll")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Vine Whip, Growth, Wrap, Sleep Powder, Poison Powder, Stun Spore, Acid, Razor Leaf, Toxic, SolarBeam, Rage, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 21) {  // assuming level 21 is when Bellsprout evolves
             using (var context = new DatabaseContext())
             {
                 var weepinbell = new Weepinbell(this);
+                weepinbell.MaxHealth = weepinbell.HealthOverride;
+                weepinbell.MaxHealth = weepinbell.HealthOverride;
                 weepinbell.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

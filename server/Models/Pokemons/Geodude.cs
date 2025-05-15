@@ -24,12 +24,30 @@ public class Geodude : PokemonMaster
         }
     }
 
+    public Geodude(float HP, string nickname, string ownerId, int exp)
+    : base("Geodude", "Rock/Ground", HP, 80, 100, 30, 30, 20, ownerId, 10, "Sturdy")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Defense Curl, Rock Throw, Self-Destruct, Harden, Earthquake, Explosion, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 25) {
             using (var context = new DatabaseContext())
             {
                 var graveler = new Graveler(this);
+                graveler.MaxHealth = graveler.HealthOverride;
                 graveler.EvolveLevelUp(Level-1); 
 
                 foreach (var skill in this.Skills)

@@ -23,6 +23,23 @@ public class Jynx : PokemonMaster
         }
     }
 
+    public Jynx(float HP, string nickname, string ownerId, int exp)
+    : base("Jynx", "Ice/Psychic", HP, 50, 35, 115, 95, 95, ownerId, 30, "Oblivious")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Pound, Lovely Kiss, Lick, Double Slap, Ice Punch, Body Slam, Thrash, Blizzard, Psychic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

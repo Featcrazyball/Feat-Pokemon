@@ -24,6 +24,23 @@ public class Mewtwo : PokemonMaster
         }
     }
 
+    public Mewtwo(float HP, string nickname, string ownerId, int exp)
+    : base("Mewtwo", "Psychic", HP, 110, 90, 154, 90, 130, ownerId, 70, "Pressure")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Confusion, Disable, Swift, Psychic, Barrier, Recover, Mist, Amnesia, Reflect, Hyper Beam, Thunderbolt, Blizzard, Fire Blast, Toxic, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

@@ -24,12 +24,30 @@ public class Ekans : PokemonMaster
         }
     }
 
+    public Ekans(float HP, string nickname, string ownerId, int exp)
+    : base("Ekans", "Poison", HP, 60, 44, 40, 54, 55, ownerId, 25, "Bite")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Wrap, Leer, Poison Sting, Bite, Glare, Screech, Acid, Toxic, Body Slam, Take Down, Double-Edge, Rage, Earthquake, Fissure, Dig, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 22) {
             using (var context = new DatabaseContext())
             {
                 var arbok = new Arbok(this);
+                arbok.MaxHealth = arbok.HealthOverride;
                 arbok.EvolveLevelUp(Level-1);
 
                 foreach (var skill in this.Skills)

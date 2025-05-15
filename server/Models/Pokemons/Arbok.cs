@@ -23,13 +23,30 @@ public class Arbok : PokemonMaster
         }
     }
 
+    public Arbok(float HP, string nickname, string ownerId, int exp)
+    : base("Arbok", "Poison", HP, 95, 69, 65, 79, 80, ownerId, 25, "Bite")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Wrap, Poison Sting, Bite, Glare, Acid, Screech, Toxic, Body Slam, Take Down, Double-Edge, Rage, Earthquake, Fissure, Skull Bash, Rock Slide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Arbok(Ekans ekans)
-    : base("Arbok", "Poison", 60, 95, 69, 65, 79, 80, ekans.OwnerId ?? "Unknown", 25, "Bite")
+    : base("Arbok", "Poison", 100, 95, 69, 65, 79, 80, ekans.OwnerId ?? "Unknown", 25, "Bite")
     {
         Id = ekans.Id;
         Level = 1;
         Nickname = ekans.Nickname;
-        Experience = ekans.Experience;
+        Experience = 0;
         HpIV = ekans.HpIV;
         AttackIV = ekans.AttackIV;
         SpecialAttackIV = ekans.SpecialAttackIV;

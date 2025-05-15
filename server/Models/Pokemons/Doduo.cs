@@ -24,13 +24,30 @@ public class Doduo : PokemonMaster
         }
     }
 
+    public Doduo(float HP, string nickname, string ownerId, int exp)
+    : base("Doduo", "Normal/Flying", HP, 85, 45, 35, 35, 75, ownerId, 20, "Run Away")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Peck, Growl, Fury Attack, Drill Peck, Rage, Agility, Tri Attack, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Doduo(Doduo doduo)
-    : base("Doduo", "Normal/Flying", 35, 85, 45, 35, 35, 75, doduo.OwnerId ?? "Unknown", 20, "Run Away")
+    : base("Doduo", "Normal/Flying", 100, 85, 45, 35, 35, 75, doduo.OwnerId ?? "Unknown", 20, "Run Away")
     {
         Id = doduo.Id;
         Level = 1;
         Nickname = doduo.Nickname;
-        Experience = doduo.Experience;
+        Experience = 0;
         HpIV = doduo.HpIV;
         AttackIV = doduo.AttackIV;
         SpecialAttackIV = doduo.SpecialAttackIV;
@@ -57,6 +74,7 @@ public class Doduo : PokemonMaster
             using (var context = new DatabaseContext())
             {
                 var dodrio = new Dodrio(this);
+                dodrio.MaxHealth = dodrio.HealthOverride;
                 dodrio.EvolveLevelUp(Level-1);
                 foreach (var skill in this.Skills)
                 {

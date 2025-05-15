@@ -23,6 +23,23 @@ public class Tauros : PokemonMaster
         }
     }
 
+    public Tauros(float HP, string nickname, string ownerId, int exp)
+    : base("Tauros", "Normal", HP, 100, 95, 40, 70, 110, ownerId, 30, "Intimidate")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, Stomp, Tail Whip, Leer, Rage, Take Down, Earthquake, Hyper Beam, Body Slam, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

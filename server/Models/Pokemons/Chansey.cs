@@ -23,6 +23,23 @@ public class Chansey : PokemonMaster
         }
     }
 
+    public Chansey(float HP, string nickname, string ownerId, int exp)
+    : base("Chansey", "Normal", HP, 5, 5, 35, 105, 50, ownerId, 30, "Natural Cure")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Pound, Double-Edge, Sing, Growl, Minimize, Defense Curl, Light Screen, DoubleSlap, Soft-boiled, Egg Bomb, Take Down, Seismic Toss, Counter, Toxic, Rage, Psychic, Teleport, Mimic, Double Team, Reflect, Bide, Metronome, Thunderbolt, Thunder, Fire Blast, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

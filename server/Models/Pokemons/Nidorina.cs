@@ -24,6 +24,23 @@ public class Nidorina : PokemonMaster
         }
     }
 
+    public Nidorina(float HP, string nickname, string ownerId, int exp)
+    : base("Nidorina", "Poison", HP, 62, 67, 55, 55, 56, ownerId, 20, "Poison Point")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Growl, Tackle, Scratch, Poison Sting, Tail Whip, Bite, Fury Swipes, Double Kick, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public Nidorina(NidoranF nidoranF)
     : base("Nidorina", "Poison", 70, 62, 67, 55, 55, 56, nidoranF.OwnerId ?? "Unknown", 20, "Poison Point")
     {
@@ -64,6 +81,7 @@ public class Nidorina : PokemonMaster
             }
 
             var nidoqueen = new Nidoqueen(this);
+                nidoqueen.MaxHealth = nidoqueen.HealthOverride;
             nidoqueen.EvolveLevelUp(Level-1); // Level up to current level
 
             foreach (var skill in this.Skills)

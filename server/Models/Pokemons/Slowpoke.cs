@@ -24,12 +24,30 @@ public class Slowpoke : PokemonMaster
         }
     }
 
+    public Slowpoke(float HP, string nickname, string ownerId, int exp)
+    : base("Slowpoke", "Water/Psychic", HP, 65, 65, 40, 40, 15, ownerId, 20, "Oblivious")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Confusion, Disable, Headbutt, Growl, Water Gun, Amnesia, Psychic, Surf, Ice Beam, Blizzard, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 37) {
             using (var context = new DatabaseContext())
             {
                 var slowbro = new Slowbro(this);
+                slowbro.MaxHealth = slowbro.HealthOverride;
                 slowbro.EvolveLevelUp(Level-1); // Level up to current level
 
                 foreach (var skill in this.Skills)
