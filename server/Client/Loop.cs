@@ -50,9 +50,6 @@ public class Client
             switch (choice.ToLower())
             {
                 case "1":
-                    // View owner's pokemon and evolve
-                    // Damage calculations for Assignment
-                    // Remember Feat's Version and Assignment Details
                     await ServerPokemon.PokemonMenu(session);
                     break;
                 case "2":
@@ -60,21 +57,51 @@ public class Client
                     break;
                 case "3":
                     await Chat.ChatMenu(session);
-                    // Chat Area
                     break;
                 case "4":
-                    // Selected Pokemon for battle 
+                    await Lineup.LineupMenu(session);
                     break;
                 case "5":
-                    // Battle Area (3 Pokemon per fight) + 1 Starter Pokemon
+                    // Battle Area (5 Pokemon per fight) + 1 Starter Pokemon
                     // Battle with other players
                     // require manual refresh. has one creator and one joiner. 
                     // joiner will create the arena object
                     // Cannot enter if Feat's Version is true
+
+                    using (var db = new DatabaseContext())
+                    {
+                        // Check for selected Pokémon
+                        var selectedPokemons = db.PokemonMaster
+                            .Where(p => p.OwnerId == user.Id && p.Selected)
+                            .ToList();
+                            
+                        if (selectedPokemons.Count != 6)
+                        {
+                            await session.SendMessageAsync($"You need exactly 6 Pokémon in your lineup. You currently have {selectedPokemons.Count}.");
+                            await session.SendMessageAsync("Please go to the Lineup menu to select your Pokémon.");
+                            await session.GetInputAsync("Input any key to continue...");
+                            break;
+                        }
+
+                        // Check for starter Pokémon
+                        var starterPokemon = db.PokemonMaster
+                            .Where(p => p.OwnerId == user.Id && p.Starter)
+                            .ToList();
+                        
+                        if (starterPokemon.Count != 1)
+                        {
+                            await session.SendMessageAsync($"You need exactly 1 starter Pokémon. You currently have {starterPokemon.Count}.");
+                            await session.SendMessageAsync("Please go to the Lineup menu to set one Pokémon as your starter.");
+                            await session.GetInputAsync("Input any key to continue...");
+                            break;
+                        }
+                        
+                        await Game.Rooms(session);
+                    }
                     break;
+
                 case "6":
-                    // On Feat's Version or not
-                    // Change username, email, password
+                    await Settings.SettingsMenu(session);
                     break;
                 case "7" or "q":
                     await session.SendMessageAsync("Thank you for playing!");

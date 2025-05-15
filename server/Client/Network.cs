@@ -165,7 +165,7 @@ namespace Server
                             while (true)
                             {
                                 email = await session.GetInputAsync("📧 Email:");
-                                if (email.Contains("@") && email.Contains(".") && email.Length > 6)
+                                if (email.Contains("@") || email.Contains(".") || email.IndexOf("@") < email.LastIndexOf(".") || email.Length > 6)
                                     break;
                                 else
                                     await session.SendMessageAsync("Invalid email format. Please try again:");

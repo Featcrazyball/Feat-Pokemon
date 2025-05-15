@@ -15,7 +15,6 @@ namespace Models
         public int Wins { get; set; }
         public int Losses { get; set; }
         public int Coins { get; set; }
-        public bool FeatVersion { get; set; }
         public bool God { get; set; } = false;
 
         public bool FreePika { get; set; } = false;
@@ -39,7 +38,6 @@ namespace Models
             Wins = 0;
             Losses = 0;
             Coins = 100;
-            FeatVersion = false;
 
         }
 

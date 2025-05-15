@@ -171,7 +171,8 @@ namespace Client
                 "Would you like to evolve ALL the pokemon in the list? (Y/N):",
                 "Would you like to evolve ALL the pokemon in the list? (Assignment) (Y/N):",
                 "Message:",
-                "Choose a Pokémon to use the XP Bottle on:"
+                "Choose a Pokémon to use the XP Bottle on:",
+                "Enter your new email address (\"cancel\" to return to Settings):"
                 
             };
 
