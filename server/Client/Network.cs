@@ -116,6 +116,13 @@ namespace Server
                                     await session.SendMessageAsync("Invalid username or password. Disconnecting...");
                                     continue;
                                 }
+
+                                // Check if user is banned
+                                if (user.IsBanned)
+                                {
+                                    await session.SendMessageAsync("User is Banned. Disconnecting...");
+                                    continue;
+                                }
                             }
 
                             await session.SendMessageAsync(@"

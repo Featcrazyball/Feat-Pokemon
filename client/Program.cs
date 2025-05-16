@@ -177,6 +177,9 @@ namespace Client
                 "Enter your new password:",
                 "Confirm your new password:",
                 "Enter your new username (\"cancel\" to return to Settings):",
+                "Enter the Pokémon's health (\"cancel\" to leave):",
+                "Enter the Pokémon's Exp (\"cancel\" to leave):",
+                "Enter the name of the Pokémon you want to create (\"cancel\" to leave):",
                 
             };
 
