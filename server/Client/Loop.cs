@@ -79,7 +79,7 @@ public class Client
                         {
                             await session.SendMessageAsync($"You need exactly 6 Pokémon in your lineup. You currently have {selectedPokemons.Count}.");
                             await session.SendMessageAsync("Please go to the Lineup menu to select your Pokémon.");
-                            await session.GetInputAsync("Input any key to continue...");
+                            await session.GetInputAsync("\nInput any key to continue...");
                             break;
                         }
 

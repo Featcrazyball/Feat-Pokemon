@@ -70,8 +70,35 @@ public class Drowzee : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var hypno = new Hypno(this);
+            hypno.MaxHealth = hypno.HealthOverride;
+            hypno.EvolveLevelUp(Level-1);
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add skills for the evolved Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(hypno);
+            foreach (var skill in hypno.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Drowzee to a Hypno!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

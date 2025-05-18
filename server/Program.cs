@@ -30,7 +30,7 @@ namespace Server
                     File.Delete(dbPath + "-wal");
                 if (File.Exists(dbPath + "-shm"))
                     File.Delete(dbPath + "-shm");
-                
+
                 // Create fresh database
                 using var context = new DatabaseContext();
                 context.Database.EnsureCreated();
@@ -41,8 +41,20 @@ namespace Server
                 Console.WriteLine($"Database initialization error: {ex.Message}");
             }
 
+            // Reset Arena Logins
+            using (var context = new DatabaseContext())
+            {
+                var users = context.Users.ToList();
+                foreach (var user in users)
+                {
+                    user.InRoom = false;
+                    context.Users.Update(user);
+                }
+                context.SaveChanges();
+            }
+
             // Server Setup
-            Socket server;
+                Socket server;
             try            
             {
                 server = await NetworkMethods.ServerSetup();

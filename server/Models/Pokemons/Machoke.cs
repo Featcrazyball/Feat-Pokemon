@@ -103,7 +103,34 @@ public class Machoke : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var machamp = new Machamp(this);
+            machamp.MaxHealth = machamp.HealthOverride;
+            machamp.EvolveLevelUp(Level-1); 
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(machamp);
+            foreach (var skill in machamp.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Machoke to a Machamp!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

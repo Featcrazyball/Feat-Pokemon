@@ -6,20 +6,12 @@ namespace Arena;
 
 public class PokemonStats
 {
-    public float Health { get; set; }
-    public float Attack { get; set; }
-    public float Defense { get; set; }
-    public float SpecialAttack { get; set; }
-    public float SpecialDefense { get; set; }
-    public float Speed { get; set; }
-
-    public int AttackStage { get; set; }
-    public int DefenseStage { get; set; }
-    public int SpeedStage { get; set; }
-    public int SpecialAttackStage { get; set; }
-    public int SpecialDefenseStage { get; set; }
-    public int AccuracyStage { get; set; }
-    public int EvasionStage { get; set; }
+    public float MaxHealth { get; set; }
+    public float MaxAttack { get; set; }
+    public float MaxDefense { get; set; }
+    public float MaxSpecialAttack { get; set; }
+    public float MaxSpecialDefense { get; set; }
+    public float MaxSpeed { get; set; }
 }
 
 public class PokemonBackupService
@@ -105,7 +97,7 @@ public class PokemonBackupService
         {
             if (CreatorPokemonStats.TryGetValue(pokemon.Id!, out var stats))
             {
-                RestoreStatsTo(pokemon, stats, halfHealth: true);
+                RestoreStatsTo(pokemon, stats);
             }
         }
         
@@ -113,7 +105,7 @@ public class PokemonBackupService
         {
             if (JoinerPokemonStats.TryGetValue(pokemon.Id!, out var stats))
             {
-                RestoreStatsTo(pokemon, stats, halfHealth: true);
+                RestoreStatsTo(pokemon, stats);
             }
         }
     }
@@ -153,37 +145,31 @@ public class PokemonBackupService
     {
         return new PokemonStats
         {
-            Health = pokemon.Health,
-            Attack = pokemon.Attack,
-            Defense = pokemon.Defense,
-            SpecialAttack = pokemon.SpecialAttack,
-            SpecialDefense = pokemon.SpecialDefense,
-            Speed = pokemon.Speed,
-            AttackStage = pokemon.AttackStage,
-            DefenseStage = pokemon.DefenseStage,
-            SpeedStage = pokemon.SpeedStage,
-            SpecialAttackStage = pokemon.SpecialAttackStage,
-            SpecialDefenseStage = pokemon.SpecialDefenseStage,
-            AccuracyStage = pokemon.AccuracyStage,
-            EvasionStage = pokemon.EvasionStage
+            MaxHealth = pokemon.MaxHealth,
+            MaxAttack = pokemon.MaxAttack,
+            MaxDefense = pokemon.MaxDefense,
+            MaxSpecialAttack = pokemon.MaxSpecialAttack,
+            MaxSpecialDefense = pokemon.MaxSpecialDefense,
+            MaxSpeed = pokemon.MaxSpeed,
         };
     }
-    
-    private void RestoreStatsTo(PokemonMaster pokemon, PokemonStats stats, bool halfHealth = false)
+
+    private void RestoreStatsTo(PokemonMaster pokemon, PokemonStats stats)
     {
-        pokemon.Health = halfHealth ? stats.Health / 2 : stats.Health;
-        pokemon.Attack = stats.Attack;
-        pokemon.Defense = stats.Defense;
-        pokemon.SpecialAttack = stats.SpecialAttack;
-        pokemon.SpecialDefense = stats.SpecialDefense;
-        pokemon.Speed = stats.Speed;
-        pokemon.AttackStage = stats.AttackStage;
-        pokemon.DefenseStage = stats.DefenseStage;
-        pokemon.SpeedStage = stats.SpeedStage;
-        pokemon.SpecialAttackStage = stats.SpecialAttackStage;
-        pokemon.SpecialDefenseStage = stats.SpecialDefenseStage;
-        pokemon.AccuracyStage = stats.AccuracyStage;
-        pokemon.EvasionStage = stats.EvasionStage;
+        // Restore max values first
+        pokemon.MaxHealth = stats.MaxHealth;
+        pokemon.MaxAttack = stats.MaxAttack;
+        pokemon.MaxDefense = stats.MaxDefense;
+        pokemon.MaxSpecialAttack = stats.MaxSpecialAttack;
+        pokemon.MaxSpecialDefense = stats.MaxSpecialDefense;
+        pokemon.MaxSpeed = stats.MaxSpeed;
+
+        pokemon.Health = stats.MaxHealth;
+        pokemon.Attack = stats.MaxAttack;
+        pokemon.Defense = stats.MaxDefense;
+        pokemon.SpecialAttack = stats.MaxSpecialAttack;
+        pokemon.SpecialDefense = stats.MaxSpecialDefense;
+        pokemon.Speed = stats.MaxSpeed;
     }
     
     private void ClearStatusConditions(PokemonMaster pokemon)

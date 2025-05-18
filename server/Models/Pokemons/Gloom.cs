@@ -101,7 +101,33 @@ public class Gloom : PokemonMaster
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Gloom to a Vileplume!");
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var Vileplume = new Vileplume(this);
+                Vileplume.MaxHealth = Vileplume.HealthOverride;
+            Vileplume.EvolveLevelUp(Level-1); // Level up to current level
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(Vileplume);
+            foreach (var skill in Vileplume.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Gloom to a Vileplume!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

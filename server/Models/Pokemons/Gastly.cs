@@ -71,6 +71,32 @@ public class Gastly : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var haunter = new Haunter(this);
+            haunter.MaxHealth = haunter.HealthOverride;
+            haunter.EvolveLevelUp(Level - 1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add skills for the evolved Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(haunter);
+            foreach (var skill in haunter.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Gastly to a Haunter!");
+    }
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;

@@ -4,10 +4,10 @@ namespace PokemonPocket;
 
 public class Blastoise : PokemonMaster
 {
-    public override float HealthOverride {get;set;} = 79;
+    public override float HealthOverride { get; set; } = 79;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Blastoise() { } //For EF Core
-    public Blastoise(string nickname, string ownerId) 
+    public Blastoise(string nickname, string ownerId)
     : base("Blastoise", "Water", 79, 83, 100, 85, 105, 78, ownerId, 30, "Torrent")
     {
         Nickname = nickname;
@@ -16,10 +16,10 @@ public class Blastoise : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -33,10 +33,10 @@ public class Blastoise : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -60,10 +60,10 @@ public class Blastoise : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -72,7 +72,13 @@ public class Blastoise : PokemonMaster
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
+    }
+
+    public override async Task GodEvolve(ClientSession session)
+    {
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
     }
 }

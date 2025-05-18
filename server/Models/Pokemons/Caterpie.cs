@@ -74,7 +74,37 @@ public class Caterpie : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var metapod = new Metapod(this);
+            metapod.MaxHealth = metapod.HealthOverride;
+            metapod.EvolveLevelUp(Level-1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add the evolved Pokemon to the context
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(metapod);
+            
+            // Add all skills for the evolved Pokemon
+            foreach (var skill in metapod.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            // Save all changes in a single transaction
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Caterpie to a Metapod!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
     }
 }

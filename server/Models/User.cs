@@ -17,6 +17,7 @@ namespace Models
         public int Coins { get; set; }
         public bool God { get; set; } = false;
         public bool IsBanned { get; set; } = false;
+        public bool InRoom { get; set; } = false;
 
         public bool FreePika { get; set; } = false;
         public bool FreeEevee { get; set; } = false;

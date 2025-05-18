@@ -4,10 +4,10 @@ namespace PokemonPocket;
 
 public class Beedrill : PokemonMaster
 {
-    public override float HealthOverride {get;set;} = 65;
+    public override float HealthOverride { get; set; } = 65;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Beedrill() { } //For EF Core
-    public Beedrill(string nickname, string ownerId) 
+    public Beedrill(string nickname, string ownerId)
     : base("Beedrill", "Bug/Poison", 65, 90, 40, 45, 80, 75, ownerId, 20, "Swarm")
     {
         Nickname = nickname;
@@ -16,10 +16,10 @@ public class Beedrill : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -33,10 +33,10 @@ public class Beedrill : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -60,10 +60,10 @@ public class Beedrill : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -72,7 +72,13 @@ public class Beedrill : PokemonMaster
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final form!");
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
+    }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final form!");
     }
 }

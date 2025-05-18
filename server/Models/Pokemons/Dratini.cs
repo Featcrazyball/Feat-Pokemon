@@ -70,8 +70,35 @@ public class Dratini : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var dragonair = new Dragonair(this);
+            dragonair.MaxHealth = dragonair.HealthOverride;
+            dragonair.EvolveLevelUp(Level-1);
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add skills for the evolved Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(dragonair);
+            foreach (var skill in dragonair.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Dratini to a Dragonair!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

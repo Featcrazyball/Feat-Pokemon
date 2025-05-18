@@ -44,8 +44,14 @@ public class Moltres : PokemonMaster
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
+    }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

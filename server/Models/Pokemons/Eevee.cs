@@ -145,7 +145,92 @@ public class Eevee : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+    public override async Task GodEvolve(ClientSession session)
+    {
+        while (true)
+        {
+            string choice = await session.GetInputAsync($"Eevee has 3 Evolution options: \n[1] Vaporeon (Water Stone)\n[2] Jolteon (Thunder Stone)\n[3] Flareon (Fire Stone). \nPlease choose one to evolve into.");
+
+            switch (choice)
+            {
+                case "1" or "Vaporeon":
+                    using (var context = new DatabaseContext())
+                    {
+                        foreach (var skill in this.Skills)
+                        {
+                            context.Skills.Remove(skill);
+                        }
+
+                        var vaporeon = new Vaporeon(this);
+                        vaporeon.MaxHealth = vaporeon.HealthOverride;
+                        vaporeon.EvolveLevelUp(Level - 1); // Level up to current level
+                        context.PokemonMaster.Remove(this);
+                        context.PokemonMaster.Add(vaporeon);
+                        foreach (var skill in vaporeon.Skills)
+                        {
+                            context.Skills.Add(skill);
+                        }
+
+                        context.SaveChanges();
+                    }
+                    await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Eevee to a Vaporeon!");
+                    return;
+                case "2" or "Jolteon":
+                    using (var context = new DatabaseContext())
+                    {
+                        foreach (var skill in this.Skills)
+                        {
+                            context.Skills.Remove(skill);
+                        }
+
+                        var jolteon = new Jolteon(this);
+                        jolteon.MaxHealth = jolteon.HealthOverride;
+                        jolteon.EvolveLevelUp(Level - 1); // Level up to current level
+
+                        context.PokemonMaster.Remove(this);
+                        context.PokemonMaster.Add(jolteon);
+                        foreach (var skill in jolteon.Skills)
+                        {
+                            context.Skills.Add(skill);
+                        }
+
+                        context.SaveChanges();
+                    }
+                    await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Eevee to a Jolteon!");
+                    return;
+                case "3" or "Flareon":
+                    using (var context = new DatabaseContext())
+                    {
+                        foreach (var skill in this.Skills)
+                        {
+                            context.Skills.Remove(skill);
+                        }
+
+                        var flareon = new Flareon(this);
+                        flareon.MaxHealth = flareon.HealthOverride;
+                        flareon.EvolveLevelUp(Level - 1); // Level up to current level
+
+                        context.PokemonMaster.Remove(this);
+                        context.PokemonMaster.Add(flareon);
+                        foreach (var skill in flareon.Skills)
+                        {
+                            context.Skills.Add(skill);
+                        }
+
+                        context.SaveChanges();
+                    }
+                    await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Eevee to a Flareon!");
+                    return;
+                default:
+                    await session.SendMessageAsync("Invalid choice. Please try again.");
+                    continue;
+            }
+        }
+        
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
     }
 }

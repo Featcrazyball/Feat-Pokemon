@@ -102,8 +102,35 @@ public class Metapod : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var butterfree = new Butterfree(this);
+            butterfree.MaxHealth = butterfree.HealthOverride;
+            butterfree.EvolveLevelUp(Level-1); // Level up to 10
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(butterfree);
+            foreach (var skill in butterfree.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Metapod to a Butterfree!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

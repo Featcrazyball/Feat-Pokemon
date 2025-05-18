@@ -70,8 +70,33 @@ public class Magikarp : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var gyarados = new Gyarados(this);
+            gyarados.MaxHealth = gyarados.HealthOverride;
+            gyarados.EvolveLevelUp(Level-1);
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(gyarados);
+            foreach (var skill in gyarados.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Magikarp to a Gyarados!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

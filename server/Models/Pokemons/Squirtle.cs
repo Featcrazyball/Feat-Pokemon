@@ -41,6 +41,32 @@ public class Squirtle : PokemonMaster
         }
     }
 
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var wartortle = new Wartortle(this);
+            wartortle.MaxHealth = wartortle.HealthOverride;
+            wartortle.EvolveLevelUp(Level-1); // Level up to 16
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(wartortle);
+            foreach (var skill in wartortle.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Squirtle to a Wartortle!");
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         if (Level >= 16) {

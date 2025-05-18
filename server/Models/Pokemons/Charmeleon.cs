@@ -102,7 +102,38 @@ public class Charmeleon : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var charizard = new Charizard(this);
+            charizard.MaxHealth = charizard.HealthOverride;
+            charizard.EvolveLevelUp(Level-1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add the evolved Pokemon to the context
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(charizard);
+            
+            // Add all skills for the evolved Pokemon
+            foreach (var skill in charizard.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            // Save all changes in a single transaction
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Charmeleon to a Charizard!");
+    }
+
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
     }
 }

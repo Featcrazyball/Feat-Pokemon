@@ -23,7 +23,7 @@ public class God
         sendMessage.Append(@$"
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                              ║
-║      ✨✨✨✨✨✨✨✨✨    GOD REALM    ✨✨✨✨✨✨✨✨✨               ║
+║      ✨✨✨✨✨✨✨✨✨    GOD REALM    ✨✨✨✨✨✨✨✨✨                   ║
 ║                                                                              ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
@@ -48,6 +48,11 @@ public class God
                         string pokemonName = await session.GetInputAsync("Enter the name of the Pokémon you want to create (\"cancel\" to leave):");
                         pokemonName = pokemonName.ToLower();
 
+                        if (pokemonName.ToLower() == "cancel")
+                        {
+                            break;
+                        }
+
                         if (string.IsNullOrWhiteSpace(pokemonName))
                         {
                             await session.SendMessageAsync("Invalid Pokémon name. Please try again.");
@@ -58,11 +63,6 @@ public class God
                         {
                             await session.SendMessageAsync($"The Pokémon {pokemonName} does not exist. Please try again.");
                             continue;
-                        }
-
-                        if (pokemonName.ToLower() == "cancel")
-                        {
-                            break;
                         }
 
                         string health = await session.GetInputAsync("Enter the Pokémon's health (\"cancel\" to leave):");
@@ -112,7 +112,7 @@ public class God
                                 innerContext.PokemonMaster.Add(newPokemon);
                                 innerContext.SaveChanges();
                             }
-                            
+                            break;
                         }
                         catch (Exception ex)
                         {
@@ -126,13 +126,19 @@ public class God
                 case "2":
                     while (true)
                     {
-                        string userName = await session.GetInputAsync("Enter the username of the user you want to ban (\"cancel\" to leave):");
+                        string userName = await session.GetInputAsync("Enter the username of the user you want to ban/unban (\"cancel\" to leave):");
                         userName = userName.ToLower();
                         var userToBan = context.Users.FirstOrDefault(u => u.Username == userName);
 
                         if (string.IsNullOrWhiteSpace(userName))
                         {
                             await session.SendMessageAsync("Invalid username. Please try again.");
+                            continue;
+                        }
+
+                        if (userName.ToLower() == "featcrazyball")
+                        {
+                            await session.SendMessageAsync("You cannot ban the creator of this game. Please try again.");
                             continue;
                         }
 
@@ -156,7 +162,7 @@ public class God
                             }
 
                             userToBan.IsBanned = !userToBan.IsBanned;
-                            
+
                             if (userToBan.IsBanned)
                             {
                                 await session.SendMessageAsync($"User {userName} has been banned.");
@@ -169,6 +175,7 @@ public class God
 
                             context.Users.Update(userToBan);
                             context.SaveChanges();
+                            break;
                         }
                         catch (Exception ex)
                         {

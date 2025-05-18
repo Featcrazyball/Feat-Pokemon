@@ -67,8 +67,6 @@ public class Bellsprout : PokemonMaster
                 {
                     context.Skills.Add(skill);
                 }
-                
-                
                 // Save all changes in a single transaction
                 context.SaveChanges();
             }
@@ -77,8 +75,41 @@ public class Bellsprout : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var weepinbell = new Weepinbell(this);
+            weepinbell.MaxHealth = weepinbell.HealthOverride;
+            weepinbell.MaxHealth = weepinbell.HealthOverride;
+            weepinbell.EvolveLevelUp(Level-1);
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add the evolved Pokemon to the context
+            // Remove the original Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(weepinbell);
+            
+            // Add all skills for the evolved Pokemon
+            foreach (var skill in weepinbell.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            
+            // Save all changes in a single transaction
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Bellsprout to a Weepinbell!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

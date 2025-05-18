@@ -101,8 +101,35 @@ public class Nidorino : PokemonMaster
         }
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Nidorino to a Nidoking!");
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var nidoking = new Nidoking(this);
+            nidoking.MaxHealth = nidoking.HealthOverride;
+            nidoking.EvolveLevelUp(Level-1); // Level up to current level
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(nidoking);
+            foreach (var skill in nidoking.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Nidorino to a Nidoking!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

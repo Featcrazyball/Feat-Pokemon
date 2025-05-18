@@ -75,7 +75,34 @@ public class Pikachu : PokemonMaster
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Pikachu to a Raichu!");
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 3*SkillDamage;
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var raichu = new Raichu(this);
+            raichu.MaxHealth = raichu.HealthOverride;
+            raichu.EvolveLevelUp(Level-1); // Level up to current level
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(raichu);
+            foreach (var skill in raichu.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Pikachu to a Raichu!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 3 * SkillDamage;
     }
 }

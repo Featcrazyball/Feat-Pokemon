@@ -75,7 +75,34 @@ public class Clefairy : PokemonMaster
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Clefairy to a Clefable!");
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var clefable = new Clefable(this);
+            clefable.MaxHealth = clefable.HealthOverride;
+            clefable.EvolveLevelUp(Level-1); // Level up to current level
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Clean up skills from the old Pokemon to prevent orphaned records
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(clefable);
+            foreach (var skill in clefable.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Clefairy to a Clefable!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

@@ -54,7 +54,10 @@ public class ChangeUsername
             user.Username = username;
             context.Users.Update(user);
             context.SaveChanges();
-            await session.SendMessageAsync("Username updated successfully.");
+
+            session.Username = username;
+            await session.SendMessageAsync($"Your username has been changed to {username}.");
+
             await session.GetInputAsync("Input any key to continue...");
             break;
         }

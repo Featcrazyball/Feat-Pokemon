@@ -96,8 +96,34 @@ public class Dragonair : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var dragonite = new Dragonite(this);
+            dragonite.MaxHealth = dragonite.HealthOverride;
+            dragonite.EvolveLevelUp(Level-1);
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add skills for the evolved Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(dragonite);
+            foreach (var skill in dragonite.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Dragonair to a Dragonite!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

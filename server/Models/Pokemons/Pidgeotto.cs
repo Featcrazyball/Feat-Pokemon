@@ -98,7 +98,34 @@ public class Pidgeotto : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var pidgeot = new Pidgeot(this);
+            pidgeot.MaxHealth = pidgeot.HealthOverride;
+            pidgeot.EvolveLevelUp(Level-1); // Level up to 36
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(pidgeot);
+            foreach (var skill in pidgeot.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Pidgeotto to a Pidgeot!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

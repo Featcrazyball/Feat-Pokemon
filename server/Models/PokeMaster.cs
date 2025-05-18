@@ -265,7 +265,7 @@ namespace PokemonPocket
             AccuracyStage = 0;
             EvasionStage = 0;
 
-            CritRate = MaxSpeed / 512; // Crit Rate
+            _critRate = 0; // Crit Rate
             CritDmg = 1.5f; // Crit Damage
 
             // Arena
@@ -356,7 +356,7 @@ namespace PokemonPocket
             Defense = MaxDefense;
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
-            CritRate = MaxSpeed / 512;
+            _critRate = 0;
         }
 
         // For Leveling Up
@@ -393,7 +393,7 @@ namespace PokemonPocket
             Defense = MaxDefense;
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
-            CritRate = MaxSpeed / 512;
+            _critRate = 0;
         }
 
         // Check if can evolve
@@ -530,6 +530,11 @@ namespace PokemonPocket
             await session.SendMessageAsync($"{Nickname} is unable evolve.");
         }
 
+        public virtual async Task GodEvolve(ClientSession session)
+        {
+            await session.SendMessageAsync($"{Nickname} is unable evolve.");
+        }
+
         // Skill Management (Complete)
         public async Task LearnSkill(string skillName, ClientSession session)
         {
@@ -653,17 +658,6 @@ namespace PokemonPocket
             }
             // Instead of saving here with context.SaveChanges(), return the skills
             return newSkills;
-        }
-
-        public void SetStarter(PokemonMaster poke)
-        {
-            using var context = new DatabaseContext();
-            foreach (var pokemon in poke.Owner?.Pokemon ?? new List<PokemonMaster>())
-            {
-                if (pokemon.Starter) { pokemon.Starter = false; }
-            }
-            poke.Starter = true;
-            context.SaveChanges();
         }
 
         public Skill? ArenaTempSkillGain(string skillName)

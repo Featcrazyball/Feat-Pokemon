@@ -68,6 +68,8 @@ public class ChangePassword
                     continue;
                 }
 
+                user.Password = newPassword;
+
                 context.Users.Update(user);
                 context.SaveChanges();
                 await session.SendMessageAsync("Password updated successfully.");

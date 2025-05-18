@@ -98,7 +98,34 @@ public class Ivysaur : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var venusaur = new Venusaur(this);
+            venusaur.MaxHealth = venusaur.HealthOverride;
+            venusaur.EvolveLevelUp(Level-1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(venusaur);
+            foreach (var skill in venusaur.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Ivysaur to a Venusaur!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
     }
 }

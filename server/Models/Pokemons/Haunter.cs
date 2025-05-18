@@ -98,7 +98,33 @@ public class Haunter : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var gengar = new Gengar(this);
+            gengar.MaxHealth = gengar.HealthOverride;
+            gengar.EvolveLevelUp(Level-1); 
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(gengar);
+            foreach (var skill in gengar.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Haunter to a Gengar!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

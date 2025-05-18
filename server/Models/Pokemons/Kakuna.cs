@@ -99,7 +99,35 @@ public class Kakuna : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var beedrill = new Beedrill(this);
+            beedrill.MaxHealth = beedrill.HealthOverride;
+            beedrill.EvolveLevelUp(Level-1); // Level up to 7
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add new skills to Beedrill
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(beedrill);
+            foreach (var skill in beedrill.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Kakuna to a Beedrill!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
     }
 }

@@ -1,62 +1,90 @@
 #!/bin/bash
-# Script to update parameters in AdminGetPokemon method
 
-# Path to User.cs file
-USER_FILE="c:/Users/yangx/OneDrive/Desktop/Feat Pokemon/Feat-Pokemon/server/Models/User.cs"
+# Directory containing Pokémon class files
+POKEMON_DIR="c:/Users/yangx/OneDrive/Desktop/Feat Pokemon/Feat-Pokemon/server/Models/Pokemons"
 
-# Create a temporary file
-TMP_FILE=$(mktemp)
+processed=0
+modified=0
 
-# Initialize variables to track if we're in AdminGetPokemon method
-IN_ADMIN_METHOD=0
-FINISHED_SWITCH=0
+echo "Beginning to process Pokémon classes..."
 
-# Process the file line by line
-while IFS= read -r line; do
-    # Check if we're entering the AdminGetPokemon method
-    if [[ $line =~ "public PokemonMaster? AdminGetPokemon" ]]; then
-        IN_ADMIN_METHOD=1
-    fi
+# Process each Pokémon class file
+for file in "$POKEMON_DIR"/*.cs; do
+    filename=$(basename "$file")
+    processed=$((processed+1))
     
-    # Check if we're starting the switch statement in AdminGetPokemon
-    if [[ $IN_ADMIN_METHOD -eq 1 && $line =~ "switch" ]]; then
-        FINISHED_SWITCH=0
-    fi
-    
-    # Check if we're at the end of AdminGetPokemon method
-    if [[ $IN_ADMIN_METHOD -eq 1 && $FINISHED_SWITCH -eq 1 && $line =~ "}" ]]; then
-        IN_ADMIN_METHOD=0
-        echo "$line" >> "$TMP_FILE"
+    # Skip if GodEvolve already exists
+    if grep -q "public override async Task GodEvolve" "$file"; then
+        echo "Skipping $filename - GodEvolve already exists"
         continue
     fi
+
+    echo "Processing $filename..."
+
+    # Find the last closing brace
+    insert_line=$(grep -n "^}" "$file" | tail -1 | cut -d: -f1)
     
-    # If we're in the switch statement of AdminGetPokemon, modify the parameters
-    if [[ $IN_ADMIN_METHOD -eq 1 && $FINISHED_SWITCH -eq 0 ]]; then
-        # Don't modify the Abra line as it's already correct
-        if [[ $line =~ "abra" && $line =~ "new Abra(HP, name, userId, exp)" ]]; then
-            echo "$line" >> "$TMP_FILE"
-            continue
-        fi
+    # For final evolution Pokémon
+    if grep -q "is already at its final evolution stage" "$file"; then
+        # Create a temporary file for the GodEvolve method
+        cat > temp_godevolve.txt << EOF
+    public override async Task GodEvolve(ClientSession session)
+    {
+        await session.SendMessageAsync(\$"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
+    }
+
+EOF
+        # Insert before the last closing brace
+        sed -i "${insert_line}i\\$(cat temp_godevolve.txt)" "$file"
+        rm temp_godevolve.txt
         
-        # Replace "None", userId! with HP, name, userId, exp for other Pokémon
-        if [[ $line =~ "new " && $line =~ "\"None\", userId!" ]]; then
-            modified_line=$(echo "$line" | sed 's/"None", userId!/HP, name, userId, exp/g')
-            echo "$modified_line" >> "$TMP_FILE"
-            continue
-        fi
+        echo "Added final-stage GodEvolve to $filename"
+        modified=$((modified+1))
+    
+    # For evolvable Pokémon
+    elif grep -q "public override async Task Evolve" "$file" && grep -q "EvolvesTo" "$file"; then
+        # Extract pokemon name and evolution target
+        pokemon_name=$(grep "class" "$file" | head -1 | awk '{print $2}')
+        evolves_to=$(grep "EvolvesTo" "$file" | grep -o '"[^"]*"' | head -1 | tr -d '"')
         
-        # Check if we've reached the end of the switch statement
-        if [[ $line =~ "_ => null" ]]; then
-            FINISHED_SWITCH=1
+        if [ -n "$evolves_to" ]; then
+            # Create a temporary file for the GodEvolve method
+            cat > temp_godevolve.txt << EOF
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var evolved = new ${evolves_to}(this);
+            evolved.MaxHealth = evolved.HealthOverride;
+            evolved.EvolveLevelUp(Level-1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(evolved);
+            
+            foreach (var skill in evolved.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync(\$"{(Nickname == "None" ? Name : Nickname)} has evolved from a ${pokemon_name} to a ${evolves_to}!");
+    }
+
+EOF
+            # Insert before the last closing brace
+            sed -i "${insert_line}i\\$(cat temp_godevolve.txt)" "$file"
+            rm temp_godevolve.txt
+            
+            echo "Added evolution GodEvolve to $filename"
+            modified=$((modified+1))
         fi
     fi
-    
-    # Output the line unchanged if no modifications were made
-    echo "$line" >> "$TMP_FILE"
-    
-done < "$USER_FILE"
+done
 
-# Replace the original file with the modified one
-mv "$TMP_FILE" "$USER_FILE"
-
-echo "Updated AdminGetPokemon parameters in $USER_FILE"
+echo "Script complete: Processed $processed files, modified $modified files"

@@ -4,22 +4,22 @@ namespace PokemonPocket;
 
 public class Arcanine : PokemonMaster
 {
-    public override float HealthOverride {get;set;} = 90;
+    public override float HealthOverride { get; set; } = 90;
     public override string? Requirements { get; set; } = "Unevolvable";
     private Arcanine() { } //For EF Core
-    public Arcanine(string nickname, string ownerId) 
+    public Arcanine(string nickname, string ownerId)
     : base("Arcanine", "Fire", 90, 110, 80, 100, 80, 95, ownerId, 59, "Intimidate")
     {
         Nickname = nickname;
         SkillPool = "Ember, Leer, Take Down, Agility, Flamethrower, Toxic, Body Slam, Double-Edge, Rage, Dragon Rage, Dig, Mimic, Fire Blast, Swift, Skull Bash, Rest, Substitute";
-        
+    
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -29,14 +29,13 @@ public class Arcanine : PokemonMaster
         Nickname = nickname;
         Experience = exp;
         SkillPool = "Ember, Leer, Take Down, Agility, Flamethrower, Toxic, Body Slam, Double-Edge, Rage, Dragon Rage, Dig, Mimic, Fire Blast, Swift, Skull Bash, Rest, Substitute";
-
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -55,15 +54,15 @@ public class Arcanine : PokemonMaster
         SpeedIV = growlithe.SpeedIV;
         StatPoints = Random.Shared.Next(1, 10);
         StatsEarned = 0;
-        SkillPool = "Ember, Leer, Take Down, Agility, Flamethrower, Toxic, Body Slam, Double-Edge, Rage, Dragon Rage, Dig, Mimic, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        SkillPool = "Ember, Leer, Take Down, Agility, Flamethrower, Toxic, Body Slam, Double-Edge, Rage, Dragon Rage, Dig, Mimic, Fire Blast, Swift, Skull Bash, Rest, Substitute";    
 
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -74,5 +73,10 @@ public class Arcanine : PokemonMaster
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
+    }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
     }
 }

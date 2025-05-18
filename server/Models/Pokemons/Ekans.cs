@@ -70,6 +70,32 @@ public class Ekans : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var arbok = new Arbok(this);
+            arbok.MaxHealth = arbok.HealthOverride;
+            arbok.EvolveLevelUp(Level - 1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add skills for the evolved Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(arbok);
+            foreach (var skill in arbok.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Ekans to an Arbok!");
+    }
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;

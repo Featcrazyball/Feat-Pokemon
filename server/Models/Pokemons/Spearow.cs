@@ -71,7 +71,34 @@ public class Spearow : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
-        return 3*SkillDamage;
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var fearow = new Fearow(this);
+            fearow.MaxHealth = fearow.HealthOverride;
+            fearow.EvolveLevelUp(Level-1); // Level up to 20
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(fearow);
+            foreach (var skill in fearow.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Spearow to a Fearow!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 3 * SkillDamage;
     }
 }

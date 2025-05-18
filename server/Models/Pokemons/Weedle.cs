@@ -70,8 +70,36 @@ public class Weedle : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var kakuna = new Kakuna(this);
+            kakuna.MaxHealth = kakuna.HealthOverride;
+            kakuna.EvolveLevelUp(Level-1); // Level up to 7
 
-    public override float calculateDamage(float SkillDamage) {
-        return 2*SkillDamage;
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(kakuna);
+            foreach (var skill in kakuna.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Weedle to a Kakuna!");
+    }
+
+
+    public override float calculateDamage(float SkillDamage)
+    {
+        return 2 * SkillDamage;
     }
 }

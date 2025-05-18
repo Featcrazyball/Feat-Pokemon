@@ -97,7 +97,34 @@ public class Graveler : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var golem = new Golem(this);
+            golem.MaxHealth = golem.HealthOverride;
+            golem.EvolveLevelUp(Level-1); 
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(golem);
+            foreach (var skill in golem.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Gravler to a Golem!");
+    }
+
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

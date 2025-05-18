@@ -71,6 +71,36 @@ public class NidoranM : PokemonMaster
         }
     }
 
+    public override async Task GodEvolve(ClientSession session)
+    {
+        if (Level >= 16) {
+            using (var context = new DatabaseContext())
+            {
+                var nidorino = new Nidorino(this);
+                nidorino.MaxHealth = nidorino.HealthOverride;
+                nidorino.EvolveLevelUp(Level-1);
+
+                foreach (var skill in this.Skills)
+                {
+                    context.Skills.Remove(skill);
+                }
+
+                context.PokemonMaster.Remove(this);
+                context.PokemonMaster.Add(nidorino);
+                foreach (var skill in nidorino.Skills)
+                {
+                    context.Skills.Add(skill);
+                }
+
+                // Remove previous and add new Pokemon
+                context.SaveChanges();
+            }
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a NidoranM to a Nidorino!");
+        } else {
+            await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
+        }
+    }
+
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
     }

@@ -74,8 +74,35 @@ public class Vulpix : PokemonMaster
         }
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Vulpix to a Ninetales!");
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var ninetales = new Ninetales(this);
+            ninetales.MaxHealth = ninetales.HealthOverride;
+            ninetales.EvolveLevelUp(Level-1); // Level up to current level
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(ninetales);
+            foreach (var skill in ninetales.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Vulpix to a Ninetales!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

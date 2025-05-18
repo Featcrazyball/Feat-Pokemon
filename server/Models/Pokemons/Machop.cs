@@ -70,6 +70,32 @@ public class Machop : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var machoke = new Machoke(this);
+            machoke.MaxHealth = machoke.HealthOverride;
+            machoke.EvolveLevelUp(Level - 1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(machoke);
+            foreach (var skill in machoke.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Machop to a Machoke!");
+    }
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;

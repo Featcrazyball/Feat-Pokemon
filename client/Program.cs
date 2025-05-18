@@ -180,6 +180,10 @@ namespace Client
                 "Enter the Pokémon's health (\"cancel\" to leave):",
                 "Enter the Pokémon's Exp (\"cancel\" to leave):",
                 "Enter the name of the Pokémon you want to create (\"cancel\" to leave):",
+                "Enter the username of the user you want to /unban (\"cancel\" to leave):",
+                "Enter a name for your battle room:",
+                "Enter the room number to join:",
+                "Please enter the name of the Pokemon you want to switch to:"
                 
             };
 

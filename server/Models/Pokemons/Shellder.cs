@@ -75,7 +75,34 @@ public class Shellder : PokemonMaster
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Shellder to a Cloyster!");
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var cloyster = new Cloyster(this);
+            cloyster.MaxHealth = cloyster.HealthOverride;
+            cloyster.EvolveLevelUp(Level-1); // Level up to current level
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(cloyster);
+            foreach (var skill in cloyster.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Shellder to a Cloyster!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

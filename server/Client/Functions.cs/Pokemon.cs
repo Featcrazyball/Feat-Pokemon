@@ -55,6 +55,8 @@ public class ServerPokemon
             case "3":
                 // Back to Trainer Menu
                 return;
+
+            // Only for showing purposes
             case "god mode":
                 if (user.God) { await PokemonMax(session, user); } 
                 using (var context = new DatabaseContext())
@@ -73,8 +75,9 @@ public class ServerPokemon
                 }
 
                 break;
+
+            // Only for showing purposes    
             case "test":
-            if (user.God) { await PokemonMax(session, user); } 
                 using (var context = new DatabaseContext())
                 {
                     context.PokemonMaster
@@ -82,9 +85,15 @@ public class ServerPokemon
                         .ToList()
                         .ForEach(p => p.Level = 100);
                     context.PokemonMaster.UpdateRange(context.PokemonMaster);
+                    Item.AddFireStone(user.Id!, 2);
+                    Item.AddWaterStone(user.Id!, 2);
+                    Item.AddThunderStone(user.Id!, 2);
+                    Item.AddLeafStone(user.Id!, 2);
+                    Item.AddMoonStone(user.Id!, 2);
                     context.SaveChanges();
                 }
                 break;
+
             default:
                 await session.SendMessageAsync("Invalid choice. Please try again.");
                 break;

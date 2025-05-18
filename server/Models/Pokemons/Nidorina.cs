@@ -102,7 +102,34 @@ public class Nidorina : PokemonMaster
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Nidorina to a Nidoqueen!");
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var nidoqueen = new Nidoqueen(this);
+                nidoqueen.MaxHealth = nidoqueen.HealthOverride;
+            nidoqueen.EvolveLevelUp(Level-1); // Level up to current level
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(nidoqueen);
+            foreach (var skill in nidoqueen.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Nidorina to a Nidoqueen!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

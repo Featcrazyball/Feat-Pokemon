@@ -53,7 +53,7 @@ public class Lineup
                     Selected = "";
                 }
 
-                sendMessage.Append($"\n║    {$"[{i+1}]",-3} {pokemon.Name, -30} ║ Level: {pokemon.Level, -3} ║{Selected, -21}    ║");
+                sendMessage.Append($"\n║    {$"[{i+1}]",-5} {pokemon.Name, -30} ║ Level: {pokemon.Level, -3} ║{Selected, -21}  ║");
                 sendMessage.Append($"\n║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━          ║");
             }
 
@@ -88,15 +88,34 @@ public class Lineup
             {
                 var selectedPokemon = PokemonList[selectedIndex - 1];
 
-                if (selectedPokemon.Starter || selectedPokemon.Selected)
+                var selected = new List<PokemonMaster>();
+                using (var context = new DatabaseContext())
                 {
-                    selectedPokemon.Starter = false;
-                    selectedPokemon.Selected = false;
-                } else if (selectedPokemon.Selected == false)
-                {
-                    selectedPokemon.Selected = true;
-                    selectedPokemon.Starter = false;
+                    var selectedPokemonList = context.PokemonMaster
+                        .Where(p => p.OwnerId == user.Id && p.Selected)
+                        .ToList();
+
+                    foreach (var pokemon in selectedPokemonList)
+                    {
+                        if (pokemon.Name == selectedPokemon.Name)
+                        {
+                            await session.SendMessageAsync("You may not select Pokemon of the same spieces.");
+                            await session.GetInputAsync("Input any key to continue...");
+                            continue;
+                        }
+                    }
                 }
+
+                if (selectedPokemon.Starter || selectedPokemon.Selected)
+                    {
+                        selectedPokemon.Starter = false;
+                        selectedPokemon.Selected = false;
+                    }
+                    else if (selectedPokemon.Selected == false)
+                    {
+                        selectedPokemon.Selected = true;
+                        selectedPokemon.Starter = false;
+                    }
 
                 using (var context = new DatabaseContext())
                 {
@@ -111,11 +130,29 @@ public class Lineup
                 {
                     var selectedPokemon = PokemonList[startIndex - 1];
 
+                    var selected = new List<PokemonMaster>();
+                    using (var context = new DatabaseContext())
+                    {
+                        var selectedPokemonList = context.PokemonMaster
+                            .Where(p => p.OwnerId == user.Id && p.Selected)
+                            .ToList();
+
+                        foreach (var pokemon in selectedPokemonList)
+                        {
+                            if (pokemon.Name == selectedPokemon.Name)
+                            {
+                                await session.SendMessageAsync("You may not select Pokemon of the same spieces.");
+                                await session.GetInputAsync("Input any key to continue...");
+                                continue;
+                            }
+                        }
+                    }
+
                     if (selectedPokemon.Starter)
                     {
                         selectedPokemon.Starter = false;
                         selectedPokemon.Selected = true;
-                    } 
+                    }
                     else
                     {
                         selectedPokemon.Selected = true;

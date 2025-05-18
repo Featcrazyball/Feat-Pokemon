@@ -6,6 +6,7 @@ public class Magneton : PokemonMaster
 {
     public override float HealthOverride {get;set;} = 50;
     public override string? Requirements { get; set; } = "Unevolvable";
+    
     private Magneton() { } //For EF Core
     public Magneton(string nickname, string ownerId) 
     : base("Magnetron", "Electric/Steel", 50, 60, 95, 120, 70, 70, ownerId, 20, "Magnet Pull")
@@ -65,6 +66,11 @@ public class Magneton : PokemonMaster
                 Skills.Add(skill);
             };
         }
+    }
+
+    public override async Task GodEvolve(ClientSession session)
+    {
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
     }
 
     public override async Task Evolve(ClientSession session)

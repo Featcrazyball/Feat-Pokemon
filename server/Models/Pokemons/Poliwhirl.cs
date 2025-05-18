@@ -102,6 +102,32 @@ public class Poliwhirl : PokemonMaster
         }
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Poliwhirl to a Poliwrath!");
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var poliwrath = new Poliwrath(this);
+            poliwrath.MaxHealth = poliwrath.HealthOverride;
+            poliwrath.EvolveLevelUp(Level - 1); // Level up to current level
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(poliwrath);
+            foreach (var skill in poliwrath.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Poliwhirl to a Poliwrath!");
+    }
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;

@@ -74,7 +74,37 @@ public class Cubone : PokemonMaster
         }
     }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var marowak = new Marowak(this);
+            marowak.MaxHealth = marowak.HealthOverride;
+            marowak.EvolveLevelUp(Level-1);
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add the evolved Pokemon to the context
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(marowak);
+            
+            // Add all skills for the evolved Pokemon
+            foreach (var skill in marowak.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            // Save all changes in a single transaction
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Cubone to a Marowak!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

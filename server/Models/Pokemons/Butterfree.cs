@@ -71,8 +71,14 @@ public class Butterfree : PokemonMaster
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final form!");
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final form!");
+    }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

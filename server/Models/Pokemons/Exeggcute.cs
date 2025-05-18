@@ -74,8 +74,35 @@ public class Exeggcute : PokemonMaster
         }
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Exeggcute to an Exeggutor!");
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var exeggutor = new Exeggutor(this);
+            exeggutor.MaxHealth = exeggutor.HealthOverride;
+            exeggutor.EvolveLevelUp(Level-1);
 
-    public override float calculateDamage(float SkillDamage) {
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            // Add skills for the evolved Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(exeggutor);
+            foreach (var skill in exeggutor.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from an Exeggcute to an Exeggutor!");
+    }
+
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

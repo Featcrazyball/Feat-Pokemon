@@ -95,8 +95,33 @@ public class Doduo : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var dodrio = new Dodrio(this);
+            dodrio.MaxHealth = dodrio.HealthOverride;
+            dodrio.EvolveLevelUp(Level-1);
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+            // Add skills for the evolved Pokemon
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(dodrio);
+            foreach (var skill in dodrio.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+            
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Doduo to a Dodrio!");
+    }
 
-    public override float calculateDamage(float SkillDamage) {
+    public override float calculateDamage(float SkillDamage)
+    {
         return SkillDamage;
     }
 }

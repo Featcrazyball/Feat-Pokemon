@@ -101,6 +101,17 @@ namespace Server
                             username = await session.GetInputAsync("👤 Username:");
                             password = await session.GetInputAsync("🔑 Password:");
 
+                            // Check if user disconnected
+                            if (client.Poll(10000, SelectMode.SelectRead))
+                            {
+                                // Check if the client is still connected
+                                byte[] buffer = new byte[1];
+                                if (client.Receive(buffer, SocketFlags.Peek) == 0)
+                                {
+                                    return;
+                                }
+                            }
+
                             if (IsUsernameActive(username))
                             {
                                 await session.SendMessageAsync("Username is already logged in.\nDisconnecting...");
@@ -121,7 +132,7 @@ namespace Server
                                 if (user.IsBanned)
                                 {
                                     await session.SendMessageAsync("User is Banned. Disconnecting...");
-                                    continue;
+                                    return;
                                 }
                             }
 
@@ -163,6 +174,16 @@ namespace Server
                             
                             username = await session.GetInputAsync("👤 Username:");
 
+                            if (client.Poll(1000, SelectMode.SelectRead))
+                            {
+                                // Check if the client is still connected
+                                byte[] buffer = new byte[1];
+                                if (client.Receive(buffer, SocketFlags.Peek) == 0)
+                                {
+                                    return;
+                                }
+                            }
+
                             if (username.Length < 3 || username.Length > 20)
                             {
                                 await session.SendMessageAsync("Username must be between 3 and 20 characters.");
@@ -191,7 +212,8 @@ namespace Server
                             using (var context = new DatabaseContext())
                             {
                                 // Check if username or email already exists
-                                var existingUser = context.Users.FirstOrDefault(u => u.Username == username || u.Email == email);
+                                var existingUser = context.Users.FirstOrDefault(u => u.Username!.ToLower() == username.ToLower() || u.Email!.ToLower() == email.ToLower());
+
                                 if (existingUser != null)
                                 {
                                     await session.SendMessageAsync("Username or email already exists.");

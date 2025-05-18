@@ -70,6 +70,32 @@ public class Rattata : PokemonMaster
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }
+    
+    public override async Task GodEvolve(ClientSession session)
+    {
+        using (var context = new DatabaseContext())
+        {
+            var ratticate = new Raticate(this);
+            ratticate.MaxHealth = ratticate.HealthOverride;
+            ratticate.EvolveLevelUp(Level - 1); // Level up to 20
+
+            foreach (var skill in this.Skills)
+            {
+                context.Skills.Remove(skill);
+            }
+
+            context.PokemonMaster.Remove(this);
+            context.PokemonMaster.Add(ratticate);
+            foreach (var skill in ratticate.Skills)
+            {
+                context.Skills.Add(skill);
+            }
+
+            // Remove previous and add new Pokemon
+            context.SaveChanges();
+        }
+        await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Rattata to a Raticate!");
+    }
 
     public override float calculateDamage(float SkillDamage) {
         return SkillDamage;
