@@ -45,6 +45,23 @@ public class Abra : PokemonMaster
         }
     }
 
+    public Abra(string ownerId)
+    : base("Abra", "Psychic", 100, 20, 15, 105, 55, 90, ownerId, 10, "Synchronize")
+    {
+        Experience = 0;
+        Nickname = "None";
+        SkillPool = "Toxic, Rage, Hyper Beam, SolarBeam, Psychic, Mimic, Double Team, Bide, Swift, Dream Eater, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+        }
+    }
+
     public override float calculateDamage(float SkillDamage)
     {
         return SkillDamage;

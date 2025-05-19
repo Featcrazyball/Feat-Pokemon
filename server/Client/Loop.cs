@@ -41,7 +41,7 @@ public class Client
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
 ║    [6] ⚙️ SETTINGS     │ Configure Your Trainer Profile                      ║
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
-║    [7] ⚙️ SETTINGS     │ Configure Your Trainer Profile                      ║
+║    [7] 📖 Assignment   │ Assignment Is Here                                  ║
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
 ║    [8] 🚪 EXIT         │ Save & Return to Real World                         ║
 ║                                                                              ║

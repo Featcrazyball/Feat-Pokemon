@@ -25,11 +25,26 @@ public class AssignmentAdd
         string HP = await session.GetInputAsync("Enter Pokemon's HP:");
         string Exp = await session.GetInputAsync("Enter Pokemon's Exp:");
 
+        // Validate HP and Exp inputs
         if (float.TryParse(HP, out float hp) && int.TryParse(Exp, out int exp))
         {
             try
             {
-                user.AdminGetPokemon(name, user.Id!, hp, exp);
+                // Add Pokemon to the user's pocket
+                using (var context = new DatabaseContext())
+                {
+                    var addedPokemon = user.AdminGetPokemon(name, user.Id!, hp, exp);
+
+                    if (addedPokemon == null)
+                    {
+                        await session.SendMessageAsync("Error creating Pokemon.");
+                        return;
+                    }
+
+                    context.PokemonMaster.Add(addedPokemon);
+                    context.SaveChanges();
+                    await session.SendMessageAsync($"{addedPokemon.Name} added to your pocket.");
+                }
             }
             catch (Exception ex)
             {

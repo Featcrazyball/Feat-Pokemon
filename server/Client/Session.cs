@@ -38,7 +38,6 @@ namespace Server
             }
             catch (Exception ex)
             {
-                // Just log the exception without throwing
                 Console.WriteLine($"[Session] Error clearing pending input: {ex.Message}");
             }
         }

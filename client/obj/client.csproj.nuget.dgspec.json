@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj": {}
+    "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj": {
+    "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj",
+        "projectUniqueName": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj",
         "projectName": "client",
-        "projectPath": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj",
-        "packagesPath": "C:\\Users\\featc\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\obj\\",
+        "projectPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj",
+        "packagesPath": "C:\\Users\\yangx\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\featc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\yangx\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"

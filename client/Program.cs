@@ -184,8 +184,10 @@ namespace Client
                 "Enter a name for your battle room:",
                 "Enter the room number to join:",
                 "Please enter the name of the Pokemon you want to switch to:",
-                "Please only enter [1,2,3,4] or Q to quit:"
-                
+                "Please only enter [1,2,3,4] or Q to quit:",
+                "Enter Pokemon's Name:",
+                "Enter Pokemon's HP:",
+                "Enter Pokemon's Exp:"
             };
 
             foreach (var str in s) { if (m.Contains(str)) { return true; }}  

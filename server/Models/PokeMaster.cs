@@ -27,7 +27,7 @@ namespace PokemonPocket
         public float MaxHealth { get; set; }
         public float SkillDamage { get; set; }
         public string? Skill { get; set; }
-        public int NoToEvolve {get; set;}
+        public int NoToEvolve { get; set; } = 2;
         public string? EvolveTo { get; set; }
 
         // To overwrite Assignment
@@ -226,6 +226,7 @@ namespace PokemonPocket
             this.Name = Name;
             this.NoToEvolve = noToEvolve;
             this.EvolvesTo = EvolvesTo;
+            this.EvolveTo = EvolvesTo;
 
             MaxHealth = 50;
             MaxAttack = 50;
@@ -283,6 +284,26 @@ namespace PokemonPocket
             return SkillDamage;
         }
 
+        public static void AssignmentEvolve(int noNeeded, int EndResult, string EvolvingFrom, string EvolvingTo, User user)
+        {
+            using (var context = new DatabaseContext())
+            {
+                var delete = context.PokemonMaster
+                    .Where(p => p.Name == EvolvingFrom && p.OwnerId == user.Id)
+                    .Take(noNeeded)
+                    .ToList();
+
+                if (delete.Count == 0)
+                {
+                    foreach (var poke in delete)
+                    {
+                        context.PokemonMaster.Remove(poke);
+                    }
+                }
+            }
+        }
+
+        // Reset Stats
         public void ResetStats()
         {
             // Basic Stats

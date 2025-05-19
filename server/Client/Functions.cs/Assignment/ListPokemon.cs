@@ -10,6 +10,7 @@ public class AssignmentList
 {
     public static async Task ListPokemonsInPocket(ClientSession session)
     {
+        // Retrieve user and their pokemon from the database
         User user;
         List<PokemonMaster> userPokemons;
         using (var context = new DatabaseContext())
