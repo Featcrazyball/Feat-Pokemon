@@ -67,22 +67,41 @@ public class Nidorino : PokemonMaster
             };
         }
     }
+    
+    public Nidorino(string ownerId)
+    : base("Nidorino", "Poison", 100, 72, 57, 55, 55, 65, ownerId, 23, "Poison Point")
+    {
+        Nickname = "None";
+        SkillPool = "Leer, Tackle, Horn Attack, Poison Sting, Focus Energy, Fury Attack, Horn Drill, Double Kick, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
             var item = context.Items.FirstOrDefault(i => i.Name == "Moon Stone" && i.OwnerId == OwnerId);
-            if (item != null) {
+            if (item != null)
+            {
                 context.Items.Remove(item);
-            } else {
+            }
+            else
+            {
                 await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Moon Stone to evolve!");
                 return;
             }
 
             var nidoking = new Nidoking(this);
             nidoking.MaxHealth = nidoking.HealthOverride;
-            nidoking.EvolveLevelUp(Level-1); // Level up to current level
+            nidoking.EvolveLevelUp(Level - 1); // Level up to current level
 
             foreach (var skill in this.Skills)
             {

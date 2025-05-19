@@ -67,6 +67,22 @@ public class Parasect : PokemonMaster
         }
     }
 
+    public Parasect(string ownerId)
+    : base("Parasect", "Bug/Grass", 100, 95, 80, 60, 80, 30, ownerId, 24, "Effect Spore")
+    {
+        Nickname = "None";
+        SkillPool = "Scratch, Stun Spore, Leech Life, Spore, Slash, Growth, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

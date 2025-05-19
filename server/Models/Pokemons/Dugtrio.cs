@@ -66,6 +66,23 @@ public class Dugtrio : PokemonMaster
             };
         }
     }
+
+    public Dugtrio(string ownerId) 
+    : base("Dugtrio", "Ground", 100, 100, 50, 50, 70, 120, ownerId, 26, "Sand Veil")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Scratch, Growl, Dig, Sand Attack, Slash, Earthquake, Fissure, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
     
     public override async Task Evolve(ClientSession session)
     {

@@ -57,18 +57,29 @@ public class Muk : PokemonMaster
         StatsEarned = 0;
         SkillPool = "Pound, Poison Gas, Harden, Minimize, Sludge, Acid Armor, Screech, Toxic, Body Slam, Hyper Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Fire Blast, Substitute";
 
-        using (var context = new DatabaseContext())
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
         {
-            var newSkills = LearnSkillFromSkillPool();
-            if (newSkills != null)
+            foreach (var skill in newSkills) 
             {
-                foreach (var skill in newSkills) 
-                {
-                    Skills.Add(skill);
-                    context.Skills.Add(skill);
-                };
-                context.SaveChanges();
-            }
+                Skills.Add(skill);
+            };
+        }
+    }
+
+    public Muk(string ownerId) 
+    : base("Muk", "Poison", 100, 105, 75, 65, 100, 50, ownerId, 35, "Poison Touch")
+    {
+        Nickname = "None";
+        SkillPool = "Pound, Poison Gas, Harden, Minimize, Sludge, Acid Armor, Screech, Toxic, Body Slam, Hyper Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Fire Blast, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
         }
     }
 

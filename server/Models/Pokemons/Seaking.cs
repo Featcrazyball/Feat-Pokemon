@@ -67,6 +67,23 @@ public class Seaking : PokemonMaster
         }
     }
 
+    public Seaking(string ownerId)
+    : base("Seaking", "Water", 100, 92, 65, 65, 80, 68, ownerId, 30, "Swift Swim")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Peck, Tail Whip, Supersonic, Horn Attack, Fury Attack, Waterfall, Horn Drill, Agility, Surf, Ice Beam, Blizzard, Body Slam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

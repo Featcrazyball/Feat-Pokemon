@@ -67,6 +67,23 @@ public class Dodrio : PokemonMaster
         }
     }
 
+    public Dodrio(string ownerId) 
+    : base("Dodrio", "Normal/Flying", 100, 110, 70, 60, 60, 110, ownerId, 30, "Early Bird")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Peck, Growl, Fury Attack, Drill Peck, Rage, Agility, Tri Attack, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

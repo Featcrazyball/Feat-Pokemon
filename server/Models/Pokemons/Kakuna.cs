@@ -67,15 +67,32 @@ public class Kakuna : PokemonMaster
             };
         }
     }
+    
+    public Kakuna(string ownerId) 
+    : base("Kakuna", "Bug/Poison", 100, 25, 50, 25, 25, 35, ownerId, 15, "Shed Skin")
+    {
+        Nickname = "None";
+        SkillPool = "Harden";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 7) {
+        if (Level >= 7)
+        {
             using (var context = new DatabaseContext())
             {
                 var beedrill = new Beedrill(this);
                 beedrill.MaxHealth = beedrill.HealthOverride;
-                beedrill.EvolveLevelUp(Level-1); // Level up to 7
+                beedrill.EvolveLevelUp(Level - 1); // Level up to 7
 
                 foreach (var skill in this.Skills)
                 {
@@ -94,7 +111,9 @@ public class Kakuna : PokemonMaster
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Kakuna to a Beedrill!");
-        } else {
+        }
+        else
+        {
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }

@@ -67,6 +67,22 @@ public class Flareon : PokemonMaster
         }
     }
 
+    public Flareon(string ownerId)
+    : base("Flareon", "Fire", 100, 130, 60, 95, 110, 65, ownerId, 20, "Flash Fire")
+    {
+        Nickname = "None";
+        SkillPool = "Tackle, Sand Attack, Quick Attack, Leer, Ember, Fire Spin, Smog, Flamethrower, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

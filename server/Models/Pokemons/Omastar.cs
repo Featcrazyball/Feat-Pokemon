@@ -68,6 +68,22 @@ public class Omastar : PokemonMaster
         }
     }
 
+    public Omastar(string ownerId)
+    : base("Omastar", "Rock/Water", 100, 60, 125, 115, 70, 55, ownerId, 40, "Swift Swim")
+    {
+        Nickname = "None";
+        SkillPool = "Water Gun, Withdraw, Horn Attack, Leer, Spike Cannon, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

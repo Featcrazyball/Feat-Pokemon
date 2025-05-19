@@ -17,6 +17,9 @@ namespace Server
         // Dictionary to track sessions by username
         private static ConcurrentDictionary<string, ClientSession> _activeUsernames = new ConcurrentDictionary<string, ClientSession>();
 
+        // Disconnect clients if they are inactive
+        private static Timer? _connectionCheckTimer;
+
         // Server Setup
         public static async Task<Socket> ServerSetup()
         {
@@ -36,6 +39,7 @@ namespace Server
             server.Listen(30); // I can have up to 30 people
             Console.WriteLine("Server Running on Port: 8000");
 
+            _connectionCheckTimer = new Timer(CheckClientConnections!, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
             return server;
         }
 
@@ -44,7 +48,7 @@ namespace Server
         {
             if (_activeSessions.TryGetValue(playerId, out var session))
                 return session;
-                
+
             return null;
         }
 
@@ -54,7 +58,7 @@ namespace Server
             string playerId = Guid.NewGuid().ToString("N").Substring(0, 8);
             var session = new ClientSession(client, playerId);
             _activeSessions[playerId] = session;
-            
+
             try
             {
                 await session.SendMessageAsync(@"
@@ -88,7 +92,8 @@ namespace Server
                 switch (choice)
                 {
                     case "1":
-                        while(true){
+                        while (true)
+                        {
                             await session.SendMessageAsync(@"
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
@@ -171,7 +176,7 @@ namespace Server
 
                         while (true)
                         {
-                            
+
                             username = await session.GetInputAsync("👤 Username:");
 
                             if (client.Poll(1000, SelectMode.SelectRead))
@@ -197,7 +202,7 @@ namespace Server
                                     break;
                                 else
                                     await session.SendMessageAsync("Invalid email format. Please try again:");
-                                    continue;
+                                continue;
                             }
 
                             password = await session.GetInputAsync("🔒 Password:");
@@ -235,14 +240,16 @@ namespace Server
                                 {
                                     newUser.God = true;
                                     newUser.Coins = 1000000;
-                                } else{
+                                }
+                                else
+                                {
                                     newUser.God = false;
                                     newUser.Coins = 100;
                                 }
-                                
+
                                 // Save the user FIRST to get a valid database ID
                                 context.SaveChanges();
-                                
+
                                 // Now that the user has a valid ID in the database, add Pokemon
                                 Random random = new Random();
                                 HashSet<int> selectedIndices = new HashSet<int>();
@@ -280,7 +287,7 @@ namespace Server
                                 while (tempCount < 5 && selectedIndices.Count < ListofStuff.AllPokemon.Count())
                                 {
                                     int randomIndex = random.Next(0, ListofStuff.AllPokemon.Count());
-                                    
+
                                     if (selectedIndices.Add(randomIndex))
                                     {
                                         try
@@ -312,7 +319,8 @@ namespace Server
                                 }
 
                                 // Now save everything at once
-                                try {
+                                try
+                                {
                                     context.SaveChanges();
 
                                     await session.SendMessageAsync(@"
@@ -326,7 +334,8 @@ namespace Server
 ╚══════════════════════════════════════════════════════════════╝");
                                     break;
                                 }
-                                catch (Exception ex) {
+                                catch (Exception ex)
+                                {
                                     Console.WriteLine($"Database error: {ex.Message}");
                                     await session.SendMessageAsync("Error creating account. Please try again.");
                                     continue;
@@ -342,20 +351,20 @@ namespace Server
 
                 session.Username = username;
                 await Client.GameLoop(session, username);
-            
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error handling client: {ex.Message}");
-                
+
                 _activeSessions.TryRemove(playerId, out _);
-                
+
                 if (!string.IsNullOrEmpty(session.Username))
                 {
                     RemoveUsername(session.Username);
                 }
                 await session.SendMessageAsync("An error occurred. Disconnecting...");
-                
+
                 try
                 {
                     client.Shutdown(SocketShutdown.Both);
@@ -367,7 +376,7 @@ namespace Server
             {
                 // Remove the client session
                 _activeSessions.TryRemove(playerId, out _);
-                
+
                 if (!string.IsNullOrEmpty(session.Username))
                 {
                     RemoveUsername(session.Username);
@@ -375,7 +384,7 @@ namespace Server
 
                 // Close the connection
                 // Not rlly needed, but free marks cuz gud practice PLEASE GIVE ME FULL MARKS
-                
+
                 try
                 {
                     client.Shutdown(SocketShutdown.Both);
@@ -384,7 +393,7 @@ namespace Server
                 catch { }
             }
         }
-    
+
         public static bool IsUsernameActive(string username)
         {
             return _activeUsernames.ContainsKey(username);
@@ -400,6 +409,74 @@ namespace Server
         public static void RemoveUsername(string username)
         {
             _activeUsernames.TryRemove(username, out _);
+        }
+
+        private static void CheckClientConnections(object state)
+        {
+            // Create copy to avoid modification during enumeration
+            foreach (var sessionEntry in _activeSessions.ToArray())
+            {
+                string sessionId = sessionEntry.Key;
+                ClientSession session = sessionEntry.Value;
+
+                try
+                {
+                    // Check if client is still connected
+                    if (session._client == null || !session._client.Connected || !IsSocketConnected(session._client))
+                    {
+                        Console.WriteLine($"[{DateTime.Now}] Client {sessionId} disconnected, cleaning up...");
+
+                        // Clean up resources - remove from active sessions
+                        _activeSessions.TryRemove(sessionId, out _);
+
+                        // Remove from username tracking if logged in
+                        if (!string.IsNullOrEmpty(session.Username))
+                        {
+                            RemoveUsername(session.Username);
+                        }
+
+                        // Close the socket if it exists and is connected
+                        try
+                        {
+                            if (session._client != null && session._client.Connected)
+                            {
+                                session._client.Shutdown(SocketShutdown.Both);
+                                session._client.Close();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error closing socket for client {sessionId}: {ex.Message}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error checking connection for client {sessionId}: {ex.Message}");
+                }
+            }
+        }
+        
+        // Check if a socket is still connected
+        private static bool IsSocketConnected(Socket socket)
+        {
+            try
+            {
+                // Check if the socket is connected and has data available
+                bool part1 = socket.Poll(1000, SelectMode.SelectRead);
+                bool part2 = (socket.Available == 0);
+                
+                // If both are true, the socket is closed or not connected
+                if (part1 && part2)
+                    return false;
+                
+                // Try to send a non-data packet (0 bytes) to test the connection
+                return !(socket.Poll(1, SelectMode.SelectRead) && socket.Available == 0);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
     }

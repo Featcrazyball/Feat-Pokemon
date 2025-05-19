@@ -67,6 +67,22 @@ public class Rhydon : PokemonMaster
         }
     }
 
+    public Rhydon(string ownerId) 
+    : base("Rhydon", "Ground/Rock", 100, 130, 120, 45, 45, 40, ownerId, 30, "Lightning Rod")
+    {
+        Nickname = "None";
+        SkillPool = "Horn Attack, Stomp, Tail Whip, Fury Attack, Horn Drill, Leer, Take Down, Earthquake, Hyper Beam, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Strength, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

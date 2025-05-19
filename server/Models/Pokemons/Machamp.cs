@@ -19,7 +19,7 @@ public class Machamp : PokemonMaster
             foreach (var skill in newSkills) 
             {
                 Skills.Add(skill);
-            };
+            }
         }
     }
 
@@ -57,17 +57,29 @@ public class Machamp : PokemonMaster
         StatsEarned = 0;
         SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
 
-        using (var context = new DatabaseContext())
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
         {
-            var newSkills = LearnSkillFromSkillPool();
-            if (newSkills != null)
+            foreach (var skill in newSkills)
             {
-                foreach (var skill in newSkills) 
-                {
-                    Skills.Add(skill);
-                    context.Skills.Add(skill);
-                };
-                context.SaveChanges();
+                Skills.Add(skill);
+            }
+        }
+    }
+
+    public Machamp(string ownerId) 
+    : base("Machamp", "Fighting", 100, 130, 80, 65, 85, 55, ownerId, 20, "No Guard")
+    {
+        Nickname = "None";
+        SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
             }
         }
     }

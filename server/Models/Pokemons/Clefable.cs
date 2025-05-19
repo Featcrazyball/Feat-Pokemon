@@ -23,6 +23,22 @@ public class Clefable : PokemonMaster
             };
         }
     }
+    
+    public Clefable(string ownerId)
+    : base("Clefable", "Fairy", 100, 70, 73, 95, 90, 60, ownerId, 35, "Cute Charm")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Sing, Double Slap, Minimize, Metronome, Defense Curl, Light Screen, Solar Beam, Thunderbolt, Thunder, Psychic, Teleport, Seismic Toss, Counter, Toxic, Body Slam, Take Down, Double-Edge, Submission, Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Psywave, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Clefable(float HP, string nickname, string ownerId, int exp)
     : base("Clefable", "Fairy", HP, 70, 73, 95, 90, 60, ownerId, 35, "Cute Charm")
@@ -34,10 +50,11 @@ public class Clefable : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

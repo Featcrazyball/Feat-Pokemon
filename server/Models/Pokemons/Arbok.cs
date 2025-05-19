@@ -23,6 +23,22 @@ public class Arbok : PokemonMaster
                 };
         }
     }
+    
+    public Arbok(string ownerId)
+    : base("Arbok", "Poison", 100, 95, 69, 65, 79, 80, ownerId, 25, "Bite")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Wrap, Poison Sting, Bite, Glare, Acid, Screech, Toxic, Body Slam, Take Down, Double-Edge, Rage, Earthquake, Fissure, Skull Bash, Rock Slide, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Arbok(float HP, string nickname, string ownerId, int exp)
     : base("Arbok", "Poison", HP, 95, 69, 65, 79, 80, ownerId, 25, "Bite")
@@ -37,7 +53,8 @@ public class Arbok : PokemonMaster
             foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

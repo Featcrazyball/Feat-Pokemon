@@ -67,15 +67,32 @@ public class Pidgeotto : PokemonMaster
             };
         }
     }
+    
+    public Pidgeotto(string ownerId)
+    : base("Pidgeotto", "Normal/Flying", 100, 60, 55, 50, 50, 71, ownerId, 25, "Gust")
+    {
+        Nickname = "None";
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Agility, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 36) {
+        if (Level >= 36)
+        {
             using (var context = new DatabaseContext())
             {
                 var pidgeot = new Pidgeot(this);
                 pidgeot.MaxHealth = pidgeot.HealthOverride;
-                pidgeot.EvolveLevelUp(Level-1); // Level up to 36
+                pidgeot.EvolveLevelUp(Level - 1); // Level up to 36
 
                 foreach (var skill in this.Skills)
                 {
@@ -93,7 +110,9 @@ public class Pidgeotto : PokemonMaster
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Pidgeotto to a Pidgeot!");
-        } else {
+        }
+        else
+        {
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }

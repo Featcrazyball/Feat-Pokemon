@@ -67,6 +67,23 @@ public class Electrode : PokemonMaster
         }
     }
 
+    public Electrode(string ownerId)
+    : base("Electrode", "Electric", 100, 50, 70, 80, 80, 150, ownerId, 26, "Static")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Screech, Sonic Boom, Self-Destruct, Light Screen, Swift, Explosion, Toxic, Take Down, Double-Edge, Rage, Thunderbolt, Thunder, Thunder Wave, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

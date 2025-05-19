@@ -72,15 +72,33 @@ public class Machoke : PokemonMaster
             }
         }
     }
+    
+    public Machoke(string ownerId)
+    : base("Machoke", "Fighting", 100, 100, 70, 50, 60, 45, ownerId, 20, "Guts")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Karate Chop, Low Kick, Leer, Focus Energy, Seismic Toss, Submission, Strength, Earthquake, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 28) {
+        if (Level >= 28)
+        {
             using (var context = new DatabaseContext())
             {
                 var machamp = new Machamp(this);
                 machamp.MaxHealth = machamp.HealthOverride;
-                machamp.EvolveLevelUp(Level-1); 
+                machamp.EvolveLevelUp(Level - 1);
 
                 foreach (var skill in this.Skills)
                 {
@@ -98,7 +116,9 @@ public class Machoke : PokemonMaster
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Machoke to a Machamp!");
-        } else {
+        }
+        else
+        {
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }

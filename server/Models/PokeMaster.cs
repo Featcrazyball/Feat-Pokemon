@@ -288,18 +288,30 @@ namespace PokemonPocket
         {
             using (var context = new DatabaseContext())
             {
+                // Get pokemon thats gonna be deleted
                 var delete = context.PokemonMaster
                     .Where(p => p.Name == EvolvingFrom && p.OwnerId == user.Id)
                     .Take(noNeeded)
                     .ToList();
 
-                if (delete.Count == 0)
+                // Delete
+                if (delete.Count != 0)
                 {
                     foreach (var poke in delete)
                     {
                         context.PokemonMaster.Remove(poke);
                     }
                 }
+
+                // Add new pokemon (Evolved)
+                for (int i = 0; i < EndResult; i++)
+                {
+                    var pokemon = user.AssignmentGetPokemon(EvolvingTo);
+                    context.PokemonMaster.Add(pokemon!);
+                }
+
+                // Save changes
+                context.SaveChanges();
             }
         }
 

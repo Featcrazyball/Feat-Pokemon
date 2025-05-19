@@ -67,6 +67,23 @@ public class Ninetales : PokemonMaster
         }
     }
 
+    public Ninetales(string ownerId)
+    : base("Ninetales", "Fire", 100, 76, 75, 81, 100, 100, ownerId, 20, "Flash Fire")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Ember, Quick Attack, Roar, Confuse Ray, Flamethrower, Fire Spin, Hyper Beam, Fire Blast, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

@@ -67,6 +67,23 @@ public class Starmie : PokemonMaster
         }
     }
 
+    public Starmie(string ownerId)
+    : base("Starmie", "Water/Psychic", 100, 75, 85, 100, 85, 115, ownerId, 30, "Illuminate")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Tackle, Harden, Recover, Swift, Minimize, Light Screen, Hydro Pump, Surf, Thunderbolt, Ice Beam, Blizzard, Psychic, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Flash";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

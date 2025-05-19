@@ -66,6 +66,22 @@ public class Vileplume : PokemonMaster
             };
         }
     }
+    
+    public Vileplume(string ownerId) 
+    : base("Vileplume", "Grass/Poison", 100, 80, 85, 110, 90, 50, ownerId, 20, "Effect Spore")
+    {
+        Nickname = "None";
+        SkillPool = "Absorb, Poison Powder, Stun Spore, Sleep Powder, Acid, Petal Dance, Solar Beam, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task GodEvolve(ClientSession session)
     {

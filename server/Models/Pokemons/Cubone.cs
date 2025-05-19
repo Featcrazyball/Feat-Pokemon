@@ -23,6 +23,23 @@ public class Cubone : PokemonMaster
             };
         }
     }
+    
+    public Cubone(string ownerId) 
+    : base("Cubone", "Ground", 100, 50, 95, 40, 50, 35, ownerId, 20, "Lightning Rod")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Bone Club, Growl, Tail Whip, Headbutt, Leer, Focus Energy, Bonemerang, Rage, Thrash, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Earthquake, Fissure, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Cubone(float HP, string nickname, string ownerId, int exp)
     : base("Cubone", "Ground", HP, 50, 95, 40, 50, 35, ownerId, 20, "Lightning Rod")
@@ -34,10 +51,11 @@ public class Cubone : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

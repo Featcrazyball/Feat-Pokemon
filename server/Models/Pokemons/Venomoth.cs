@@ -67,6 +67,22 @@ public class Venomoth : PokemonMaster
         }
     }
 
+    public Venomoth(string ownerId)
+    : base("Venomoth", "Bug/Poison", 100, 65, 60, 90, 75, 90, ownerId, 31, "Shield Dust")
+    {
+        Nickname = "None";
+        SkillPool = "Tackle, Disable, Supersonic, Confusion, Poison Powder, Leech Life, Stun Spore, Psybeam, Sleep Powder, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

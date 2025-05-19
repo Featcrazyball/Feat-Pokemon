@@ -23,12 +23,12 @@ public class Caterpie : PokemonMaster
             };
         }
     }
-
-    public Caterpie(float HP, string nickname, string ownerId, int exp)
-    : base("Caterpie", "Bug", HP, 30, 35, 20, 20, 45, ownerId,  10, "Shield Dust")
+    
+    public Caterpie(string ownerId)
+    : base("Caterpie", "Bug", 100, 30, 35, 20, 20, 45, ownerId, 10, "Shield Dust")
     {
-        Nickname = nickname;
-        Experience = exp;
+        Nickname = "None";
+        Experience = 0;
         SkillPool = "Tackle, String Shot";
 
         var newSkills = LearnSkillFromSkillPool();
@@ -38,6 +38,24 @@ public class Caterpie : PokemonMaster
             {
                 Skills.Add(skill);
             };
+        }
+    }
+
+    public Caterpie(float HP, string nickname, string ownerId, int exp)
+    : base("Caterpie", "Bug", HP, 30, 35, 20, 20, 45, ownerId, 10, "Shield Dust")
+    {
+        Nickname = nickname;
+        Experience = exp;
+        SkillPool = "Tackle, String Shot";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+            ;
         }
     }
 

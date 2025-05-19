@@ -66,6 +66,22 @@ public class Nidoqueen : PokemonMaster
             };
         }
     }
+    
+    public Nidoqueen(string ownerId)
+    : base("Nidoqueen", "Poison/Ground", 100, 82, 87, 75, 85, 76, ownerId, 30, "Poison Point")
+    {
+        Nickname = "None";
+        SkillPool = "Scratch, Tackle, Poison Sting, Focus Energy, Fury Swipes, Body Slam, Earthquake, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Hyper Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Fire Blast, Skull Bash, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+        }
+    }
 
     public override async Task GodEvolve(ClientSession session)
     {

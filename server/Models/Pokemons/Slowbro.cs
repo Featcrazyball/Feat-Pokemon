@@ -67,6 +67,23 @@ public class Slowbro : PokemonMaster
         }
     }
 
+    public Slowbro(string ownerId)
+    : base("Slowbro", "Water/Psychic", 100, 75, 110, 100, 80, 30, ownerId, 36, "Oblivious")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Confusion, Disable, Headbutt, Growl, Water Gun, Withdraw, Amnesia, Psychic, Surf, Ice Beam, Blizzard, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

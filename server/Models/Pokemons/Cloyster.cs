@@ -19,7 +19,24 @@ public class Cloyster : PokemonMaster
             foreach (var skill in newSkills) 
             {
                 Skills.Add(skill);
-            };
+            }
+        }
+    }
+
+    public Cloyster(string ownerId) 
+    : base("Cloyster", "Water/Ice", 100, 95, 180, 85, 45, 70, ownerId, 30, "Shell Armor")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Clamp, Supersonic, Aurora Beam, Withdraw, Leer, Ice Beam, Spike Cannon, Toxic, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            }
         }
     }
 
@@ -33,10 +50,11 @@ public class Cloyster : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

@@ -67,6 +67,23 @@ public class Beedrill : PokemonMaster
         }
     }
 
+    public Beedrill(string ownerId)
+    : base("Beedrill", "Bug/Poison", 65, 90, 40, 45, 80, 75, ownerId, 20, "Swarm")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Fury Attack, Focus Energy, Twinneedle, Rage, Agility, Toxic, Take Down, Double-Edge, Hyper Beam, Mimic, Skull Bash, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final form!");

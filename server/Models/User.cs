@@ -59,6 +59,100 @@ namespace Models
             }
         }
 
+        public PokemonMaster? AssignmentGetPokemon(string name)
+        {
+            PokemonMaster? pokemon = name.ToLower() switch
+            {
+                "alakazam" => new Alakazam(Id!),
+                "arbok" => new Arbok(Id!),
+                "arcanine" => new Arcanine(Id!),
+                "beedrill" => new Beedrill(Id!),
+                "bellsprout" => new Bellsprout(Id!),
+                "blastoise" => new Blastoise(Id!),
+                "bulbasaur" => new Bulbasaur(Id!),
+                "butterfree" => new Butterfree(Id!),
+                "caterpie" => new Caterpie(Id!),
+                "charizard" => new Charizard(Id!),
+                "charmeleon" => new Charmeleon(Id!),
+                "charmander" => new Charmander(Id!),
+                "clefable" => new Clefable(Id!),
+                "clefairy" => new Clefairy(Id!),
+                "cloyster" => new Cloyster(Id!),
+                "cubone" => new Cubone(Id!),
+                "dewgong" => new Dewgong(Id!),
+                "diglett" => new Diglett(Id!),
+                "dodrio" => new Dodrio(Id!),
+                "doduo" => new Doduo(Id!),
+                "dragonair" => new Dragonair(Id!),
+                "dragonite" => new Dragonite(Id!),
+                "dratini" => new Dratini(Id!),
+                "drowzee" => new Drowzee(Id!),
+                "dugtrio" => new Dugtrio(Id!),
+                "electrode" => new Electrode(Id!),
+                "exeggutor" => new Exeggutor(Id!),
+                "fearow" => new Fearow(Id!),
+                "flareon" => new Flareon(Id!),
+                "gengar" => new Gengar(Id!),
+                "gloom" => new Gloom(Id!),
+                "golbat" => new Golbat(Id!),
+                "golduck" => new Golduck(Id!),
+                "golem" => new Golem(Id!),
+                "graveler" => new Graveler(Id!),
+                "gyarados" => new Gyarados(Id!),
+                "haunter" => new Haunter(Id!),
+                "hypno" => new Hypno(Id!),
+                "ivysaur" => new Ivysaur(Id!),
+                "kabutops" => new Kabutops(Id!),
+                "kadabra" => new Kadabra(Id!),
+                "kakuna" => new Kakuna(Id!),
+                "kingler" => new Kingler(Id!),
+                "machamp" => new Machamp(Id!),
+                "machoke" => new Machoke(Id!),
+                "magneton" => new Magneton(Id!),
+                "marowak" => new Marowak(Id!),
+                "metapod" => new Metapod(Id!),
+                "muk" => new Muk(Id!),
+                "nidoking" => new Nidoking(Id!),
+                "nidoqueen" => new Nidoqueen(Id!),
+                "nidorina" => new Nidorina(Id!),
+                "nidorino" => new Nidorino(Id!),
+                "ninetales" => new Ninetales(Id!),
+                "omastar" => new Omastar(Id!),
+                "parasect" => new Parasect(Id!),
+                "persian" => new Persian(Id!),
+                "pidgeot" => new Pidgeot(Id!),
+                "pidgeotto" => new Pidgeotto(Id!),
+                "poliwhirl" => new Poliwhirl(Id!),
+                "poliwrath" => new Poliwrath(Id!),
+                "primeape" => new Primeape(Id!),
+                "raichu" => new Raichu(Id!),
+                "rapidash" => new Rapidash(Id!),
+                "raticate" => new Raticate(Id!),
+                "rhydon" => new Rhydon(Id!),
+                "sandslash" => new Sandslash(Id!),
+                "seadra" => new Seadra(Id!),
+                "seaking" => new Seaking(Id!),
+                "slowbro" => new Slowbro(Id!),
+                "starmie" => new Starmie(Id!),
+                "tentacruel" => new Tentacruel(Id!),
+                "venomoth" => new Venomoth(Id!),
+                "venusaur" => new Venusaur(Id!),
+                "victreebel" => new Victreebel(Id!),
+                "vileplume" => new Vileplume(Id!),
+                "wartortle" => new Wartortle(Id!),
+                "weepinbell" => new Weepinbell(Id!),
+                "weezing" => new Weezing(Id!),
+                "wigglytuff" => new Wigglytuff(Id!),
+                _ => null
+            };
+            if (pokemon != null)
+            {
+                pokemon.MaxHealth = pokemon.HealthOverride;
+                return pokemon;
+            }
+            return null;
+        }
+
         public void GetPokemon(string name)
         {
             using (var context = new DatabaseContext())

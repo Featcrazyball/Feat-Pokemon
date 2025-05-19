@@ -23,6 +23,22 @@ public class Diglett : PokemonMaster
             };
         }
     }
+    
+    public Diglett(string ownerId)
+    : base("Diglett", "Ground", 100, 55, 25, 35, 45, 95, ownerId, 10, "Sand Veil")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Scratch, Growl, Dig, Sand Attack, Slash, Earthquake, Fissure, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Diglett(float HP, string nickname, string ownerId, int exp)
     : base("Diglett", "Ground", HP, 55, 25, 35, 45, 95, ownerId, 10, "Sand Veil")
@@ -34,10 +50,11 @@ public class Diglett : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

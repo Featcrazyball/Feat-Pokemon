@@ -23,6 +23,22 @@ public class Blastoise : PokemonMaster
         }
     }
 
+    public Blastoise(string ownerId)
+    : base("Blastoise", "Water", 100, 83, 100, 85, 105, 78, ownerId, 30, "Torrent")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Tackle, Bubble, Water Gun, Bite, Withdraw, Skull Bash, Hydro Pump, Toxic, Body Slam, Take Down, Blizzard, Hyper Beam, Submission, Seismic Toss, Counter, Ice Beam, Dig, Mimic, Double Team, Bide, Rest, Substitute, Surf, Strength";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+        }
+    }
+
     public Blastoise(float HP, string nickname, string ownerId, int exp)
     : base("Blastoise", "Water", HP, 83, 100, 85, 105, 78, ownerId, 30, "Torrent")
     {

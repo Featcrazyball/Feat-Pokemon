@@ -67,6 +67,23 @@ public class Exeggutor : PokemonMaster
         }
     }
 
+    public Exeggutor(string ownerId)
+    : base("Exeggutor", "Grass/Psychic", 100, 95, 85, 125, 75, 55, ownerId, 30, "Chlorophyll")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Stomp, Hypnosis, Barrage, Solar Beam, Toxic, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

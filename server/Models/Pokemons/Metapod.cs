@@ -72,15 +72,33 @@ public class Metapod : PokemonMaster
             }
         }
     }
+    
+    public Metapod(string ownerId)
+    : base("Metapod", "Bug", 100, 20, 55, 25, 25, 30, ownerId, 25, "Harden")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Harden";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 10) {
+        if (Level >= 10)
+        {
             using (var context = new DatabaseContext())
             {
                 var butterfree = new Butterfree(this);
                 butterfree.MaxHealth = butterfree.HealthOverride;
-                butterfree.EvolveLevelUp(Level-1); // Level up to 10
+                butterfree.EvolveLevelUp(Level - 1); // Level up to 10
 
                 foreach (var skill in this.Skills)
                 {
@@ -98,7 +116,9 @@ public class Metapod : PokemonMaster
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Metapod to a Butterfree!");
-        } else {
+        }
+        else
+        {
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }

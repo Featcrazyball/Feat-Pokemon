@@ -1,0 +1,20 @@
+    
+    public Alakazam(string ownerId) 
+    : base("Alakazam"
+"Alakazam",  "Psychic"
+ "Psychic", 100, 50, 45, 135, 95, 120, ownerId, 20, "Synchronize"
+50, 45, 135, 95, 120, ownerId, 20, "Synchronize")
+    {
+        Experience = 0;
+        Nickname = "None";
+        SkillPool = "Confusion, Psybeam, Recover, Psychic, Reflect, Kinesis, Toxic, Seismic Toss, Rage, Hyper Beam, Counter, Mimic, Double Team, Bide, Metronome, Swift, Dream Eater, Rest, Psywave, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+        }
+    }

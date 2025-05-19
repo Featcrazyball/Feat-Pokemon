@@ -22,6 +22,23 @@ public class Butterfree : PokemonMaster
             };
         }
     }
+    
+    public Butterfree(string ownerId)
+    : base("Butterfree", "Bug/Flying", 100, 45, 50, 90, 80, 70, ownerId, 25, "Confusion")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Confusion, Poison Powder, Stun Spore, Sleep Powder, Psybeam, Supersonic, Whirlwind, Toxic, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Butterfree(float HP, string nickname, string ownerId, int exp)
     : base("Butterfree", "Bug/Flying", HP, 45, 50, 90, 80, 70, ownerId, 25, "Confusion")
@@ -33,10 +50,11 @@ public class Butterfree : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

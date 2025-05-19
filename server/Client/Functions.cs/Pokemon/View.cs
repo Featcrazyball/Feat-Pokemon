@@ -69,9 +69,9 @@ $"-----------------------------------------\n"
                                         "[B] Back to Pokémon Menu\n" +
                                         "[N] Nickname Pokémon\n" +
                                         "[P] Allocate Stat Points\n" +
-                                        "[D] Damage Calculator (Assignment)\n" +
+                                        "[D] Damage Calculator\n" +
                                         "[L] Level Up Pokémon\n" +
-                                        $"{(user.God ? $"[F] Future Evolutions (Assignment and God)\n" : "")}\n"
+                                        $"{(user.God ? $"[F] Future Evolutions (God)\n" : "")}\n"
                                         );
             
         // Handle user input for actions

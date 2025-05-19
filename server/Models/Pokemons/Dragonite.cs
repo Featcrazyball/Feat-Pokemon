@@ -22,6 +22,22 @@ public class Dragonite : PokemonMaster
             };
         }
     }
+    
+    public Dragonite(string ownerId)
+    : base("Dragonite", "Dragon", 100, 134, 95, 100, 100, 80, ownerId, 60, "Inner Focus")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Wrap, Leer, Thunder Wave, Agility, Slam, Dragon Rage, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Rage, Thunderbolt, Thunder, Surf, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Dragonite(float HP, string nickname, string ownerId, int exp)
     : base("Dragonite", "Dragon", HP, 134, 95, 100, 100, 80, ownerId, 60, "Inner Focus")
@@ -33,10 +49,11 @@ public class Dragonite : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

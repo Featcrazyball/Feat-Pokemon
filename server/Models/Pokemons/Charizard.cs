@@ -22,6 +22,22 @@ public class Charizard : PokemonMaster
             };
         }
     }
+    
+    public Charizard(string ownerId)
+    : base("Charizard", "Fire/Flying", 100, 84, 78, 109, 85, 100, ownerId, 40, "Fire Burst")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Scratch, Growl, Ember, Leer, Rage, Slash, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Submission, Seismic Toss, Counter, Dragon Rage, Earthquake, Fissure, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Charizard(float HP, string nickname, string ownerId, int exp)
     : base("Charizard", "Fire/Flying", HP, 84, 78, 109, 85, 100, ownerId, 40, "Fire Burst")
@@ -33,10 +49,11 @@ public class Charizard : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

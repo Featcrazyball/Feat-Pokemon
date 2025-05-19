@@ -67,6 +67,23 @@ public class Tentacruel : PokemonMaster
         }
     }
 
+    public Tentacruel(string ownerId)
+    : base("Tentacruel", "Water/Poison", 100, 70, 65, 80, 120, 100, ownerId, 30, "Liquid Ooze")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Acid, Supersonic, Wrap, Poison Sting, Water Gun, Constrict, Barrier, Screech, Toxic, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

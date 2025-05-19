@@ -67,22 +67,41 @@ public class Weepinbell : PokemonMaster
             };
         }
     }
+    
+    public Weepinbell(string ownerId)
+    : base("Weepinbell", "Grass/Poison", 100, 90, 50, 85, 45, 55, ownerId, 21, "Chlorophyll")
+    {
+        Nickname = "None";
+        SkillPool = "Vine Whip, Sleep Powder, Stun Spore, Acid, Razor Leaf, Growth, Wrap, PoisonPowder, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
             var item = context.Items.FirstOrDefault(i => i.Name == "Leaf Stone" && i.OwnerId == OwnerId);
-            if (item != null) {
+            if (item != null)
+            {
                 context.Items.Remove(item);
-            } else {
+            }
+            else
+            {
                 await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Leaf Stone to evolve!");
                 return;
             }
 
             var victreebel = new Victreebel(this);
-                victreebel.MaxHealth = victreebel.HealthOverride;
-            victreebel.EvolveLevelUp(Level-1); // Level up to current level
+            victreebel.MaxHealth = victreebel.HealthOverride;
+            victreebel.EvolveLevelUp(Level - 1); // Level up to current level
 
             foreach (var skill in this.Skills)
             {

@@ -67,6 +67,21 @@ public class Raticate : PokemonMaster
         }
     }
 
+    public Raticate(string ownerId) 
+    : base("Raticate", "Normal", 100, 81, 60, 50, 70, 97, ownerId, 25, "Run Away")
+    {
+        Nickname = "None";
+        SkillPool = "Tackle, Tail Whip, Quick Attack, Hyper Fang, Focus Energy, Super Fang, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            }
+        }
+    }
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

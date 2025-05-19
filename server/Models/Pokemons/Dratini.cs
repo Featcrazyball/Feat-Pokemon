@@ -23,6 +23,22 @@ public class Dratini : PokemonMaster
             };
         }
     }
+    
+    public Dratini(string ownerId)
+    : base("Dratini", "Dragon", 100, 64, 45, 50, 50, 50, ownerId, 15, "Shed Skin")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Wrap, Leer, Thunder Wave, Agility, Slam, Dragon Rage, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Rage, Thunderbolt, Thunder, Surf, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Dratini(float HP, string nickname, string ownerId, int exp)
     : base("Dratini", "Dragon", HP, 64, 45, 50, 50, 50, ownerId, 15, "Shed Skin")
@@ -34,10 +50,11 @@ public class Dratini : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

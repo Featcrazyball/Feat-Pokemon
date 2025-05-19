@@ -67,6 +67,22 @@ public class Pidgeot : PokemonMaster
         }
     }
 
+    public Pidgeot(string ownerId)
+    : base("Pidgeot", "Normal/Flying", 100, 80, 75, 70, 70, 101, ownerId, 25, "Keen Eye")
+    {
+        Nickname = "None";
+        SkillPool = "Gust, Sand Attack, Quick Attack, Whirlwind, Wing Attack, Agility, Sky Attack, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

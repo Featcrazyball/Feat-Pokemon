@@ -67,6 +67,22 @@ public class Gyarados : PokemonMaster
         }
     }
 
+    public Gyarados(string ownerId) 
+    : base("Gyarados", "Water/Ice", 100, 125, 79, 60, 100, 81, ownerId, 30, "Intimidate")
+    {
+        Nickname = "None";
+        SkillPool = "Bite, Dragon Rage, Leer, Hydro Pump, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Hyper Beam, Rage, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Fire Blast, Skull Bash, Rest, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

@@ -23,6 +23,22 @@ public class Arcanine : PokemonMaster
         }
     }
 
+    public Arcanine(string ownerId)
+    : base("Arcanine", "Fire", 100, 110, 80, 100, 80, 95, ownerId, 59, "Intimidate")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Ember, Leer, Take Down, Agility, Flamethrower, Toxic, Body Slam, Double-Edge, Rage, Dragon Rage, Dig, Mimic, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+        }
+    }
+
     public Arcanine(float HP, string nickname, string ownerId, int exp)
     : base("Arcanine", "Fire", HP, 110, 80, 100, 80, 95, ownerId, 59, "Intimidate")
     {

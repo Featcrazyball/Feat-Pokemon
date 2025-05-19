@@ -23,7 +23,7 @@ public class Aerodactyl : PokemonMaster
             };
         }
     }
-
+             
     public Aerodactyl(float HP, string nickname, string ownerId, int exp)
     : base("Aerodactyl", "Rock/Flying", HP, 105, 65, 60, 75, 130, ownerId, 20, "Pressure")
     {

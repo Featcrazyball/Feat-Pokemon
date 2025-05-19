@@ -67,22 +67,41 @@ public class Gloom : PokemonMaster
             };
         }
     }
+    
+    public Gloom(string ownerId) 
+    : base("Gloom", "Grass/Poison", 100, 65, 70, 85, 75, 40, ownerId, 20, "Chlorophyll")
+    {
+        Nickname = "None";
+        SkillPool = "Absorb, Poison Powder, Stun Spore, Sleep Powder, Acid, Petal Dance, Solar Beam, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
             var item = context.Items.FirstOrDefault(i => i.Name == "Leaf Stone" && i.OwnerId == OwnerId);
-            if (item != null) {
+            if (item != null)
+            {
                 context.Items.Remove(item);
-            } else {
+            }
+            else
+            {
                 await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Leaf Stone to evolve!");
                 return;
             }
 
             var Vileplume = new Vileplume(this);
-                Vileplume.MaxHealth = Vileplume.HealthOverride;
-            Vileplume.EvolveLevelUp(Level-1); // Level up to current level
+            Vileplume.MaxHealth = Vileplume.HealthOverride;
+            Vileplume.EvolveLevelUp(Level - 1); // Level up to current level
 
             foreach (var skill in this.Skills)
             {

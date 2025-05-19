@@ -599,7 +599,7 @@ public class Arena
             sb.AppendLine($"\nYour {JoinerBattle!.Name} has fainted!");
             sb.AppendLine("\nPlease choose a Pokémon to switch to:");
 
-            int i=1;
+            int i = 1;
             foreach (var poke in joinerPokemon!)
             {
                 sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
@@ -615,7 +615,7 @@ public class Arena
                 pokemonName = await switcher.GetInputAsync("\nChoice::");
             } while (!int.TryParse(pokemonName, out choice) || choice < 1 || choice > joinerPokemon!.Count);
 
-            var pokemon = joinerPokemon!.ElementAt(choice-1);
+            var pokemon = joinerPokemon!.ElementAt(choice - 1);
             joinerPokemon!.Remove(pokemon!);
 
             // Swap
@@ -629,7 +629,7 @@ public class Arena
             sb.AppendLine("\n-------------------------------------------------------");
             sb.AppendLine($"\nYour {CreatorBattle!.Name} has fainted!");
             sb.AppendLine("\nPlease choose a Pokémon to switch to:");
-            int i=1;
+            int i = 1;
             foreach (var poke in creatorPokemon!)
             {
                 sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
@@ -644,7 +644,7 @@ public class Arena
                 pokemonName = await switcher.GetInputAsync("\nChoice::");
             } while (!int.TryParse(pokemonName, out choice) || choice < 1 || choice > creatorPokemon!.Count);
 
-            var pokemon = creatorPokemon!.ElementAt(choice-1);
+            var pokemon = creatorPokemon!.ElementAt(choice - 1);
             creatorPokemon!.Remove(pokemon!);
 
             // Swap
@@ -1034,7 +1034,7 @@ public class Arena
                 continue;
             }
         }
-        
+
     }
 
     public async Task AdministerBattle(ClientSession FirstSession, ClientSession SecondSession, string FirstChoice, string SecondChoice)
@@ -1058,8 +1058,11 @@ public class Arena
             OriginalSecondBattle = CreatorBattle!;
         }
 
+        // Administer Status Effects
+        bool SkipFirst = await StatusEffects(FirstSession);
+
         // First Action
-        if (FirstAction == "Switch")
+        if (FirstAction == "Switch"&& SkipFirst == false)
         {
             if (FirstSession == CreatorSession)
             {
@@ -1081,7 +1084,7 @@ public class Arena
             }
         }
 
-        if (FirstAction == "Attack")
+        if (FirstAction == "Attack" && SkipFirst == false)
         {
             if (FirstSession == CreatorSession)
             {
@@ -1118,7 +1121,10 @@ public class Arena
         {
             if (SecondAction == "Switch")
             {
-                if (SecondSession == CreatorSession)
+                // Administer Status Effects
+                bool SkipSecond = await StatusEffects(SecondSession);
+
+                if (SecondSession == CreatorSession && SkipSecond == false)
                 {
                     // Switch Pokemon
                     var SwitchTo = creatorPokemon!
@@ -1127,7 +1133,7 @@ public class Arena
                     creatorPokemon!.Add(CreatorBattle!);
                     CreatorBattle = SwitchTo;
                 }
-                else
+                else if (SkipSecond == false)
                 {
                     // Switch Pokemon
                     var SwitchTo = joinerPokemon!
@@ -1140,7 +1146,10 @@ public class Arena
 
             if (SecondAction == "Attack")
             {
-                if (SecondSession == CreatorSession)
+                // Administer Status Effects
+                bool SkipSecond = await StatusEffects(SecondSession);
+
+                if (SecondSession == CreatorSession && SkipSecond == false)
                 {
                     var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
                     if (skill != null)
@@ -1153,7 +1162,7 @@ public class Arena
                         }
                     }
                 }
-                else
+                else if (SkipSecond == false)
                 {
                     var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
                     if (skill != null)
@@ -1169,5 +1178,10 @@ public class Arena
             }
         }
 
+    }
+
+    public async Task<bool> StatusEffects(ClientSession session)
+    {
+        return false;
     }
 }

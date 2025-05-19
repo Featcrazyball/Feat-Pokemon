@@ -23,6 +23,22 @@ public class Doduo : PokemonMaster
             };
         }
     }
+    
+    public Doduo(string ownerId)
+    : base("Doduo", "Normal/Flying", 100, 85, 45, 35, 35, 75, ownerId, 20, "Run Away")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Peck, Growl, Fury Attack, Drill Peck, Rage, Agility, Tri Attack, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Fly";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Doduo(float HP, string nickname, string ownerId, int exp)
     : base("Doduo", "Normal/Flying", HP, 85, 45, 35, 35, 75, ownerId, 20, "Run Away")
@@ -34,10 +50,11 @@ public class Doduo : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

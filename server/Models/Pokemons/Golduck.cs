@@ -67,6 +67,21 @@ public class Golduck : PokemonMaster
         }
     }
 
+    public Golduck(string ownerId) 
+    : base("Golduck", "Water", 100, 82, 78, 95, 80, 85, ownerId, 55, "Damp")
+    {
+        Nickname = "None";
+        SkillPool = "Scratch, Tail Whip, Disable, Confusion, Screech, Fury Swipes, Hydro Pump, Psychic, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

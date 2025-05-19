@@ -23,6 +23,22 @@ public class Dragonair : PokemonMaster
             };
         }
     }
+    
+    public Dragonair(string ownerId)
+    : base("Dragonair", "Dragon", 100, 84, 65, 70, 70, 70, ownerId, 30, "Shed Skin")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Wrap, Leer, Thunder Wave, Agility, Slam, Dragon Rage, Hyper Beam, Toxic, Body Slam, Take Down, Double-Edge, Blizzard, Rage, Thunderbolt, Thunder, Surf, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Dragonair(float HP, string nickname, string ownerId, int exp)
     : base("Dragonair", "Dragon", HP, 84, 65, 70, 70, 70, ownerId, 30, "Shed Skin")
@@ -34,10 +50,11 @@ public class Dragonair : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

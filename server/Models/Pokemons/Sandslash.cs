@@ -68,6 +68,22 @@ public class Sandslash : PokemonMaster
         }
     }
 
+    public Sandslash(string ownerId)
+    : base("Sandslash", "Ground", 100, 100, 110, 45, 55, 65, ownerId, 25, "Sand Attack")
+    {
+        Nickname = "None";
+        SkillPool = "Scratch, Sand Attack, Slash, Poison Sting, Swift, Fury Swipes, Earthquake, Hyper Beam, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

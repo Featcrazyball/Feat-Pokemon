@@ -67,6 +67,23 @@ public class Seadra : PokemonMaster
         }
     }
 
+    public Seadra(string ownerId) 
+    : base("Seadra", "Water", 100, 65, 95, 95, 45, 85, ownerId, 25, "Poison Point")
+    {
+        Nickname = "None";
+        SkillPool = "Bubble, Smokescreen, Leer, Water Gun, Agility, Hydro Pump, Surf, Ice Beam, Blizzard, Body Slam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

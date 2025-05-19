@@ -24,6 +24,22 @@ public class Charmeleon : PokemonMaster
             };
         }
     }
+    
+    public Charmeleon(string ownerId)
+    : base("Charmeleon", "Fire", 100, 64, 58, 80, 65, 80, ownerId, 25, "Fire Burst")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Scratch, Growl, Ember, Leer, Rage, Slash, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Counter, Dragon Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Charmeleon(float HP, string nickname, string ownerId, int exp)
     : base("Charmeleon", "Fire", HP, 64, 58, 80, 65, 80, ownerId, 25, "Fire Burst")
@@ -35,10 +51,11 @@ public class Charmeleon : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

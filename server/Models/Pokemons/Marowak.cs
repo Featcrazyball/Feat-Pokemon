@@ -67,6 +67,23 @@ public class Marowak : PokemonMaster
         }
     }
 
+    public Marowak(string ownerId)
+    : base("Marowak", "Ground", 100, 80, 110, 50, 80, 45, ownerId, 20, "Lightning Rod")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Bone Club, Growl, Tail Whip, Headbutt, Leer, Focus Energy, Bonemerang, Rage, Earthquake, Hyper Beam, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

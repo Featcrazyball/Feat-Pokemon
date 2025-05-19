@@ -67,6 +67,22 @@ public class Kingler : PokemonMaster
         }
     }
 
+    public Kingler(string ownerId) 
+    : base("Kingler", "Water", 100, 130, 115, 50, 50, 75, ownerId, 30, "Hyper Cutter")
+    {
+        Nickname = "None";
+        SkillPool = "Bubble, Leer, ViceGrip, Guillotine, Stomp, Crabhammer, Harden, Toxic, Body Slam, Take Down, Double-Edge, BubbleBeam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

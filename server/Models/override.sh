@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to generate additional constructors for Pokemon classes
-# Usage: ./generate_constructors.sh <directory_path>
+# Uses Abra as a reference pattern
 
 DIR_PATH=${1:-"C:/Users/yangx/OneDrive/Desktop/Pokemon/Feat-Pokemon/server/Models/Pokemons"}
 POKEMON_FILES=$(find "$DIR_PATH" -name "*.cs" -type f)
@@ -23,7 +23,7 @@ for file in $POKEMON_FILES; do
     echo "Processing $CLASS_NAME in file $file"
     
     # Find the constructor with nickname and ownerId
-    CONSTRUCTOR=$(sed -n '/public '$CLASS_NAME'\(string nickname, string ownerId\)/,/}/p' "$file")
+    CONSTRUCTOR=$(grep -A20 "public $CLASS_NAME *( *string nickname, string ownerId *)" "$file")
     
     if [ -z "$CONSTRUCTOR" ]; then
         echo "Skipping $file - couldn't find appropriate constructor"
@@ -33,23 +33,24 @@ for file in $POKEMON_FILES; do
     # Extract the base constructor parameters
     BASE_PARAMS=$(echo "$CONSTRUCTOR" | grep -o ": base(.*)" | sed 's/: base(//' | sed 's/)//')
     
-    # Split parameters and replace the third one (HP) with 100
-    IFS=',' read -r -a PARAMS <<< "$BASE_PARAMS"
-    if [ ${#PARAMS[@]} -lt 3 ]; then
-        echo "Skipping $file - not enough parameters in base constructor"
-        continue
-    fi
+    # Get the Pokemon name and type (first two parameters)
+    NAME=$(echo "$BASE_PARAMS" | cut -d',' -f1)
+    TYPE=$(echo "$BASE_PARAMS" | cut -d',' -f2)
     
-    # Get the SkillPool
-    SKILL_POOL=$(echo "$CONSTRUCTOR" | grep -o 'SkillPool = ".*";' | sed 's/SkillPool = //' | sed 's/;//')
+    # Get the remaining parameters after the 3rd one (which will be replaced with 100)
+    REST_PARAMS=$(echo "$BASE_PARAMS" | cut -d',' -f4- | sed 's/^[ \t]*//')
     
-    # Create the new constructor
-    NEW_CONSTRUCTOR="
-    public $CLASS_NAME(string ownerId)
-    : base(${PARAMS[0]}, ${PARAMS[1]}, 100, ${PARAMS[3]}, ${PARAMS[4]}, ${PARAMS[5]}, ${PARAMS[6]}, ${PARAMS[7]}, ownerId, ${PARAMS[9]}, ${PARAMS[10]})
+    # Get the SkillPool - protect from quote issues
+    SKILL_POOL=$(grep -o 'SkillPool = ".*";' "$file" | head -1 | sed 's/SkillPool = //' | sed 's/;$//')
+    
+    # Write the new constructor to a temp file to avoid sed escaping issues
+    cat > temp_constructor.txt << EOF
+    
+    public $CLASS_NAME(string ownerId) 
+    : base($NAME, $TYPE, 100, $REST_PARAMS)
     {
         Experience = 0;
-        Nickname = \"None\";
+        Nickname = "None";
         SkillPool = $SKILL_POOL;
 
         var newSkills = LearnSkillFromSkillPool();
@@ -60,19 +61,33 @@ for file in $POKEMON_FILES; do
                 Skills.Add(skill);
             }
         }
-    }"
-    
-    # Insert the new constructor after the existing one
-    INSERTION_POINT=$(grep -n "public $CLASS_NAME(string nickname, string ownerId)" "$file" | cut -d: -f1)
-    INSERTION_POINT=$(awk -v line="$INSERTION_POINT" 'NR==line{i=1} i&&/}/{print NR; exit}' "$file")
-    
-    if [ -z "$INSERTION_POINT" ]; then
-        echo "Skipping $file - couldn't find insertion point"
+    }
+EOF
+
+    # Find the end of the first constructor block
+    FIRST_CONSTRUCTOR=$(grep -n "public $CLASS_NAME *( *string nickname, string ownerId *)" "$file" | head -1 | cut -d: -f1)
+    if [ -z "$FIRST_CONSTRUCTOR" ]; then
+        echo "Skipping $file - couldn't find constructor"
         continue
     fi
     
-    sed -i "${INSERTION_POINT}a\\${NEW_CONSTRUCTOR}" "$file"
+    # Find the closing brace of this constructor
+    END_LINE=$((FIRST_CONSTRUCTOR + 50))  # Look within the next 50 lines
+    CONSTRUCTOR_END=$(head -n $END_LINE "$file" | tail -n $((END_LINE - FIRST_CONSTRUCTOR)) | grep -n "    }" | head -1 | cut -d: -f1)
+    
+    if [ -z "$CONSTRUCTOR_END" ]; then
+        echo "Skipping $file - couldn't find constructor end point"
+        continue
+    fi
+    
+    # Calculate the actual line number
+    CONSTRUCTOR_END=$((FIRST_CONSTRUCTOR + CONSTRUCTOR_END - 1))
+    
+    # Insert the new constructor after the first constructor block
+    sed -i "${CONSTRUCTOR_END}r temp_constructor.txt" "$file"
     echo "Added new constructor to $file"
 done
 
+# Clean up
+rm -f temp_constructor.txt
 echo "Constructor generation complete!"

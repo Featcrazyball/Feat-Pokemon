@@ -67,6 +67,22 @@ public class Persian : PokemonMaster
         }
     }
 
+    public Persian(string ownerId)
+    : base("Persian", "Normal", 100, 70, 60, 65, 65, 115, ownerId, 34, "Limber")
+    {
+        Nickname = "None";
+        SkillPool = "Scratch, Growl, Bite, Screech, Slash, Hyper Beam, Body Slam, Take Down, Double-Edge, Bubble Beam, Thunderbolt, Thunder, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

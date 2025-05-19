@@ -24,6 +24,23 @@ public class Bellsprout : PokemonMaster
             };
         }
     }
+    
+    public Bellsprout(string ownerId)
+    : base("Bellsprout", "Grass/Poison", 100, 75, 35, 70, 30, 40, ownerId, 10, "Chlorophyll")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Vine Whip, Growth, Wrap, Sleep Powder, Poison Powder, Stun Spore, Acid, Razor Leaf, Toxic, SolarBeam, Rage, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Bellsprout(float HP, string nickname, string ownerId, int exp)
     : base("Bellsprout", "Grass/Poison", HP, 75, 35, 70, 30, 40, ownerId, 10, "Chlorophyll")
@@ -35,10 +52,11 @@ public class Bellsprout : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

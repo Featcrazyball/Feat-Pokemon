@@ -67,15 +67,33 @@ public class Ivysaur : PokemonMaster
             };
         }
     }
+    
+    public Ivysaur(string ownerId)
+    : base("Ivysaur", "Grass/Poison", 100, 62, 63, 80, 80, 60, ownerId, 20, "Water Burst")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Tackle, Growl, Leech Seed, Vine Whip, Poison Powder, Sleep Powder, Razor Leaf, Growth, Solar Beam, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 32) {
+        if (Level >= 32)
+        {
             using (var context = new DatabaseContext())
             {
                 var venusaur = new Venusaur(this);
                 venusaur.MaxHealth = venusaur.HealthOverride;
-                venusaur.EvolveLevelUp(Level-1);
+                venusaur.EvolveLevelUp(Level - 1);
 
                 foreach (var skill in this.Skills)
                 {
@@ -93,7 +111,9 @@ public class Ivysaur : PokemonMaster
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Ivysaur to a Venusaur!");
-        } else {
+        }
+        else
+        {
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }

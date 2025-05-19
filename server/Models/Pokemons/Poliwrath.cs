@@ -67,6 +67,22 @@ public class Poliwrath : PokemonMaster
         }
     }
 
+    public Poliwrath(string ownerId) 
+    : base("Poliwrath", "Water", 100, 95, 95, 70, 90, 70, ownerId, 60, "Water Absorb")
+    {
+        Nickname = "None";
+        SkillPool = "Hypnosis, Water Gun, DoubleSlap, Body Slam, Amnesia, Hydro Pump, Submission, Counter, Seismic Toss, Strength, Earthquake, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

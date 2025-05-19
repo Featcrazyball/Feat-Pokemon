@@ -68,6 +68,22 @@ public class Magneton : PokemonMaster
         }
     }
 
+    public Magneton(string ownerId) 
+    : base("Magnetron", "Electric/Steel", 100, 60, 95, 120, 70, 70, ownerId, 20, "Magnet Pull")
+    {
+        Nickname = "None";
+        SkillPool = "Tackle, Sonic Boom, ThunderShock, Supersonic, Thunder Wave, Thunderbolt, Reflect, Hyper Beam, Toxic, Mimic, Double Team, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

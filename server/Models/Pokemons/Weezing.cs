@@ -66,6 +66,22 @@ public class Weezing : PokemonMaster
             };
         }
     }
+
+    public Weezing(string ownerId)
+    : base("Weezing", "Poison", 100, 90, 120, 85, 70, 60, ownerId, 35, "Levitate")
+    {
+        Nickname = "None";
+        SkillPool = "Tackle, Smog, Sludge, SmokeScreen, Self-Destruct, Haze, Explosion, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
     
     public override async Task GodEvolve(ClientSession session)
     {

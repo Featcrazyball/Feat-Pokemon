@@ -68,6 +68,22 @@ public class Gengar : PokemonMaster
         }
     }
 
+    public Gengar(string ownerId) 
+    : base("Gengar", "Ghost/Poison", 100, 65, 60, 130, 75, 110, ownerId, 25, "Cursed Body")
+    {
+        Nickname = "None";
+        SkillPool = "Lick, Confuse Ray, Night Shade, Hypnosis, Dream Eater, Toxic, Body Slam, Seismic Toss, Thunderbolt, Thunder, Psychic, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

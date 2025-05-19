@@ -67,6 +67,22 @@ public class Primeape : PokemonMaster
         }
     }
 
+    public Primeape(string ownerId)
+    : base("Primeape", "Fighting", 100, 105, 60, 60, 70, 95, ownerId, 27, "Vital Spirit")
+    {
+        Nickname = "None";
+        SkillPool = "Scratch, Leer, Low Kick, Karate Chop, Fury Swipes, Focus Energy, Seismic Toss, Thrash, Screech, Submission, Counter, Strength, Earthquake, Toxic, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

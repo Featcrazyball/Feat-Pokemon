@@ -67,6 +67,23 @@ public class Fearow : PokemonMaster
         }
     }
 
+    public Fearow(string ownerId)
+    : base("Fearow", "Normal/Flying", 100, 90, 65, 61, 61, 100, ownerId, 25, "Peck")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Peck, Growl, Leer, Fury Attack, Drill Peck, Agility, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Swift, Rest, Substitute, Fly";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task Evolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final form!");

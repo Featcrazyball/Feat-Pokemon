@@ -67,6 +67,22 @@ public class Victreebel : PokemonMaster
         }
     }
 
+    public Victreebel(string ownerId) 
+    : base("Victreebel", "Grass/Poison", 100, 105, 65, 100, 70, 70, ownerId, 20, "Chlorophyll")
+    {
+        Nickname = "None";
+        SkillPool = "Vine Whip, Sleep Powder, Stun Spore, Acid, Razor Leaf, Growth, Wrap, Poison Powder, Solar Beam, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

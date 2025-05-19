@@ -67,6 +67,23 @@ public class Venusaur : PokemonMaster
         }
     }
 
+    public Venusaur(string ownerId)
+    : base("Venusaur", "Grass/Poison", 100, 82, 83, 100, 100, 80, ownerId, 30, "Water Burst")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Tackle, Growl, Leech Seed, Vine Whip, Poison Powder, Razor Leaf, Growth, Sleep Powder, Solar Beam, Toxic, Body Slam, Take Down, Double-Edge, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Cut";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

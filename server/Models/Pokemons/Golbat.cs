@@ -67,6 +67,22 @@ public class Golbat : PokemonMaster
         }
     }
 
+    public Golbat(string ownerId)
+    : base("Golbat", "Poison/Flying", 100, 80, 70, 65, 75, 90, ownerId, 20, "Inner Focus")
+    {
+        Nickname = "None";
+        SkillPool = "Leech Life, Screech, Bite, Supersonic, Confuse Ray, Wing Attack, Haze, Toxic, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

@@ -26,6 +26,24 @@ public class Bulbasaur : PokemonMaster
         }
     }
 
+    public Bulbasaur(string ownerId)
+    : base("Bulbasaur", "Grass/Poison", 100, 49, 49, 65, 65, 45, ownerId, 10, "Water Burst")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Tackle, Growl, Leech Seed, Vine Whip, Poison Powder, Sleep Powder, Razor Leaf, Growth, SolarBeam, Toxic, Body Slam, Take Down, Double-Edge, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills)
+            {
+                Skills.Add(skill);
+            }
+            ;
+        }
+    }
+
     public Bulbasaur(float HP, string nickname, string ownerId, int exp)
     : base("Bulbasaur", "Grass/Poison", HP, 49, 49, 65, 65, 45, ownerId, 10, "Water Burst")
     {

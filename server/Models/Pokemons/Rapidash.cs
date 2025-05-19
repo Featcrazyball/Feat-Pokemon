@@ -67,6 +67,22 @@ public class Rapidash : PokemonMaster
         }
     }
 
+    public Rapidash(string ownerId) 
+    : base("Rapidash", "Fire", 100, 100, 70, 80, 80, 105, ownerId, 40, "Flame Body")
+    {
+        Nickname = "None";
+        SkillPool = "Ember, Stomp, Fire Spin, Agility, Fire Blast, Hyper Beam, Body Slam, Take Down, Double-Edge, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            }
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

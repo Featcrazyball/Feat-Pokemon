@@ -68,6 +68,22 @@ public class Raichu : PokemonMaster
         }
     }
 
+    public Raichu(string ownerId)
+    : base("Raichu", "Electric", 100, 90, 55, 90, 80, 110, ownerId, 25, "Thunderbolt")
+    {
+        Nickname = "None";
+        SkillPool = "ThunderShock, Thunderbolt, Thunder, Quick Attack, Agility, Slam, Surf, Body Slam, Seismic Toss, Toxic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

@@ -68,15 +68,33 @@ public class Haunter : PokemonMaster
             };
         }
     }
+    
+    public Haunter(string ownerId)
+    : base("Haunter", "Ghost/Poison", 100, 50, 45, 115, 55, 95, ownerId, 25, "Levitate")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Lick, Confuse Ray, Night Shade, Hypnosis, Dream Eater, Toxic, Psychic, Mimic, Double Team, Reflect, Bide, Rest, Substitute";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
-        if (Level >= 1) {
+        if (Level >= 1)
+        {
             using (var context = new DatabaseContext())
             {
                 var gengar = new Gengar(this);
                 gengar.MaxHealth = gengar.HealthOverride;
-                gengar.EvolveLevelUp(Level-1); 
+                gengar.EvolveLevelUp(Level - 1);
 
                 foreach (var skill in this.Skills)
                 {
@@ -93,7 +111,9 @@ public class Haunter : PokemonMaster
                 context.SaveChanges();
             }
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} has evolved from a Haunter to a Gengar!");
-        } else {
+        }
+        else
+        {
             await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is not ready to evolve yet.");
         }
     }

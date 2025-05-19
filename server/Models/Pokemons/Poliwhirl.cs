@@ -68,22 +68,41 @@ public class Poliwhirl : PokemonMaster
             };
         }
     }
+    
+    public Poliwhirl(string ownerId) 
+    : base("Poliwhirl", "Water", 100, 65, 65, 50, 50, 90, ownerId, 25, "Water Absorb")
+    {
+        Nickname = "None";
+        SkillPool = "Bubble, Hypnosis, Water Gun, Double Slap, Body Slam, Amnesia, Hydro Pump, Toxic, Take Down, Double-Edge, Ice Beam, Blizzard, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public override async Task Evolve(ClientSession session)
     {
         using (var context = new DatabaseContext())
         {
             var item = context.Items.FirstOrDefault(i => i.Name == "Water Stone" && i.OwnerId == OwnerId);
-            if (item != null) {
+            if (item != null)
+            {
                 context.Items.Remove(item);
-            } else {
+            }
+            else
+            {
                 await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} needs a Water Stone to evolve!");
                 return;
             }
 
             var poliwrath = new Poliwrath(this);
-                poliwrath.MaxHealth = poliwrath.HealthOverride;
-            poliwrath.EvolveLevelUp(Level-1); // Level up to current level
+            poliwrath.MaxHealth = poliwrath.HealthOverride;
+            poliwrath.EvolveLevelUp(Level - 1); // Level up to current level
 
             foreach (var skill in this.Skills)
             {

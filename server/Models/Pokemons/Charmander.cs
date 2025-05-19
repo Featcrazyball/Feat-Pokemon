@@ -23,6 +23,22 @@ public class Charmander : PokemonMaster
             };
         }
     }
+    
+    public Charmander(string ownerId)
+    : base("Charmander", "Fire", 100, 52, 43, 60, 50, 65, ownerId, 10, "Solar Power")
+    {
+        Nickname = "None";
+        Experience = 0;
+        SkillPool = "Scratch, Growl, Ember, Leer, Rage, Slash, Flamethrower, Fire Spin, Toxic, Body Slam, Take Down, Double-Edge, Submission, Seismic Toss, Counter, Dragon Rage, Dig, Mimic, Double Team, Reflect, Bide, Fire Blast, Swift, Skull Bash, Rest, Substitute";
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
 
     public Charmander(float HP, string nickname, string ownerId, int exp)
     : base("Charmander", "Fire", HP, 52, 43, 60, 50, 65, ownerId, 10, "Solar Power")
@@ -34,10 +50,11 @@ public class Charmander : PokemonMaster
         var newSkills = LearnSkillFromSkillPool();
         if (newSkills != null)
         {
-            foreach (var skill in newSkills) 
+            foreach (var skill in newSkills)
             {
                 Skills.Add(skill);
-            };
+            }
+            ;
         }
     }
 

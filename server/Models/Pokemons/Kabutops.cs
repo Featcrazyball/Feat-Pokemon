@@ -67,6 +67,22 @@ public class Kabutops : PokemonMaster
         }
     }
 
+    public Kabutops(string ownerId)
+    : base("Kabutops", "Rock/Water", 100, 115, 105, 65, 70, 80, ownerId, 40, "Swift Swim")
+    {
+        Nickname = "None";
+        SkillPool = "Scratch, Harden, Absorb, Slash, Leer, Hydro Pump, Toxic, Body Slam, Take Down, Double-Edge, Bubble Beam, Ice Beam, Blizzard, Hyper Beam, Rage, Mimic, Double Team, Reflect, Bide, Rest, Substitute, Surf";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");

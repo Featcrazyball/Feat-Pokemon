@@ -68,6 +68,22 @@ public class Golem : PokemonMaster
         }
     }
     
+    public Golem(string ownerId)
+    : base("Golem", "Rock/Ground", 100, 120, 130, 55, 65, 45, ownerId, 43, "Sturdy")
+    {
+        Nickname = "None";
+        SkillPool = "Tackle, Defense Curl, Rock Throw, Self-Destruct, Harden, Earthquake, Explosion, Toxic, Body Slam, Take Down, Double-Edge, Seismic Toss, Rage, Mimic, Double Team, Reflect, Bide, Fire Blast, Rest, Substitute, Strength";
+
+        var newSkills = LearnSkillFromSkillPool();
+        if (newSkills != null)
+        {
+            foreach (var skill in newSkills) 
+            {
+                Skills.Add(skill);
+            };
+        }
+    }
+
     public override async Task GodEvolve(ClientSession session)
     {
         await session.SendMessageAsync($"{(Nickname == "None" ? Name : Nickname)} is already at its final evolution stage.");
