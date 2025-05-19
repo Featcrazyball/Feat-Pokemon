@@ -87,8 +87,10 @@ public class Arena
     }
 
     // Very important for killing pokemon and ending batle
-    public async Task<bool?> CheckStats(ClientSession creator, ClientSession joiner)
+    public async Task<bool?> CheckStats()
     {
+        var creator = CreatorSession;
+        var joiner = JoinerSession;
         if (creatorPokemon == null) { await creator.SendMessageAsync("You have no Pokemon!"); return null; }
         if (joinerPokemon == null) { await joiner.SendMessageAsync("You have no Pokemon!"); return null; }
         if (CreatorBattle == null) { await creator.SendMessageAsync("You have no Pokemon!"); return null; }
@@ -112,15 +114,24 @@ public class Arena
         // Check for fainted Pokemon
         if (CreatorBattle.Health <= 0)
         {
-            await creator.SendMessageAsync($"Your {CreatorBattle.Name} has fainted!");
-            await joiner.SendMessageAsync($"{creator.Username} {CreatorBattle.Name} has fainted!");
+
+            var CreatorFaintedTask = Task.Run(async () =>
+            {
+                await creator.SendMessageAsync($"Your {CreatorBattle.Name} has fainted!");
+            });
+
+            var JoinerFaintedTask = Task.Run(async () =>
+            {
+                await joiner.SendMessageAsync($"{creator.Username} {CreatorBattle.Name} has fainted!");
+            });
+            await Task.WhenAll(CreatorFaintedTask, JoinerFaintedTask);
 
             // print out all remaining pokemon
             if (creatorPokemon.Count > 0)
             {
                 var creatorTask = Task.Run(async () =>
                 {
-                    await FaintSwitchPokemon(creator, "creator");
+                    await FaintSwitchPokemon(creator);
                 });
 
                 var joinerTask = Task.Run(async () =>
@@ -140,15 +151,23 @@ public class Arena
 
         if (JoinerBattle.Health <= 0)
         {
-            await joiner.SendMessageAsync($"Your {JoinerBattle.Name} has fainted!");
-            await creator.SendMessageAsync($"{joiner.Username} {JoinerBattle.Name} has fainted!");
+            var CreatorFaintedTask = Task.Run(async () =>
+            {
+                await creator.SendMessageAsync($"Your {JoinerBattle.Name} has fainted!");
+            });
+
+            var JoinerFaintedTask = Task.Run(async () =>
+            {
+                await joiner.SendMessageAsync($"{joiner.Username} {JoinerBattle.Name} has fainted!");
+            });
+            await Task.WhenAll(JoinerFaintedTask, CreatorFaintedTask);
 
             // print out all remaining pokemon
             if (joinerPokemon.Count > 0)
             {
                 var joinerTask = Task.Run(async () =>
                 {
-                    await FaintSwitchPokemon(joiner, "joiner");
+                    await FaintSwitchPokemon(joiner);
                 });
 
                 var creatorTask = Task.Run(async () =>
@@ -156,6 +175,7 @@ public class Arena
                     await creator.SendMessageAsync("Please wait for your opponent to choose their next Pokémon.");
                 });
 
+                await Task.Delay(60000);
                 await Task.WhenAll(joinerTask, creatorTask);
                 await joiner.SendMessageAsync($"You have switched to {JoinerBattle.Name}.");
                 await creator.SendMessageAsync($"{joiner.Username} has switched to {JoinerBattle.Name}.");
@@ -249,76 +269,6 @@ public class Arena
             await SkillHelper.ProcessDig(CreatorBattle, JoinerBattle, joiner, creator);
         }
 
-        // Skill
-        string Creatorskill;
-        string Joinerskill;
-
-        // Ask for skill
-        if (!NoCreatorTurn)
-        {
-            await creator.SendMessageAsync("Unfortunately, you cannot use your skill this turn. Please wait for your opponent to finish their turn.");
-        }
-        else
-        {
-            for (int i = 0; i < CreatorBattle.Skills.Count; i++)
-            {
-                var skill = CreatorBattle.Skills.ElementAt(i);
-                await creator.SendMessageAsync($"{i + 1}. {skill.Name} - Power: {skill.BasePower} - PP: {skill.PowerPoints}/{skill.MaxPowerPoints}");
-            }
-            Creatorskill = await creator.GetInputAsync($"Please select a skill:");
-
-        }
-
-        if (!NoJoinerTurn)
-        {
-            await joiner.SendMessageAsync("Unfortunately, you cannot use your skill this turn. Please wait for your opponent to finish their turn.");
-        }
-        else
-        {
-            for (int i = 0; i < JoinerBattle.Skills.Count; i++)
-            {
-                var skill = JoinerBattle.Skills.ElementAt(i);
-                await joiner.SendMessageAsync($"{i + 1}. {skill.Name} - Power: {skill.BasePower} - PP: {skill.PowerPoints}/{skill.MaxPowerPoints}");
-            }
-            Joinerskill = await joiner.GetInputAsync($"Please select a skill:");
-        }
-
-        // Decide who goes first
-        if (CreatorBattle.Priority > JoinerBattle.Priority)
-        {
-
-        }
-        else if (CreatorBattle.Priority < JoinerBattle.Priority)
-        {
-
-        }
-        else
-        {
-            if (CreatorBattle.Speed > JoinerBattle.Speed)
-            {
-
-            }
-            else if (CreatorBattle.Speed < JoinerBattle.Speed)
-            {
-
-            }
-            else
-            {
-                // Randomize
-                if (Random.Shared.NextDouble() <= 0.50)
-                {
-
-                }
-                else
-                {
-
-                }
-            }
-        }
-
-
-
-
         turn++;
     }
 
@@ -361,6 +311,7 @@ public class Arena
         if (CreatorBattle != null) CreatorBattle.ResetStats();
         if (JoinerBattle != null) JoinerBattle.ResetStats();
 
+        bool? winner = null;
         try
         {
             // Verify sessions are still valid before starting
@@ -382,15 +333,13 @@ public class Arena
 
             do
             {
-                await PrintMenu("creator");
-                await PrintMenu("joiner");
-
                 creatorResponse = false;
                 joinerResponse = false;
 
                 // Creator Choices
                 var creatorTask = Task.Run(async () =>
                 {
+                    await PrintMenu("creator");
                     var response = await Choice(CreatorSession);
                     creatorResponse = true;
                     return response;
@@ -399,7 +348,8 @@ public class Arena
                 // Joiner Choices
                 var joinerTask = Task.Run(async () =>
                 {
-                    var response = await JoinerSession.GetInputAsync("Please choose your action:");
+                    await PrintMenu("joiner");
+                    var response = await Choice(JoinerSession);
                     joinerResponse = true;
                     return response;
                 });
@@ -417,9 +367,41 @@ public class Arena
                     string creatorChoice = responses[0];
                     string joinerChoice = responses[1];
 
-                    // Send confirmations
-                    await JoinerSession.SendMessageAsync($"\n{creator.Username} chose: {creatorChoice}");
-                    await CreatorSession.SendMessageAsync($"\n{joiner.Username} chose: {joinerChoice}");
+                    // Process the choices
+                    string CreatorAction = creatorChoice.Split('|')[0].Trim();
+                    string JoinerAction = joinerChoice.Split('|')[0].Trim();
+
+                    string CreatorActionFollowUp = creatorChoice.Split('|')[1].Trim();
+                    string JoinerActionFollowUp = joinerChoice.Split('|')[1].Trim();
+
+                    // Calculate Speed
+                    string FirstTurn = CalculateSpeed(CreatorAction, JoinerAction, CreatorActionFollowUp, JoinerActionFollowUp);
+
+                    ClientSession FirstTurnSession;
+                    ClientSession SecondTurnSession;
+                    string FirstChoice;
+                    string SecondChoice;
+
+                    if (FirstTurn == "creator")
+                    {
+                        FirstTurnSession = CreatorSession;
+                        SecondTurnSession = JoinerSession;
+
+                        FirstChoice = CreatorAction;
+                        SecondChoice = JoinerAction;
+                    }
+                    else
+                    {
+                        FirstTurnSession = JoinerSession;
+                        SecondTurnSession = CreatorSession;
+
+                        FirstChoice = JoinerAction;
+                        SecondChoice = CreatorAction;
+                    }
+
+                    await AdministerBattle(FirstTurnSession, SecondTurnSession, FirstChoice, SecondChoice);
+                    winner = CheckWinner();
+
                 }
                 else if (completedTask == timeoutTask)
                 {
@@ -454,12 +436,12 @@ public class Arena
                 }
 
                 turn++;
-                return true;
+                break;
                 // Continue with battle logic...
             } while (true); // Add your battle termination condition here
 
 
-
+            RestorePokemonStats();
 
             // Collect both inputs in parallel to avoid deadlocks
             // var creatorInputTask = Task.Run(async () =>
@@ -528,8 +510,24 @@ public class Arena
             //     }
             // }
 
-
-            // return null;
+            if (winner == true)
+            {
+                await CreatorSession.SendMessageAsync("\nYou have won the battle!");
+                await JoinerSession.SendMessageAsync("\nYou have lost the battle!");
+                return true;
+            }
+            else if (winner == false)
+            {
+                await CreatorSession.SendMessageAsync("\nYou have lost the battle!");
+                await JoinerSession.SendMessageAsync("\nYou have won the battle!");
+                return false;
+            }
+            else
+            {
+                await CreatorSession.SendMessageAsync("\nBattle has been abandoned");
+                await JoinerSession.SendMessageAsync("\nBattle has been abandoned.");
+            }
+            return null;
         }
         catch (Exception ex)
         {
@@ -581,58 +579,136 @@ public class Arena
         if (creatorFainted != null && creatorFainted.Count == 6)
         {
             // Creator has no Pokemon left
-            return true;
+            return false;
         }
         else if (joinerFainted != null && joinerFainted.Count == 6)
         {
             // Joiner has no Pokemon left
-            return false;
+            return true;
         }
         return null;
     }
 
-    public async Task FaintSwitchPokemon(ClientSession switcher, string joinerOrCreator)
+    public async Task FaintSwitchPokemon(ClientSession switcher)
     {
-        string pokemonName;
-        var pokemonList = new List<string>();
+        if (switcher == JoinerSession)
+        {
+            StringBuilder sb = new StringBuilder();
 
-        // List of Names of Joiner Pokemon 
-        if (joinerOrCreator == "joiner")
-        {
-            pokemonList = joinerPokemon!.Select(p => p.Name).ToList()!;
-        }
-        else if (joinerOrCreator == "creator")
-        {
-            pokemonList = creatorPokemon!.Select(p => p.Name).ToList()!;
-        }
+            sb.AppendLine("\n-------------------------------------------------------");
+            sb.AppendLine($"\nYour {JoinerBattle!.Name} has fainted!");
+            sb.AppendLine("\nPlease choose a Pokémon to switch to:");
 
-        if (joinerOrCreator == "joiner")
-        {
+            int i=1;
+            foreach (var poke in joinerPokemon!)
+            {
+                sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
+                i++;
+            }
+
+            await switcher.SendMessageAsync(sb.ToString());
+
+            string pokemonName;
+            int choice;
             do
             {
-                pokemonName = await switcher.GetInputAsync("Please enter the name of the Pokemon you want to switch to:");
-            } while (string.IsNullOrEmpty(pokemonName) || !pokemonList.Contains(pokemonName));
+                pokemonName = await switcher.GetInputAsync("\nChoice::");
+            } while (!int.TryParse(pokemonName, out choice) || choice < 1 || choice > joinerPokemon!.Count);
 
-            var pokemon = joinerPokemon!.FirstOrDefault(p => p.Name! == pokemonName);
+            var pokemon = joinerPokemon!.ElementAt(choice-1);
             joinerPokemon!.Remove(pokemon!);
 
             // Swap
             joinerFainted!.Add(JoinerBattle!);
             JoinerBattle = pokemon;
         }
-        else if (joinerOrCreator == "creator")
+        else if (switcher == CreatorSession)
         {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("\n-------------------------------------------------------");
+            sb.AppendLine($"\nYour {CreatorBattle!.Name} has fainted!");
+            sb.AppendLine("\nPlease choose a Pokémon to switch to:");
+            int i=1;
+            foreach (var poke in creatorPokemon!)
+            {
+                sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
+                i++;
+            }
+            await switcher.SendMessageAsync(sb.ToString());
+
+            string pokemonName;
+            int choice;
             do
             {
-                pokemonName = await switcher.GetInputAsync("Please enter the name of the Pokemon you want to switch to:");
-            } while (string.IsNullOrEmpty(pokemonName) || !pokemonList.Contains(pokemonName));
+                pokemonName = await switcher.GetInputAsync("\nChoice::");
+            } while (!int.TryParse(pokemonName, out choice) || choice < 1 || choice > creatorPokemon!.Count);
 
-            var pokemon = creatorPokemon!.FirstOrDefault(p => p.Name! == pokemonName);
+            var pokemon = creatorPokemon!.ElementAt(choice-1);
             creatorPokemon!.Remove(pokemon!);
 
             // Swap
             creatorFainted!.Add(CreatorBattle!);
             CreatorBattle = pokemon;
+        }
+    }
+
+    public string CalculateSpeed(string creatorChoice, string joinerChoice, string creatorAction, string joinerAction)
+    {
+        int creatorPriority = 0;
+        int joinerPriority = 0;
+
+        float creatorSpeed = CreatorBattle!.Speed;
+        float joinerSpeed = JoinerBattle!.Speed;
+
+        if (creatorChoice.Contains("Attack"))
+        {
+            var skill = CreatorBattle.Skills.FirstOrDefault(s => s.Name == creatorAction);
+            if (skill != null)
+            {
+                creatorPriority = skill.Priority;
+            }
+        }
+
+        if (joinerChoice.Contains("Attack"))
+        {
+            var skill = JoinerBattle.Skills.FirstOrDefault(s => s.Name == joinerAction);
+            if (skill != null)
+            {
+                joinerPriority = skill.Priority;
+            }
+        }
+
+        if (creatorPriority > joinerPriority)
+        {
+            return "creator";
+        }
+        else if (creatorPriority < joinerPriority)
+        {
+            return "joiner";
+        }
+        else
+        {
+            if (creatorSpeed > joinerSpeed)
+            {
+                return "creator";
+            }
+            else if (creatorSpeed < joinerSpeed)
+            {
+                return "joiner";
+            }
+            else
+            {
+                // Randomize
+                if (Random.Shared.NextDouble() <= 0.50)
+                {
+                    return "creator";
+                }
+                else
+                {
+                    return "joiner";
+                }
+            }
         }
     }
 
@@ -855,8 +931,7 @@ public class Arena
             switch (choice.ToUpper())
             {
                 case "1":
-
-                    return "Attack";
+                    return await ChoiceAttack(session);
                 case "2":
                     return await ChoiceSwitch(session);
                 case "RESIGN":
@@ -906,18 +981,6 @@ public class Arena
                 var selectedPokemon = pokemonCollection
                     .FirstOrDefault(p => p.Name == pokedict[choiceNumber]);
 
-                if (CreatorSession == session)
-                {
-                    creatorPokemon!.Add(CreatorBattle!);
-                    CreatorBattle = selectedPokemon;
-                    creatorPokemon!.Remove(selectedPokemon!);
-                }
-                else
-                {
-                    joinerPokemon!.Add(JoinerBattle!);
-                    JoinerBattle = selectedPokemon;
-                    joinerPokemon!.Remove(selectedPokemon!);
-                }
                 return $"Switch | {selectedPokemon!.Name}";
             }
             else if (choice.ToUpper() == "B")
@@ -973,5 +1036,138 @@ public class Arena
         }
         
     }
-    
+
+    public async Task AdministerBattle(ClientSession FirstSession, ClientSession SecondSession, string FirstChoice, string SecondChoice)
+    {
+        string FirstAction = FirstChoice.Split('|')[0].Trim();
+        string SecondAction = SecondChoice.Split('|')[0].Trim();
+
+        string FirstFollowUp = FirstChoice.Split('|')[1].Trim();
+        string SecondFollowUp = SecondChoice.Split('|')[1].Trim();
+
+        PokemonMaster OriginalFirstBattle;
+        PokemonMaster OriginalSecondBattle;
+        if (FirstSession == CreatorSession)
+        {
+            OriginalFirstBattle = CreatorBattle!;
+            OriginalSecondBattle = JoinerBattle!;
+        }
+        else
+        {
+            OriginalFirstBattle = JoinerBattle!;
+            OriginalSecondBattle = CreatorBattle!;
+        }
+
+        // First Action
+        if (FirstAction == "Switch")
+        {
+            if (FirstSession == CreatorSession)
+            {
+                // Switch Pokemon
+                var SwitchTo = creatorPokemon!
+                    .FirstOrDefault(p => p.Name == FirstFollowUp);
+
+                creatorPokemon!.Add(CreatorBattle!);
+                CreatorBattle = SwitchTo;
+            }
+            else
+            {
+                // Switch Pokemon
+                var SwitchTo = joinerPokemon!
+                    .FirstOrDefault(p => p.Name == FirstFollowUp);
+
+                joinerPokemon!.Add(JoinerBattle!);
+                JoinerBattle = SwitchTo;
+            }
+        }
+
+        if (FirstAction == "Attack")
+        {
+            if (FirstSession == CreatorSession)
+            {
+                var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == FirstFollowUp);
+                if (skill != null)
+                {
+                    await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+
+                    // Check if the target Pokémon fainted
+                    if (JoinerBattle!.Health <= 0)
+                    {
+                        await CheckStats();
+                    }
+                }
+            }
+            else
+            {
+                var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == FirstFollowUp);
+                if (skill != null)
+                {
+                    await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+
+                    // Check if the target Pokémon fainted
+                    if (CreatorBattle!.Health <= 0)
+                    {
+                        await CheckStats();
+                    }
+                }
+            }
+        }
+
+        // Second Action
+        if ((OriginalSecondBattle == JoinerBattle && SecondSession == JoinerSession) || (OriginalSecondBattle == CreatorBattle && SecondSession == CreatorSession))
+        {
+            if (SecondAction == "Switch")
+            {
+                if (SecondSession == CreatorSession)
+                {
+                    // Switch Pokemon
+                    var SwitchTo = creatorPokemon!
+                        .FirstOrDefault(p => p.Name == SecondFollowUp);
+
+                    creatorPokemon!.Add(CreatorBattle!);
+                    CreatorBattle = SwitchTo;
+                }
+                else
+                {
+                    // Switch Pokemon
+                    var SwitchTo = joinerPokemon!
+                        .FirstOrDefault(p => p.Name == SecondFollowUp);
+
+                    joinerPokemon!.Add(JoinerBattle!);
+                    JoinerBattle = SwitchTo;
+                }
+            }
+
+            if (SecondAction == "Attack")
+            {
+                if (SecondSession == CreatorSession)
+                {
+                    var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
+                    if (skill != null)
+                    {
+                        await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+
+                        if (JoinerBattle!.Health <= 0)
+                        {
+                            await CheckStats();
+                        }
+                    }
+                }
+                else
+                {
+                    var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
+                    if (skill != null)
+                    {
+                        await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+
+                        if (CreatorBattle!.Health <= 0)
+                        {
+                            await CheckStats();
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }

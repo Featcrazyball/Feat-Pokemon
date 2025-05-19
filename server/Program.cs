@@ -54,7 +54,7 @@ namespace Server
             }
 
             // Server Setup
-                Socket server;
+            Socket server;
             try            
             {
                 server = await NetworkMethods.ServerSetup();

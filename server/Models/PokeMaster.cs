@@ -14,14 +14,21 @@ namespace PokemonPocket
     {
         [Key]
         public string? Id { get; set; }
-        public string? Name { get; set; }
         public string? Nickname { get; set; }
         public string? Type { get; set; }
         public int Level { get; set; }
-        public int Experience { get; set; }
         public virtual string? Requirements { get; set; }
         public bool Evolvable { get; set; } = false;
         public virtual string? EvolvesTo { get; set; }
+
+        // For Assignment
+        public string? Name { get; set; } 
+        public int Experience { get; set; } 
+        public float MaxHealth { get; set; }
+        public float SkillDamage { get; set; }
+        public string? Skill { get; set; }
+        public int NoToEvolve {get; set;}
+        public string? EvolveTo { get; set; }
 
         // To overwrite Assignment
         public virtual float HealthOverride { get; set; } = 0;
@@ -34,7 +41,6 @@ namespace PokemonPocket
         [NotMapped] public float SpecialDefense { get; set; }
         [NotMapped] public float Speed { get; set; }
 
-        public float MaxHealth { get; set; }
         public float MaxAttack { get; set; }
         public float MaxSpecialAttack { get; set; }
         public float MaxDefense { get; set; }
@@ -165,10 +171,6 @@ namespace PokemonPocket
 
         [NotMapped] public bool Transform { get; set; } = false;
 
-        // For Assignment
-        public float SkillDamage { get; set; }
-        public string? Skill { get; set; }
-
         public PokemonMaster() { } //For EF Core
         public PokemonMaster(string Name, string Type, float MaxHealth, float MaxAttack, float MaxDefense, float MaxSpecialAttack, float MaxSpecialDefense, float MaxSpeed, string OwnerId, int SkillDamage, string Skill)
         {
@@ -201,7 +203,36 @@ namespace PokemonPocket
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
 
+            NoToEvolve = 0;
+            EvolveTo = string.Empty;
+
             _critRate = 0;
+        }
+
+        // For Assignment
+        public PokemonMaster(string Name, int noToEvolve, string EvolvesTo)
+        {
+            Id = Guid.NewGuid().ToString("N")[..15];
+            HpIV = Random.Shared.Next(1, 31);
+            AttackIV = Random.Shared.Next(1, 31);
+            SpecialAttackIV = Random.Shared.Next(1, 31);
+            DefenseIV = Random.Shared.Next(1, 31);
+            SpecialDefenseIV = Random.Shared.Next(1, 31);
+            SpeedIV = Random.Shared.Next(1, 31);
+            StatPoints = Random.Shared.Next(1, 10);
+            Level = 1;
+            Experience = 0;
+            StatsEarned = 0;
+            this.Name = Name;
+            this.NoToEvolve = noToEvolve;
+            this.EvolvesTo = EvolvesTo;
+
+            MaxHealth = 50;
+            MaxAttack = 50;
+            MaxSpecialAttack = 50;
+            MaxDefense = 50;
+            MaxSpecialDefense = 50;
+            MaxSpeed = 50;
         }
 
         // Evolution
@@ -239,6 +270,11 @@ namespace PokemonPocket
 
             _critRate = 0;
             CritDmg = poke.CritDmg;
+        }
+
+        public void setOwner(string ownerId)
+        {
+            OwnerId = ownerId;
         }
 
         // For Assignment

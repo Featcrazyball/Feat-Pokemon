@@ -183,7 +183,8 @@ namespace Client
                 "Enter the username of the user you want to /unban (\"cancel\" to leave):",
                 "Enter a name for your battle room:",
                 "Enter the room number to join:",
-                "Please enter the name of the Pokemon you want to switch to:"
+                "Please enter the name of the Pokemon you want to switch to:",
+                "Please only enter [1,2,3,4] or Q to quit:"
                 
             };
 

@@ -41,7 +41,9 @@ public class Client
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
 ║    [6] ⚙️ SETTINGS     │ Configure Your Trainer Profile                      ║
 ║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
-║    [7] 🚪 EXIT         │ Save & Return to Real World                         ║
+║    [7] ⚙️ SETTINGS     │ Configure Your Trainer Profile                      ║
+║    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━              ║
+║    [8] 🚪 EXIT         │ Save & Return to Real World                         ║
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ");
@@ -103,7 +105,14 @@ public class Client
                 case "6":
                     await Settings.SettingsMenu(session);
                     break;
-                case "7" or "q":
+
+                case "7":
+                    if (user.God)
+                    {
+                        await Assignment.AssignmentMenu(session);
+                    }
+                    break;
+                case "8" or "q":
                     await session.SendMessageAsync("Thank you for playing!");
                     exit = true;
                     break;
