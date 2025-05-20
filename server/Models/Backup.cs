@@ -12,6 +12,8 @@ public class PokemonStats
     public float MaxSpecialAttack { get; set; }
     public float MaxSpecialDefense { get; set; }
     public float MaxSpeed { get; set; }
+
+    public string Type { get; set; } = string.Empty;
 }
 
 public class PokemonBackupService
@@ -151,6 +153,7 @@ public class PokemonBackupService
             MaxSpecialAttack = pokemon.MaxSpecialAttack,
             MaxSpecialDefense = pokemon.MaxSpecialDefense,
             MaxSpeed = pokemon.MaxSpeed,
+            Type = pokemon.Type ?? string.Empty
         };
     }
 
@@ -170,6 +173,8 @@ public class PokemonBackupService
         pokemon.SpecialAttack = stats.MaxSpecialAttack;
         pokemon.SpecialDefense = stats.MaxSpecialDefense;
         pokemon.Speed = stats.MaxSpeed;
+
+        pokemon.Type = stats.Type;
     }
     
     private void ClearStatusConditions(PokemonMaster pokemon)

@@ -55,6 +55,14 @@ public class Metronome : Skill
         // Update last move and first move
         await SkillHelper.MoveUpdater(this, user, UserSession, TargetSession);
 
+        // check if metronome is already in use
+        if (user.Metronome)
+        {
+            await UserSession.SendMessageAsync($"Your {user.Name} is already using Metronome!");
+            await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} is already using Metronome!");
+            return;
+        }
+
         await UserSession.SendMessageAsync($"Your {user.Name} used Metronome!");
         await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Metronome!");
         
@@ -68,6 +76,7 @@ public class Metronome : Skill
             await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} used Metronome, but it couldn't use the move!");
             return;
         }
+        user.Metronome = true;
 
         moveToUse.Metronome = true;
         // Execute the selected move

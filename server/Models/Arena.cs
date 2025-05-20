@@ -4,6 +4,7 @@ using Models;
 using System.Text;
 using Database;
 using System.Threading.Tasks;
+using System.Data.SQLite;
 
 namespace Arena;
 
@@ -139,7 +140,17 @@ public class Arena
                     await joiner.SendMessageAsync("Please wait for your opponent to choose their next Pokémon.");
                 });
 
-                await Task.WhenAll(creatorTask, joinerTask);
+                var timeout = Task.Delay(60000);
+                var tasks = Task.WhenAll(creatorTask, joinerTask);
+                var completedTask = await Task.WhenAny(timeout, tasks);
+
+                if (completedTask == timeout)
+                {
+                    await creator.SendMessageAsync("Time limit reached. Battle Abandoned.");
+                    await joiner.SendMessageAsync("Time limit reached. Battle Abandoned.");
+                    return null;
+                }
+
                 await creator.SendMessageAsync($"You have switched to {CreatorBattle.Name}.");
                 await joiner.SendMessageAsync($"{creator.Username} has switched to {CreatorBattle.Name}.");
             }
@@ -153,12 +164,12 @@ public class Arena
         {
             var CreatorFaintedTask = Task.Run(async () =>
             {
-                await creator.SendMessageAsync($"Your {JoinerBattle.Name} has fainted!");
+                await creator.SendMessageAsync($"{joiner.Username}'s {JoinerBattle.Name} has fainted!");
             });
 
             var JoinerFaintedTask = Task.Run(async () =>
             {
-                await joiner.SendMessageAsync($"{joiner.Username} {JoinerBattle.Name} has fainted!");
+                await joiner.SendMessageAsync($"Your {JoinerBattle.Name} has fainted!");
             });
             await Task.WhenAll(JoinerFaintedTask, CreatorFaintedTask);
 
@@ -175,8 +186,17 @@ public class Arena
                     await creator.SendMessageAsync("Please wait for your opponent to choose their next Pokémon.");
                 });
 
-                await Task.Delay(60000);
-                await Task.WhenAll(joinerTask, creatorTask);
+                var timeout = Task.Delay(60000);
+                var tasks = Task.WhenAll(joinerTask, creatorTask);
+
+                var completedTask = await Task.WhenAny(timeout, tasks);
+                if (completedTask == timeout)
+                {
+                    await creator.SendMessageAsync("Time limit reached. Battle Abandoned.");
+                    await joiner.SendMessageAsync("Time limit reached. Battle Abandoned.");
+                    return null;
+                }
+
                 await joiner.SendMessageAsync($"You have switched to {JoinerBattle.Name}.");
                 await creator.SendMessageAsync($"{joiner.Username} has switched to {JoinerBattle.Name}.");
             }
@@ -187,89 +207,6 @@ public class Arena
         }
 
         return CheckWinner();
-    }
-
-    public async Task StartTurn(ClientSession creator, ClientSession joiner)
-    {
-        // Change this
-        if (creatorPokemon == null) { await creator.SendMessageAsync("You have no Pokemon!"); return; }
-        if (joinerPokemon == null) { await joiner.SendMessageAsync("You have no Pokemon!"); return; }
-        if (CreatorBattle == null) { await creator.SendMessageAsync("You have no Pokemon!"); return; }
-        if (JoinerBattle == null) { await joiner.SendMessageAsync("You have no Pokemon!"); return; }
-
-        // Status effects and if skip turn
-        // Confusion
-        bool NoCreatorTurn = await SkillHelper.ProcessConfusion(CreatorBattle, creator, joiner);
-        bool NoJoinerTurn = await SkillHelper.ProcessConfusion(JoinerBattle, joiner, creator);
-
-        // Check for Bide
-        if (CreatorBattle.BideActive && CreatorBattle.BideTurns > 0)
-        {
-            CreatorBattle.BideTurns--;
-
-            if (CreatorBattle.BideTurns == 0)
-            {
-                CreatorBattle.BideActive = false;
-                JoinerBattle.Health -= CreatorBattle.BideDamage * 2; // Apply Bide damage to the opponent
-                CreatorBattle.BideDamage = 0;
-            }
-            NoCreatorTurn = true;
-        }
-
-        if (JoinerBattle.BideActive && JoinerBattle.BideTurns > 0)
-        {
-            JoinerBattle.BideTurns--;
-
-            if (JoinerBattle.BideTurns == 0)
-            {
-                JoinerBattle.BideActive = false;
-                CreatorBattle.Health -= JoinerBattle.BideDamage * 2; // Apply Bide damage to the opponent
-                JoinerBattle.BideDamage = 0;
-            }
-            NoJoinerTurn = true;
-        }
-
-        // Check for Bind
-        if (CreatorBattle.BindActive && CreatorBattle.BindTurns > 0)
-        {
-            CreatorBattle.BindTurns--;
-            CreatorBattle.Health -= CreatorBattle.BindDamage;
-
-            if (CreatorBattle.BindTurns == 0)
-            {
-                CreatorBattle.BindActive = false;
-                CreatorBattle.BindDamage = 0;
-            }
-            NoCreatorTurn = true;
-        }
-
-        if (JoinerBattle.BindActive && JoinerBattle.BindTurns > 0)
-        {
-            JoinerBattle.BindTurns--;
-            JoinerBattle.Health -= JoinerBattle.BindDamage;
-
-            if (JoinerBattle.BindTurns == 0)
-            {
-                JoinerBattle.BindActive = false;
-                JoinerBattle.BindDamage = 0;
-            }
-            NoJoinerTurn = true;
-        }
-
-        // Dig
-        if (CreatorBattle.Dig && NoCreatorTurn == false)
-        {
-            NoCreatorTurn = true;
-            await SkillHelper.ProcessDig(JoinerBattle, CreatorBattle, creator, joiner);
-        }
-
-        if (JoinerBattle.Dig && NoJoinerTurn == false)
-        {
-            NoJoinerTurn = true;
-            await SkillHelper.ProcessDig(CreatorBattle, JoinerBattle, joiner, creator);
-        }
-
-        turn++;
     }
 
     public async Task<bool?> StartBattle()
@@ -399,7 +336,13 @@ public class Arena
                         SecondChoice = CreatorAction;
                     }
 
-                    await AdministerBattle(FirstTurnSession, SecondTurnSession, FirstChoice, SecondChoice);
+                    // Turn
+                    winner = await AdministerBattle(FirstTurnSession, SecondTurnSession, FirstChoice, SecondChoice);
+                    if (winner != null)
+                    {
+                        break;
+                    }
+
                     winner = CheckWinner();
 
                 }
@@ -437,78 +380,11 @@ public class Arena
 
                 turn++;
                 break;
-                // Continue with battle logic...
-            } while (true); // Add your battle termination condition here
+            } while (winner == null);
 
 
             RestorePokemonStats();
-
-            // Collect both inputs in parallel to avoid deadlocks
-            // var creatorInputTask = Task.Run(async () =>
-            // {
-            //     try
-            //     {
-            //         await CreatorSession.SendMessageAsync("\nPlease type a message:");
-            //         return await CreatorSession.GetInputAsync("") ?? "No input";
-            //     }
-            //     catch (Exception ex)
-            //     {
-            //         Console.WriteLine($"[Battle] Creator input error: {ex.Message}");
-            //         return "Error";
-            //     }
-            // });
-
-            // var joinerInputTask = Task.Run(async () =>
-            // {
-            //     try
-            //     {
-            //         await JoinerSession.SendMessageAsync("\nPlease type a message:");
-            //         return await JoinerSession.GetInputAsync("") ?? "No input";
-            //     }
-            //     catch (Exception ex)
-            //     {
-            //         Console.WriteLine($"[Battle] Joiner input error: {ex.Message}");
-            //         return "Error";
-            //     }
-            // });
-
-            // // Wait for both tasks with a timeout
-            // var allInputTasks = Task.WhenAll(creatorInputTask, joinerInputTask);
-            // string creatorResponse;
-            // string joinerResponse;
-            // if (await Task.WhenAny(allInputTasks, Task.Delay(60000)) == allInputTasks)
-            // {
-            //     // Both inputs received
-            //     string[] responses = await allInputTasks;
-            //     creatorResponse = responses[0];
-            //     joinerResponse = responses[1];
-
-            //     Console.WriteLine($"[Battle] Creator said: {creatorResponse}");
-            //     Console.WriteLine($"[Battle] Joiner said: {joinerResponse}");
-
-            //     // Acknowledge inputs
-            //     await CreatorSession.SendMessageAsync($"\nYou said: {creatorResponse}");
-            //     await CreatorSession.SendMessageAsync($"\nYour opponent said: {joinerResponse}");
-            //     await JoinerSession.SendMessageAsync($"\nYou said: {joinerResponse}");
-            //     await JoinerSession.SendMessageAsync($"\nYour opponent said: {creatorResponse}");
-            // }
-            // else
-            // {
-            //     // Timeout occurred
-            //     Console.WriteLine("[Battle] Input collection timed out");
-            //     creatorResponse = "Timeout";
-            //     joinerResponse = "Timeout";
-
-            //     try
-            //     {
-            //         await CreatorSession.SendMessageAsync("\nTime limit reached. Continuing with battle.");
-            //         await JoinerSession.SendMessageAsync("\nTime limit reached. Continuing with battle.");
-            //     }
-            //     catch (Exception ex)
-            //     {
-            //         Console.WriteLine($"[Battle] Error sending timeout messages: {ex.Message}");
-            //     }
-            // }
+            RemoveTempSkills();
 
             if (winner == true)
             {
@@ -533,6 +409,172 @@ public class Arena
         {
             Console.WriteLine($"[Battle] Error in StartBattle: {ex.Message}");
             return null;
+        }
+    }
+
+    public async Task PayDay()
+    {
+        int creatorCoins = 100;
+        int joinerCoins = 100;
+
+        // Fainted Pokemon
+        if (creatorFainted != null && creatorFainted.Count > 0)
+        {
+            var paydayPokimon = creatorFainted.Where(s => s.PayDay > 0).ToList();
+            foreach (var poki in paydayPokimon)
+            {
+                creatorCoins += poki.PayDay;
+            }
+        }
+
+        if (joinerFainted != null && joinerFainted!.Count > 0)
+        {
+            var paydayPokimon = joinerFainted.Where(s => s.PayDay > 0).ToList();
+            foreach (var poki in paydayPokimon)
+            {
+                joinerCoins += poki.PayDay;
+            }
+        }
+
+
+        // Battle
+        if (CreatorBattle != null)
+        {
+            creatorCoins += CreatorBattle.PayDay;
+        }
+
+        if (JoinerBattle != null)
+        {
+            joinerCoins += JoinerBattle.PayDay;
+        }
+
+        // List of Pokemon
+        if (creatorPokemon != null && creatorPokemon.Count > 0)
+        {
+            var paydayPokimon = creatorPokemon.Where(s => s.PayDay > 0).ToList();
+            foreach (var poki in paydayPokimon)
+            {
+                creatorCoins += poki.PayDay;
+            }
+        }
+
+        if (joinerPokemon != null && joinerPokemon.Count > 0)
+        {
+            var paydayPokimon = joinerPokemon.Where(s => s.PayDay > 0).ToList();
+            foreach (var poki in paydayPokimon)
+            {
+                joinerCoins += poki.PayDay;
+            }
+        }
+
+        string creatorpay = creatorCoins == 100 ? "You have earned 100 coins" : $"You have earned {creatorCoins} coins with the addition of Pay Day!";
+        string joinerpay = joinerCoins == 100 ? "You have earned 100 coins" : $"You have earned {joinerCoins} coins with the addition of Pay Day!";
+
+        using (var context = new DatabaseContext())
+        {
+            var creatorUser = context.Users.FirstOrDefault(u => u.Username == creator!.Username);
+            var joinerUser = context.Users.FirstOrDefault(u => u.Username == joiner!.Username);
+
+            if (creatorUser != null)
+            {
+                creatorUser.Coins += creatorCoins;
+                context.Users.Update(creatorUser);
+                context.SaveChanges();
+            }
+
+            if (joinerUser != null)
+            {
+                joinerUser.Coins += joinerCoins;
+                context.Users.Update(joinerUser);
+                context.SaveChanges();
+            }
+        }
+
+        await CreatorSession.SendMessageAsync(creatorpay);
+        await JoinerSession.SendMessageAsync(joinerpay);
+    }
+
+    public void RemoveTempSkills()
+    {
+        // Remove metronome, mimic and transform skills
+        foreach (var pokemon in creatorFainted!)
+        {
+            var tempskills = pokemon.Skills.Where(s => s.Metronome || s.Mimic || s.Transform).ToList();
+            foreach (var skill in tempskills)
+            {
+                pokemon.Skills.Remove(skill);
+            }
+            pokemon.Mimic = false;
+            pokemon.Transform = false;
+            pokemon.Metronome = false;
+        }
+
+        foreach (var pokemon in joinerFainted!)
+        {
+            var tempskills = pokemon.Skills.Where(s => s.Metronome || s.Mimic || s.Transform).ToList();
+            foreach (var skill in tempskills)
+            {
+                pokemon.Skills.Remove(skill);
+            }
+            pokemon.Mimic = false;
+            pokemon.Transform = false;
+            pokemon.Metronome = false;
+        }
+
+        // Remove metronome, mimic and transform skills
+        if (CreatorBattle != null)
+        {
+            var tempskills = CreatorBattle.Skills.Where(s => s.Metronome || s.Mimic || s.Transform).ToList();
+            foreach (var skill in tempskills)
+            {
+                CreatorBattle.Skills.Remove(skill);
+            }
+            CreatorBattle.Mimic = false;
+            CreatorBattle.Transform = false;
+            CreatorBattle.Metronome = false;
+        }
+
+        if (JoinerBattle != null)
+        {
+            var tempskills = JoinerBattle.Skills.Where(s => s.Metronome || s.Mimic || s.Transform).ToList();
+            foreach (var skill in tempskills)
+            {
+                JoinerBattle.Skills.Remove(skill);
+            }
+            JoinerBattle.Mimic = false;
+            JoinerBattle.Transform = false;
+            JoinerBattle.Metronome = false;
+        }
+
+        // Original List
+        if (creatorPokemon != null)
+        {
+            foreach (var pokemon in creatorPokemon)
+            {
+                var tempskills = pokemon.Skills.Where(s => s.Metronome || s.Mimic || s.Transform).ToList();
+                foreach (var skill in tempskills)
+                {
+                    pokemon.Skills.Remove(skill);
+                }
+                pokemon.Mimic = false;
+                pokemon.Metronome = false;
+                pokemon.Transform = false;
+            }
+        }
+
+        if (joinerPokemon != null)
+        {
+            foreach (var pokemon in joinerPokemon)
+            {
+                var tempskills = pokemon.Skills.Where(s => s.Metronome || s.Mimic || s.Transform).ToList();
+                foreach (var skill in tempskills)
+                {
+                    pokemon.Skills.Remove(skill);
+                }
+                pokemon.Mimic = false;
+                pokemon.Transform = false;
+                pokemon.Metronome = false;
+            }
         }
     }
 
@@ -915,6 +957,43 @@ public class Arena
 
     public async Task<string> Choice(ClientSession session)
     {
+        // Hyper Beam Recharge Check
+        if (session == CreatorSession && CreatorBattle!.HyperBeamRecharge)
+        {
+            await session.SendMessageAsync("Due to hyperbeam, you must recharge this turn.");
+            return "Attack | Hyper Beam";
+        }
+        else if (session == JoinerSession && JoinerBattle!.HyperBeamRecharge)
+        {
+            await session.SendMessageAsync("You must recharge after using Hyper Beam.");
+            return "Attack | Hyper Beam";
+        }
+
+        // Check for petal dance
+        if (session == CreatorSession && CreatorBattle!.PetalDance)
+        {
+            await session.SendMessageAsync("Petal Dance will be used.");
+            return "Attack | Petal Dance";
+        }
+        else if (session == JoinerSession && JoinerBattle!.PetalDance)
+        {
+            await session.SendMessageAsync("Petal Dance will be used.");
+            return "Attack | Petal Dance";
+        }
+
+        // Check for thrash
+        if (session == CreatorSession && CreatorBattle!.Thrashing)
+        {
+            await session.SendMessageAsync("Thrash will be used.");
+            return "Attack | Thrash";
+        }
+        else if (session == JoinerSession && JoinerBattle!.Thrashing)
+        {
+            await session.SendMessageAsync("Thrash will be used.");
+            return "Attack | Thrash";
+        }
+
+
         while (true)
         {
             StringBuilder sb = new StringBuilder();
@@ -927,6 +1006,23 @@ public class Arena
             await session.SendMessageAsync(sb.ToString());
 
             string choice = await session.GetInputAsync("\nChoice:");
+
+            if (session == CreatorSession && choice == "2")
+            {
+                if (CreatorBattle!.BindActive)
+                {
+                    await session.SendMessageAsync("You cannot switch Pokémon while Bind is active.");
+                    continue;
+                }
+            }
+            else if (session == JoinerSession && choice == "2")
+            {
+                if (JoinerBattle!.BindActive)
+                {
+                    await session.SendMessageAsync("You cannot switch Pokémon while Bind is active.");
+                    continue;
+                }
+            }
 
             switch (choice.ToUpper())
             {
@@ -1007,6 +1103,13 @@ public class Arena
 
             var BattleSkills = BattlePokemon!.Skills;
 
+            if (BattlePokemon.Transform)
+            {
+                BattleSkills = BattlePokemon.Skills
+                    .Where(s => s.Transform)
+                    .ToList();
+            }
+
             foreach (var skill in BattleSkills)
             {
                 sb.Append($"\n [{i}] {skill.Name} - Power: {skill.BasePower} - PP: {skill.PowerPoints}/{skill.MaxPowerPoints}");
@@ -1019,9 +1122,64 @@ public class Arena
 
             string choice = await session.GetInputAsync("\nChoice:");
 
+            if (choice == "Mimic" && session == CreatorSession && CreatorBattle!.Mimic)
+            {
+                await session.SendMessageAsync("Mimic can only be used once.");
+                continue;
+            }
+            else if (choice == "Mimic" && session == JoinerSession && JoinerBattle!.Mimic)
+            {
+                await session.SendMessageAsync("Mimic can only be used once.");
+                continue;
+            }
+
             if (int.TryParse(choice, out int choiceNumber) && choiceNumber >= 1 && choiceNumber <= BattleSkills.Count)
             {
                 var selectedSkill = BattleSkills.ElementAt(choiceNumber - 1);
+
+                //  Check for PP
+                if (selectedSkill.PowerPoints <= 0)
+                {
+                    await session.SendMessageAsync($"You cannot use {selectedSkill.Name} because it has no PP left.");
+                    continue;
+                }
+
+                // Check for Bide
+                if (session == CreatorSession)
+                {
+                    if (CreatorBattle!.BideActive)
+                    {
+                        await session.SendMessageAsync("You cannot use Bide while it is active.");
+                        continue;
+                    }
+                }
+                else if (session == JoinerSession)
+                {
+                    if (JoinerBattle!.BideActive)
+                    {
+                        await session.SendMessageAsync("You cannot use Bide while it is active.");
+                        continue;
+                    }
+                }
+
+                // Check for Disabled
+                if (session == CreatorSession)
+                {
+                    if (CreatorBattle!.Disable && CreatorBattle.DisabledSkill == selectedSkill.Name)
+                    {
+                        await session.SendMessageAsync($"You cannot use {CreatorBattle.DisabledSkill} while it is disabled.");
+                        continue;
+                    }
+                }
+                else if (session == JoinerSession)
+                {
+                    if (JoinerBattle!.Disable && JoinerBattle.DisabledSkill == selectedSkill.Name)
+                    {
+                        await session.SendMessageAsync($"You cannot use {JoinerBattle.DisabledSkill} while it is disabled.");
+                        continue;
+                    }
+                }
+
                 return $"Attack | {selectedSkill.Name}";
             }
             else if (choice.ToUpper() == "B")
@@ -1037,7 +1195,7 @@ public class Arena
 
     }
 
-    public async Task AdministerBattle(ClientSession FirstSession, ClientSession SecondSession, string FirstChoice, string SecondChoice)
+    public async Task<bool?> AdministerBattle(ClientSession FirstSession, ClientSession SecondSession, string FirstChoice, string SecondChoice)
     {
         string FirstAction = FirstChoice.Split('|')[0].Trim();
         string SecondAction = SecondChoice.Split('|')[0].Trim();
@@ -1061,37 +1219,133 @@ public class Arena
         // Administer Status Effects
         bool SkipFirst = await StatusEffects(FirstSession);
 
-        // First Action
-        if (FirstAction == "Switch"&& SkipFirst == false)
+        // First Action for switch for Joiner and Creator
+        if (FirstAction == "Switch" && SkipFirst == false)
         {
             if (FirstSession == CreatorSession)
             {
+                SwitchCure(FirstSession);
                 // Switch Pokemon
                 var SwitchTo = creatorPokemon!
                     .FirstOrDefault(p => p.Name == FirstFollowUp);
 
                 creatorPokemon!.Add(CreatorBattle!);
                 CreatorBattle = SwitchTo;
+                await CreatorSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle!.Name}!");
+                await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle.Name}!");
             }
             else
             {
+                SwitchCure(FirstSession);
                 // Switch Pokemon
                 var SwitchTo = joinerPokemon!
                     .FirstOrDefault(p => p.Name == FirstFollowUp);
 
                 joinerPokemon!.Add(JoinerBattle!);
                 JoinerBattle = SwitchTo;
+                await JoinerSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle!.Name}!");
+                await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle.Name}!");
             }
         }
 
+        // First Attack for joiner and creator
         if (FirstAction == "Attack" && SkipFirst == false)
         {
             if (FirstSession == CreatorSession)
             {
                 var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == FirstFollowUp);
+
+                await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} used {skill.Name}!");
+
                 if (skill != null)
                 {
-                    await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                    if (JoinerBattle!.Underground)
+                    {
+                        if (skill.Name == "Earthquake")
+                        {
+                            await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                        }
+                        else
+                        {
+                            await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is underground!");
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is underground!");
+                        }
+                    }
+                    else if (JoinerBattle.Flying)
+                    {
+                        if (skill.Name == "Thunder" || skill.Name == "Thunderbolt")
+                        {
+                            await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                        }
+                        else
+                        {
+                            await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is flying!");
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is flying!");
+                        }
+                    }
+                    else if (skill.Name == "Dig" && CreatorBattle.Dig)
+                    {
+                        await SkillHelper.ProcessDig(JoinerBattle, CreatorBattle!, CreatorSession, JoinerSession);
+                    }
+                    else if (skill.Name == "Fly" && CreatorBattle.Flying)
+                    {
+                        await SkillHelper.ProcessFly(JoinerBattle, CreatorBattle!, CreatorSession, JoinerSession);
+                    }
+                    else if (skill.Name == "Hyper Beam" && CreatorBattle.HyperBeamRecharge)
+                    {
+                        CreatorBattle.HyperBeamRecharge = false;
+                        await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is recharging after using Hyper Beam!");
+                        await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is recharging after using Hyper Beam!");
+                    }
+                    else if (skill.Name == "Roar")
+                    {
+                        if (joinerPokemon!.Count == 0)
+                        {
+                            await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                        }
+                        else
+                        {
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                            await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                            bool? Timeout = await ForceSwitchPokemon(JoinerSession);
+                            if (Timeout == false)
+                            {
+                                return false;
+                            }
+                            else if (Timeout == true)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (skill.Name == "Whirlwind")
+                    {
+                        if (joinerPokemon!.Count == 0)
+                        {
+                            await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                        }
+                        else
+                        {
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                            await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                            bool? Timeout = await ForceSwitchPokemon(JoinerSession);
+                            if (Timeout == false)
+                            {
+                                return false;
+                            }
+                            else if (Timeout == true)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                    }
 
                     // Check if the target Pokémon fainted
                     if (JoinerBattle!.Health <= 0)
@@ -1103,11 +1357,99 @@ public class Arena
             else
             {
                 var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == FirstFollowUp);
+
+                await JoinerSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} used {skill.Name}!");
+
                 if (skill != null)
                 {
-                    await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                    if (CreatorBattle!.Underground)
+                    {
+                        if (skill.Name == "Earthquake")
+                        {
+                            await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                        }
+                        else
+                        {
+                            await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is underground!");
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is underground!");
+                        }
+                    }
+                    else if (CreatorBattle.Flying)
+                    {
+                        if (skill.Name == "Thunder" || skill.Name == "Thunderbolt")
+                        {
+                            await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                        }
+                        else
+                        {
+                            await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is flying!");
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is flying!");
+                        }
+                    }
+                    else if (skill.Name == "Dig" && JoinerBattle.Dig)
+                    {
+                        await SkillHelper.ProcessDig(CreatorBattle, JoinerBattle!, JoinerSession, CreatorSession);
+                    }
+                    else if (skill.Name == "Fly" && JoinerBattle.Flying)
+                    {
+                        await SkillHelper.ProcessFly(CreatorBattle, JoinerBattle!, JoinerSession, CreatorSession);
+                    }
+                    else if (skill.Name == "Hyper Beam" && JoinerBattle.HyperBeamRecharge)
+                    {
+                        JoinerBattle.HyperBeamRecharge = false;
+                        await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is recharging after using Hyper Beam!");
+                        await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is recharging after using Hyper Beam!");
+                    }
+                    else if (skill.Name == "Roar")
+                    {
+                        if (creatorPokemon!.Count == 0)
+                        {
+                            await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                        }
+                        else
+                        {
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                            await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                            bool? Timeout = await ForceSwitchPokemon(CreatorSession);
+                            if (Timeout == false)
+                            {
+                                return false;
+                            }
+                            else if (Timeout == true)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else if (skill.Name == "Whirlwind")
+                    {
+                        if (creatorPokemon!.Count == 0)
+                        {
+                            await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                        }
+                        else
+                        {
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                            await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                            bool? Timeout = await ForceSwitchPokemon(CreatorSession);
+                            if (Timeout == false)
+                            {
+                                return false;
+                            }
+                            else if (Timeout == true)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                    }
 
-                    // Check if the target Pokémon fainted
                     if (CreatorBattle!.Health <= 0)
                     {
                         await CheckStats();
@@ -1119,6 +1461,7 @@ public class Arena
         // Second Action
         if ((OriginalSecondBattle == JoinerBattle && SecondSession == JoinerSession) || (OriginalSecondBattle == CreatorBattle && SecondSession == CreatorSession))
         {
+            // Second Action Switch for creator and joiner
             if (SecondAction == "Switch")
             {
                 // Administer Status Effects
@@ -1127,23 +1470,30 @@ public class Arena
                 if (SecondSession == CreatorSession && SkipSecond == false)
                 {
                     // Switch Pokemon
+                    SwitchCure(SecondSession);
                     var SwitchTo = creatorPokemon!
                         .FirstOrDefault(p => p.Name == SecondFollowUp);
 
                     creatorPokemon!.Add(CreatorBattle!);
                     CreatorBattle = SwitchTo;
+                    await CreatorSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle!.Name}!");
+                    await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle.Name}!");
                 }
                 else if (SkipSecond == false)
                 {
                     // Switch Pokemon
+                    SwitchCure(SecondSession);
                     var SwitchTo = joinerPokemon!
                         .FirstOrDefault(p => p.Name == SecondFollowUp);
 
                     joinerPokemon!.Add(JoinerBattle!);
                     JoinerBattle = SwitchTo;
+                    await JoinerSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle!.Name}!");
+                    await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle.Name}!");
                 }
             }
 
+            // Second Action Attack
             if (SecondAction == "Attack")
             {
                 // Administer Status Effects
@@ -1152,10 +1502,100 @@ public class Arena
                 if (SecondSession == CreatorSession && SkipSecond == false)
                 {
                     var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
+
+                    await CreatorSession.SendMessageAsync($"You used {skill!.Name}!");
+                    await JoinerSession.SendMessageAsync($"{CreatorSession.Username} used {skill.Name}!");
+
                     if (skill != null)
                     {
-                        await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                        if (JoinerBattle!.Underground)
+                        {
+                            if (skill.Name == "Earthquake")
+                            {
+                                await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                            }
+                            else
+                            {
+                                await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is underground!");
+                                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is underground!");
+                            }
+                        }
+                        else if (JoinerBattle.Flying)
+                        {
+                            if (skill.Name == "Thunder" || skill.Name == "Thunderbolt")
+                            {
+                                await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                            }
+                            else
+                            {
+                                await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is flying!");
+                                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it missed because {JoinerBattle.Name} is flying!");
+                            }
+                        }
+                        else if (skill.Name == "Dig" && CreatorBattle.Dig)
+                        {
+                            await SkillHelper.ProcessDig(JoinerBattle, CreatorBattle!, CreatorSession, JoinerSession);
+                        }
+                        else if (skill.Name == "Fly" && CreatorBattle.Flying)
+                        {
+                            await SkillHelper.ProcessFly(JoinerBattle, CreatorBattle!, CreatorSession, JoinerSession);
+                        }
+                        else if (skill.Name == "Hyper Beam" && CreatorBattle.HyperBeamRecharge)
+                        {
+                            CreatorBattle.HyperBeamRecharge = false;
+                            await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is recharging after using Hyper Beam!");
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is recharging after using Hyper Beam!");
+                        }
+                        else if (skill.Name == "Roar")
+                        {
+                            if (joinerPokemon!.Count == 0)
+                            {
+                                await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                            }
+                            else
+                            {
+                                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                                await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                                bool? Timeout = await ForceSwitchPokemon(JoinerSession);
+                                if (Timeout == false)
+                                {
+                                    return false;
+                                }
+                                else if (Timeout == true)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        else if (skill.Name == "Whirlwind")
+                        {
+                            if (joinerPokemon!.Count == 0)
+                            {
+                                await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name} but it failed!");
+                            }
+                            else
+                            {
+                                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                                await CreatorSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used {skill.Name}, forcing {JoinerBattle.Name} to switch out!");
+                                bool? Timeout = await ForceSwitchPokemon(JoinerSession);
+                                if (Timeout == false)
+                                {
+                                    return false;
+                                }
+                                else if (Timeout == true)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
+                        }
 
+                        // Check if the target Pokémon fainted
                         if (JoinerBattle!.Health <= 0)
                         {
                             await CheckStats();
@@ -1165,9 +1605,97 @@ public class Arena
                 else if (SkipSecond == false)
                 {
                     var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
+
+                    await CreatorSession.SendMessageAsync($"You used {skill!.Name}!");
+                    await JoinerSession.SendMessageAsync($"{JoinerSession.Username} used {skill.Name}!");
                     if (skill != null)
                     {
-                        await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                        if (CreatorBattle!.Underground)
+                        {
+                            if (skill.Name == "Earthquake")
+                            {
+                                await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                            }
+                            else
+                            {
+                                await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is underground!");
+                                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is underground!");
+                            }
+                        }
+                        else if (CreatorBattle.Flying)
+                        {
+                            if (skill.Name == "Thunder" || skill.Name == "Thunderbolt")
+                            {
+                                await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                            }
+                            else
+                            {
+                                await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is flying!");
+                                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it missed because {CreatorBattle.Name} is flying!");
+                            }
+                        }
+                        else if (skill.Name == "Dig" && JoinerBattle.Dig)
+                        {
+                            await SkillHelper.ProcessDig(CreatorBattle, JoinerBattle!, JoinerSession, CreatorSession);
+                        }
+                        else if (skill.Name == "Fly" && JoinerBattle.Flying)
+                        {
+                            await SkillHelper.ProcessFly(CreatorBattle, JoinerBattle!, JoinerSession, CreatorSession);
+                        }
+                        else if (skill.Name == "Hyper Beam" && JoinerBattle.HyperBeamRecharge)
+                        {
+                            JoinerBattle.HyperBeamRecharge = false;
+                            await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is recharging after using Hyper Beam!");
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is recharging after using Hyper Beam!");
+                        }
+                        else if (skill.Name == "Roar")
+                        {
+                            if (creatorPokemon!.Count == 0)
+                            {
+                                await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                            }
+                            else
+                            {
+                                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                                await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                                bool? Timeout = await ForceSwitchPokemon(CreatorSession);
+                                if (Timeout == false)
+                                {
+                                    return false;
+                                }
+                                else if (Timeout == true)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        else if (skill.Name == "Whirlwind")
+                        {
+                            if (creatorPokemon!.Count == 0)
+                            {
+                                await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name} but it failed!");
+                            }
+                            else
+                            {
+                                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                                await JoinerSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used {skill.Name}, forcing {CreatorBattle.Name} to switch out!");
+                                bool? Timeout = await ForceSwitchPokemon(CreatorSession);
+                                if (Timeout == false)
+                                {
+                                    return false;
+                                }
+                                else if (Timeout == true)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
+                        }
 
                         if (CreatorBattle!.Health <= 0)
                         {
@@ -1178,10 +1706,634 @@ public class Arena
             }
         }
 
+        // Reset Flinch
+        if (CreatorBattle!.Flinch)
+        {
+            CreatorBattle.Flinch = false;
+        }
+
+        if (JoinerBattle!.Flinch)
+        {
+            JoinerBattle.Flinch = false;
+        }
+
+        // Disable End
+        if (CreatorBattle.Disable)
+        {
+            CreatorBattle.DisableTurns -= 1;
+            if (CreatorBattle.DisableTurns == 0)
+            {
+                CreatorBattle.Disable = false;
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} can once again use {CreatorBattle.DisabledSkill}.");
+                CreatorBattle.DisabledSkill = string.Empty;
+            }
+        }
+
+        if (JoinerBattle!.Disable)
+        {
+            JoinerBattle.DisableTurns -= 1;
+            if (JoinerBattle.DisableTurns == 0)
+            {
+                JoinerBattle.Disable = false;
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} can once again use {JoinerBattle.DisabledSkill}.");
+                JoinerBattle.DisabledSkill = string.Empty;
+            }
+        }
+
+        return null;
+
     }
 
     public async Task<bool> StatusEffects(ClientSession session)
     {
-        return false;
+        bool currentSkip = false;
+
+        if (session == CreatorSession && CreatorBattle != null)
+        {
+            // Flinch
+            if (CreatorBattle.Flinch)
+            {
+                currentSkip = true;
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} flinched and couldn't move!");
+                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} flinched and couldn't move!");
+            }
+
+            // Bide
+            if (CreatorBattle.BideActive)
+            {
+                currentSkip = true;
+                CreatorBattle.BideTurns -= 1;
+                if (CreatorBattle.BideTurns == 0)
+                {
+                    CreatorBattle.BideActive = false;
+                    await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} can once again move.");
+
+                    if (JoinerBattle!.Substitude)
+                    {
+                        if (JoinerBattle.SubstituteHealth <= CreatorBattle.BideDamage)
+                        {
+                            JoinerBattle.Substitude = false;
+                            JoinerBattle.SubstituteHealth = 0;
+
+                            await CreatorSession.SendMessageAsync($"Your {CreatorBattle.Name} used Wing Attack and broke {JoinerBattle.Name}'s Substitute!");
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used Wing Attack and broke your {JoinerBattle.Name}'s Substitute!");
+                        }
+                        else
+                        {
+                            JoinerBattle.SubstituteHealth -= CreatorBattle.BideDamage;
+
+                            await CreatorSession.SendMessageAsync($"Your {CreatorBattle.Name} used Wing Attack on {JoinerBattle.Name}'s Substitute, dealing {CreatorBattle.BideDamage:F1} damage.");
+                            await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used Wing Attack on your {JoinerBattle.Name}'s Substitute, dealing {CreatorBattle.BideDamage:F1} damage.");
+
+                            if (JoinerBattle.SubstituteHealth < 0) JoinerBattle.SubstituteHealth = 0;
+                        }
+                    }
+                    else
+                    {
+                        JoinerBattle.Health -= CreatorBattle.BideDamage;
+
+                        await CreatorSession.SendMessageAsync($"Your {CreatorBattle.Name} used Wing Attack on {JoinerBattle.Name}, dealing {CreatorBattle.BideDamage:F1} damage!");
+                        await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} used Wing Attack on your {JoinerBattle.Name}, dealing {CreatorBattle.BideDamage:F1} damage!");
+                    }
+                    CreatorBattle.BideDamage = 0;
+                }
+            }
+
+            // Paralyze
+            if (CreatorBattle.Paralyzed && Random.Shared.NextDouble() <= 0.25)
+            {
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is paralyzed and couldn't move!");
+                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is paralyzed and couldn't move!");
+                currentSkip = true;
+            }
+
+            // Confusion
+            if (CreatorBattle.Confused)
+            {
+                CreatorBattle.ConfusionTurns -= 1;
+                if (Random.Shared.NextDouble() <= 0.5)
+                {
+                    currentSkip = true;
+                    await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is confused and hurt itself!");
+                    await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is confused and hurt itself!");
+                    CreatorBattle.Health -= CreatorBattle.MaxHealth * 0.4f;
+                }
+            }
+
+            // Burn
+            if (CreatorBattle.Burning)
+            {
+                CreatorBattle.Health -= CreatorBattle.MaxHealth * (1.0f / 16.0f);
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is burned and lost {CreatorBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is burned and lost {CreatorBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+            }
+
+            // Poison
+            if (CreatorBattle.Poisoned)
+            {
+                float damage = CreatorBattle.MaxHealth * (1.0f / 16.0f);
+                CreatorBattle.Health -= damage;
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is poisoned and lost {damage:F1} HP!");
+                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is poisoned and lost {damage:F1} HP!");
+            }
+
+            // Badly Poison
+            if (CreatorBattle.BadlyPoisoned)
+            {
+                CreatorBattle.BadlyPoisonedTurns += 1;
+                float damage = CreatorBattle.MaxHealth * (1.0f / 16.0f) * CreatorBattle.BadlyPoisonedTurns;
+                CreatorBattle.Health -= damage;
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is badly poisoned and lost {damage:F1} HP!");
+                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is badly poisoned and lost {damage:F1} HP!");
+            }
+
+            // Frozen
+            if (CreatorBattle.Freezing)
+            {
+                currentSkip = true;
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is frozen and couldn't move!");
+                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is frozen and couldn't move!");
+            }
+
+            // Sleeping
+            if (CreatorBattle.Sleeping)
+            {
+                currentSkip = true;
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is asleep and couldn't move!");
+                await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} is asleep and couldn't move!");
+                CreatorBattle.SleepTurns -= 1;
+                if (CreatorBattle.SleepTurns == 0)
+                {
+                    CreatorBattle.Sleeping = false;
+                    await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} woke up!");
+                    await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} woke up!");
+                    if (CreatorBattle.Rest)
+                    {
+                        CreatorBattle.Rest = false;
+                        CreatorBattle.Health = CreatorBattle.MaxHealth;
+
+                        CreatorBattle.Freezing = false;
+                        CreatorBattle.Poisoned = false;
+                        CreatorBattle.BadlyPoisoned = false;
+                        CreatorBattle.BadlyPoisonedTurns = 0;
+
+                        if (CreatorBattle.Burning)
+                        {
+                            CreatorBattle.BurningAttack = false;
+                            CreatorBattle.Burning = false;
+                            CreatorBattle.Attack *= 2;
+                        }
+
+                        if (CreatorBattle.Paralyzed)
+                        {
+                            CreatorBattle.Paralyzed = false;
+                            CreatorBattle.ParalyzeSpeed = false;
+                            CreatorBattle.Speed *= 2;
+                        }
+
+                        await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} restored all of its health after resting!");
+                        await JoinerSession.SendMessageAsync($"{CreatorSession.Username}'s {CreatorBattle.Name} restored all of its health after resting!");
+                    }
+                }
+            }
+
+            // Leech Seed
+            if (CreatorBattle.LeechSeed)
+            {
+                CreatorBattle.Health -= CreatorBattle.MaxHealth * (1.0f / 16.0f);
+                JoinerBattle!.Health += CreatorBattle.MaxHealth * (1.0f / 16.0f);
+                await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is being leeched health and lost {CreatorBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+                await JoinerSession.SendMessageAsync($"\nYour's {JoinerBattle.Name} is leeching health and gained {CreatorBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+
+                CreatorBattle.LeechSeedTurns -= 1;
+                if (CreatorBattle.LeechSeedTurns == 0)
+                {
+                    CreatorBattle.LeechSeed = false;
+                    await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name} is no longer being leeched health.");
+                }
+            }
+
+            // Light Screen
+            if (CreatorBattle.LightScreen)
+            {
+                CreatorBattle.LightScreenTurns -= 1;
+                if (CreatorBattle.LightScreenTurns == 0)
+                {
+                    CreatorBattle.LightScreen = false;
+                    await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name}'s Light Screen has faded.");
+                }
+            }
+
+            // Mist
+            if (CreatorBattle.Mist)
+            {
+                CreatorBattle.MistTurns -= 1;
+                if (CreatorBattle.MistTurns == 0)
+                {
+                    CreatorBattle.Mist = false;
+                    await CreatorSession.SendMessageAsync($"\nYour {CreatorBattle.Name}'s Mist has faded.");
+                }
+            }
+
+
+            // Check if dead
+            if (CreatorBattle.Health <= 0)
+            {
+                await CheckStats();
+                currentSkip = true;
+            }
+
+        }
+        else if (session == JoinerSession && JoinerBattle != null)
+        {
+            // Flinch
+            if (JoinerBattle.Flinch)
+            {
+                currentSkip = true;
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} flinched and couldn't move!");
+                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} flinched and couldn't move!");
+            }
+
+            // Bide
+            if (JoinerBattle.BideActive)
+            {
+                currentSkip = true;
+                JoinerBattle.BideTurns -= 1;
+                if (JoinerBattle.BideTurns == 0)
+                {
+                    JoinerBattle.BideActive = false;
+                    await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} can once again move.");
+
+                    if (CreatorBattle!.Substitude)
+                    {
+                        if (CreatorBattle.SubstituteHealth <= JoinerBattle.BideDamage)
+                        {
+                            CreatorBattle.Substitude = false;
+                            CreatorBattle.SubstituteHealth = 0;
+
+                            await JoinerSession.SendMessageAsync($"Your {JoinerBattle.Name} used Wing Attack and broke {CreatorBattle.Name}'s Substitute!");
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used Wing Attack and broke your {CreatorBattle.Name}'s Substitute!");
+                        }
+                        else
+                        {
+                            CreatorBattle.SubstituteHealth -= JoinerBattle.BideDamage;
+
+                            await JoinerSession.SendMessageAsync($"Your {JoinerBattle.Name} used Wing Attack on {CreatorBattle.Name}'s Substitute, dealing {JoinerBattle.BideDamage:F1} damage.");
+                            await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used Wing Attack on your {CreatorBattle.Name}'s Substitute, dealing {JoinerBattle.BideDamage:F1} damage.");
+
+                            if (CreatorBattle.SubstituteHealth < 0) CreatorBattle.SubstituteHealth = 0;
+                        }
+                    }
+                    else
+                    {
+                        CreatorBattle.Health -= JoinerBattle.BideDamage;
+
+                        await JoinerSession.SendMessageAsync($"Your {JoinerBattle.Name} used Wing Attack on {CreatorBattle.Name}, dealing {JoinerBattle.BideDamage:F1} damage!");
+                        await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} used Wing Attack on your {CreatorBattle.Name}, dealing {JoinerBattle.BideDamage:F1} damage!");
+                    }
+                    JoinerBattle.BideDamage = 0;
+                }
+            }
+
+            // Paralyze
+            if (JoinerBattle.Paralyzed && Random.Shared.NextDouble() <= 0.25)
+            {
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is paralyzed and couldn't move!");
+                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is paralyzed and couldn't move!");
+                currentSkip = true;
+            }
+
+            // Confusion
+            if (JoinerBattle.Confused)
+            {
+                JoinerBattle.ConfusionTurns -= 1;
+                if (Random.Shared.NextDouble() <= 0.50)
+                {
+                    await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is confused and hurt itself!");
+                    await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is confused and hurt itself!");
+                    JoinerBattle.Health -= JoinerBattle.MaxHealth * 0.4f;
+                    currentSkip = true;
+                }
+            }
+
+            // Burn
+            if (JoinerBattle.Burning)
+            {
+                JoinerBattle.Health -= JoinerBattle.MaxHealth * (1.0f / 16.0f);
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is burned and lost {JoinerBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is burned and lost {JoinerBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+            }
+
+            // Poison
+            if (JoinerBattle.Poisoned)
+            {
+                float damage = JoinerBattle.MaxHealth * (1.0f / 16.0f);
+                JoinerBattle.Health -= damage;
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is poisoned and lost {damage:F1} HP!");
+                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is poisoned and lost {damage:F1} HP!");
+            }
+
+            // Badly Poison
+            if (JoinerBattle.BadlyPoisoned)
+            {
+                JoinerBattle.BadlyPoisonedTurns += 1;
+                float damage = JoinerBattle.MaxHealth * (1.0f / 16.0f) * JoinerBattle.BadlyPoisonedTurns;
+                JoinerBattle.Health -= damage;
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is badly poisoned and lost {damage:F1} HP!");
+                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is badly poisoned and lost {damage:F1} HP!");
+            }
+
+            // Frozen
+            if (JoinerBattle.Freezing)
+            {
+                currentSkip = true;
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is frozen and couldn't move!");
+                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is frozen and couldn't move!");
+            }
+
+            // Sleeping
+            if (JoinerBattle.Sleeping)
+            {
+                currentSkip = true;
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is asleep and couldn't move!");
+                await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} is asleep and couldn't move!");
+                JoinerBattle.SleepTurns -= 1;
+                if (JoinerBattle.SleepTurns == 0)
+                {
+                    JoinerBattle.Sleeping = false;
+                    await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} woke up!");
+                    await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} woke up!");
+                    if (JoinerBattle.Rest)
+                    {
+                        JoinerBattle.Rest = false;
+                        JoinerBattle.Health = JoinerBattle.MaxHealth;
+
+                        JoinerBattle.Freezing = false;
+                        JoinerBattle.Poisoned = false;
+                        JoinerBattle.BadlyPoisoned = false;
+                        JoinerBattle.BadlyPoisonedTurns = 0;
+                        JoinerBattle.Confused = false;
+                        if (JoinerBattle.Burning)
+                        {
+                            JoinerBattle.BurningAttack = false;
+                            JoinerBattle.Burning = false;
+                            JoinerBattle.Attack *= 2;
+                        }
+
+                        if (JoinerBattle.Paralyzed)
+                        {
+                            JoinerBattle.Paralyzed = false;
+                            JoinerBattle.ParalyzeSpeed = false;
+                            JoinerBattle.Speed *= 2;
+                        }
+                        await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} restored all of its health after resting!");
+                        await CreatorSession.SendMessageAsync($"{JoinerSession.Username}'s {JoinerBattle.Name} restored all of its health after resting!");
+                    }
+                }
+            }
+
+            // Leech Seed
+            if (JoinerBattle.LeechSeed)
+            {
+                JoinerBattle.Health -= JoinerBattle.MaxHealth * (1.0f / 16.0f);
+                CreatorBattle!.Health += JoinerBattle.MaxHealth * (1.0f / 16.0f);
+                await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is being leeched health and lost {JoinerBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+                await CreatorSession.SendMessageAsync($"\nYour's {CreatorBattle.Name} is leeching health and gained {JoinerBattle.MaxHealth * (1.0f / 16.0f):F1} HP!");
+
+                JoinerBattle.LeechSeedTurns -= 1;
+                if (JoinerBattle.LeechSeedTurns == 0)
+                {
+                    JoinerBattle.LeechSeed = false;
+                    await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name} is no longer being leeched health.");
+                }
+            }
+
+            // Light Screen
+            if (JoinerBattle.LightScreen)
+            {
+                JoinerBattle.LightScreenTurns -= 1;
+                if (JoinerBattle.LightScreenTurns == 0)
+                {
+                    JoinerBattle.LightScreen = false;
+                    await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name}'s Light Screen has faded.");
+                }
+            }
+
+            // Mist
+            if (JoinerBattle.Mist)
+            {
+                JoinerBattle.MistTurns -= 1;
+                if (JoinerBattle.MistTurns == 0)
+                {
+                    JoinerBattle.Mist = false;
+                    await JoinerSession.SendMessageAsync($"\nYour {JoinerBattle.Name}'s Mist has faded.");
+                }
+            }
+
+            // Check if dead
+            if (JoinerBattle.Health <= 0)
+            {
+                await CheckStats();
+                currentSkip = true;
+            }
+        }
+        return currentSkip;
+    }
+
+    public void SwitchCure(ClientSession session)
+    {
+        if (session == CreatorSession && CreatorBattle != null)
+        {
+            CreatorBattle.Freezing = false;
+            CreatorBattle.Poisoned = false;
+            CreatorBattle.BadlyPoisoned = false;
+            CreatorBattle.Confused = false;
+
+            if (CreatorBattle.Burning)
+            {
+                CreatorBattle.BurningAttack = false;
+                CreatorBattle.Burning = false;
+                CreatorBattle.Attack *= 2;
+            }
+
+            if (CreatorBattle.Paralyzed)
+            {
+                CreatorBattle.Paralyzed = false;
+                CreatorBattle.ParalyzeSpeed = false;
+                CreatorBattle.Speed *= 2;
+            }
+
+        }
+        else if (session == JoinerSession && JoinerBattle != null)
+        {
+            JoinerBattle.Freezing = false;
+            JoinerBattle.Poisoned = false;
+            JoinerBattle.BadlyPoisoned = false;
+            JoinerBattle.BadlyPoisonedTurns = 0;
+            JoinerBattle.Confused = false;
+
+            if (JoinerBattle.Burning)
+            {
+                JoinerBattle.BurningAttack = false;
+                JoinerBattle.Burning = false;
+                JoinerBattle.Attack *= 2;
+            }
+
+            if (JoinerBattle.Paralyzed)
+            {
+                JoinerBattle.Paralyzed = false;
+                JoinerBattle.ParalyzeSpeed = false;
+                JoinerBattle.Speed *= 2;
+            }
+        }
+    }
+
+    public async Task<bool?> ForceSwitchPokemon(ClientSession session)
+    {
+        if (session == JoinerSession)
+        {
+            var joinerResponse = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("════════════ POKÉMON AVAILABLE ════════════");
+
+                    int i = 1;
+                    var pokemonCollection = CreatorSession == session ? creatorPokemon : joinerPokemon;
+                    var pokedict = new Dictionary<int, string>();
+
+                    var BattlePokemon = CreatorSession == session ? CreatorBattle : JoinerBattle;
+
+                    foreach (var pokemon in pokemonCollection!)
+                    {
+                        sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health}/{pokemon.MaxHealth}");
+                        pokedict.Add(i, pokemon.Name!);
+                        i++;
+                    }
+
+                    sb.Append(@$" [B] Back");
+
+                    await session.SendMessageAsync(sb.ToString());
+
+                    string choice = await session.GetInputAsync("\nChoice:");
+
+                    if (int.TryParse(choice, out int choiceNumber) && choiceNumber >= 1 && choiceNumber <= pokemonCollection.Count)
+                    {
+                        var selectedPokemon = pokemonCollection
+                            .FirstOrDefault(p => p.Name == pokedict[choiceNumber]);
+
+                        SwitchCure(JoinerSession);
+                        // Switch Pokemon
+                        var SwitchTo = joinerPokemon!
+                            .FirstOrDefault(p => p.Name == selectedPokemon!.Name);
+
+                        joinerPokemon!.Add(JoinerBattle!);
+                        JoinerBattle = SwitchTo;
+                        break;
+                    }
+                    else
+                    {
+                        await session.SendMessageAsync("Invalid choice. Please try again.");
+                        continue;
+                    }
+                }
+            });
+
+            var CreatorResponse = Task.Run(async () =>
+            {
+                await CreatorSession.SendMessageAsync($"Please wait for {JoinerSession.Username} to switch Pokemon.");
+            });
+
+            var timeout = Task.Delay(60000); // 60 seconds timeout
+
+            var BothTasks = Task.WhenAll(joinerResponse, CreatorResponse);
+            var completedTask = await Task.WhenAny(BothTasks, timeout);
+
+            if (completedTask == timeout)
+            {
+                await CreatorSession.SendMessageAsync($"Time's up! {JoinerSession.Username} didn't respond in time.");
+                await JoinerSession.SendMessageAsync($"Time's up! You didn't respond in time.");
+                return false;
+            }
+            else
+            {
+                await BothTasks; // Await both tasks to ensure they complete
+                return null;
+            }
+        }
+        if (session == CreatorSession)
+        {
+            var creatorResponse = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("════════════ POKÉMON AVAILABLE ════════════");
+
+                    int i = 1;
+                    var pokemonCollection = CreatorSession == session ? creatorPokemon : joinerPokemon;
+                    var pokedict = new Dictionary<int, string>();
+
+                    var BattlePokemon = CreatorSession == session ? CreatorBattle : JoinerBattle;
+
+                    foreach (var pokemon in pokemonCollection!)
+                    {
+                        sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health}/{pokemon.MaxHealth}");
+                        pokedict.Add(i, pokemon.Name!);
+                        i++;
+                    }
+
+                    sb.Append(@$" [B] Back");
+
+                    await session.SendMessageAsync(sb.ToString());
+
+                    string choice = await session.GetInputAsync("\nChoice:");
+
+                    if (int.TryParse(choice, out int choiceNumber) && choiceNumber >= 1 && choiceNumber <= pokemonCollection.Count)
+                    {
+                        var selectedPokemon = pokemonCollection
+                            .FirstOrDefault(p => p.Name == pokedict[choiceNumber]);
+
+                        SwitchCure(CreatorSession);
+                        // Switch Pokemon
+                        var SwitchTo = creatorPokemon!
+                            .FirstOrDefault(p => p.Name == selectedPokemon!.Name);
+
+                        creatorPokemon!.Add(CreatorBattle!);
+                        CreatorBattle = SwitchTo;
+                        break;
+                    }
+                    else
+                    {
+                        await session.SendMessageAsync("Invalid choice. Please try again.");
+                        continue;
+                    }
+                }
+            });
+
+            var JoinerResponse = Task.Run(async () =>
+            {
+                await JoinerSession.SendMessageAsync($"Please wait for {CreatorSession.Username} to switch Pokemon.");
+            });
+
+            var timeout = Task.Delay(60000); // 60 seconds timeout
+
+            var BothTasks = Task.WhenAll(creatorResponse, JoinerResponse);
+            var completedTask = await Task.WhenAny(BothTasks, timeout);
+
+            if (completedTask == timeout)
+            {
+                await CreatorSession.SendMessageAsync($"Time's up! {JoinerSession.Username} didn't respond in time.");
+                await JoinerSession.SendMessageAsync($"Time's up! You didn't respond in time.");
+                return false;
+            }
+            else
+            {
+                await BothTasks; // Await both tasks to ensure they complete
+                return null;
+            }
+        }
+        return null;
     }
 }

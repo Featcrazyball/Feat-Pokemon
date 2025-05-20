@@ -315,39 +315,7 @@ public class Game
             await Task.Delay(2000);
 
             Console.WriteLine("[Battle] Calling StartBattle()");
-            var result = await arena.StartBattle();
-            Console.WriteLine($"[Battle] StartBattle() returned: {result}");
-
-            if (result == null)
-            {
-                // Handle battle error
-                if (room.HostSession != null)
-                    await room.HostSession.SendMessageAsync("There was an error with the battle.");
-                if (room.ChallengerSession != null)
-                    await room.ChallengerSession.SendMessageAsync("There was an error with the battle.");
-            }
-            else if (result == false)
-            {
-                // Challenger won
-                if (room.HostSession != null)
-                    await room.HostSession.SendMessageAsync("You lost the battle!");
-                if (room.ChallengerSession != null)
-                    await room.ChallengerSession.SendMessageAsync("You won the battle!");
-
-                room.Challenger!.Wins++;
-                room.Host!.Losses++;
-            }
-            else if (result == true)
-            {
-                // Host won
-                if (room.HostSession != null)
-                    await room.HostSession.SendMessageAsync("You won the battle!");
-                if (room.ChallengerSession != null)
-                    await room.ChallengerSession.SendMessageAsync("You lost the battle!");
-
-                room.Host!.Wins++;
-                room.Challenger!.Losses++;
-            }
+            await arena.StartBattle();
 
             // Cleanup after battle
             room.Host!.InRoom = false;

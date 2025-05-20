@@ -156,9 +156,11 @@ namespace PokemonPocket
 
         [NotMapped] public bool Mimic { get; set; } = false;
         [NotMapped] public Skill? MimicSkill { get; set; }
+        [NotMapped] public bool Metronome { get; set; } = false;
 
         [NotMapped] public bool PetalDance { get; set; } = false;
         [NotMapped] public int PetalDanceTurns { get; set; } = 0;
+        
         [NotMapped] public bool Thrashing { get; set; } = false;
         [NotMapped] public int ThrashTurns { get; set; } = 0;
 
@@ -393,6 +395,7 @@ namespace PokemonPocket
             ChargingSolar = false;
             BadlyPoisoned = false;
             BadlyPoisonedTurns = 0;
+            Metronome = false;
             Transform = false;
         }
 
