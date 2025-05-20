@@ -27,6 +27,12 @@ public class Chat
                 return;
             }
 
+            if (!NetworkMethods.IsUsernameActive(session.Username!))
+            {
+                await session.SendMessageAsync("The host has disconnected. Returning to room selection.");
+                break;
+            }
+
             // list of all clients
             var clients = ClientSession.GetAllClients();
 

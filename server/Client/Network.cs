@@ -411,7 +411,7 @@ namespace Server
             _activeUsernames.TryRemove(username, out _);
         }
 
-        private static void CheckClientConnections(object state)
+        public static void CheckClientConnections(object state)
         {
             // Create copy to avoid modification during enumeration
             foreach (var sessionEntry in _activeSessions.ToArray())
@@ -457,6 +457,53 @@ namespace Server
             }
         }
         
+
+        public static void ServerCheckClientConnections()
+        {
+            // Create copy to avoid modification during enumeration
+            foreach (var sessionEntry in _activeSessions.ToArray())
+            {
+                string sessionId = sessionEntry.Key;
+                ClientSession session = sessionEntry.Value;
+
+                try
+                {
+                    // Check if client is still connected
+                    if (session._client == null || !session._client.Connected || !IsSocketConnected(session._client))
+                    {
+                        Console.WriteLine($"[{DateTime.Now}] Client {sessionId} disconnected, cleaning up...");
+
+                        // Clean up resources - remove from active sessions
+                        _activeSessions.TryRemove(sessionId, out _);
+
+                        // Remove from username tracking if logged in
+                        if (!string.IsNullOrEmpty(session.Username))
+                        {
+                            RemoveUsername(session.Username);
+                        }
+
+                        // Close the socket if it exists and is connected
+                        try
+                        {
+                            if (session._client != null && session._client.Connected)
+                            {
+                                session._client.Shutdown(SocketShutdown.Both);
+                                session._client.Close();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error closing socket for client {sessionId}: {ex.Message}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error checking connection for client {sessionId}: {ex.Message}");
+                }
+            }
+        }
+
         // Check if a socket is still connected
         private static bool IsSocketConnected(Socket socket)
         {
@@ -465,11 +512,11 @@ namespace Server
                 // Check if the socket is connected and has data available
                 bool part1 = socket.Poll(1000, SelectMode.SelectRead);
                 bool part2 = (socket.Available == 0);
-                
+
                 // If both are true, the socket is closed or not connected
                 if (part1 && part2)
                     return false;
-                
+
                 // Try to send a non-data packet (0 bytes) to test the connection
                 return !(socket.Poll(1, SelectMode.SelectRead) && socket.Available == 0);
             }

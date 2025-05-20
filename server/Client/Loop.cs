@@ -12,13 +12,13 @@ public class Client
 
         using var context = new DatabaseContext();
         var user = context.Users.FirstOrDefault(u => u.Username == username);
-
         if (user == null)
         {
             await session.SendMessageAsync("There has been an error locating your account. Please try again.");
             await session.SendMessageAsync("2q30-8b6r7-vyq20974ryf-b09qw8r7bq9-28-3v");
             return;
         }
+        user!.InRoom = false;
 
         while (!exit)
         {

@@ -35,7 +35,7 @@ public class AssignmentEvolve
             new PokemonMaster("Geodude", 2, "Graveler"),
             new PokemonMaster("Gloom", 2, "Vileplume"),
             new PokemonMaster("Goldeen", 3, "Seaking"),
-            new PokemonMaster("Gravler", 3, "Golem"),
+            new PokemonMaster("Graveler", 3, "Golem"),
             new PokemonMaster("Grimer", 2, "Muk"),
             new PokemonMaster("Growlithe", 2, "Arcanine"),
             new PokemonMaster("Haunter", 3, "Gengar"),

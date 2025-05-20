@@ -4,6 +4,7 @@ using Models;
 using System.Text;
 using Database;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using System.Data.SQLite;
 
 namespace Arena;
@@ -218,22 +219,60 @@ public class Arena
             joiner = context.Users.FirstOrDefault(u => u.Username == joiner!.Username);
 
             creatorPokemon = context.PokemonMaster
+                .Include(p => p.Skills)  // <-- Include skills
                 .Where(p => p.OwnerId == creator!.Id)
                 .Where(p => p.Selected && !p.Starter)
                 .ToList();
 
             joinerPokemon = context.PokemonMaster
+                .Include(p => p.Skills)  // <-- Include skills 
                 .Where(p => p.OwnerId == joiner!.Id)
                 .Where(p => p.Selected && !p.Starter)
                 .ToList();
 
             CreatorBattle = context.PokemonMaster
+                .Include(p => p.Skills)  // <-- Include skills
                 .Where(p => p.OwnerId == creator!.Id)
                 .FirstOrDefault(p => p.Starter);
 
             JoinerBattle = context.PokemonMaster
+                .Include(p => p.Skills)  // <-- Include skills
                 .Where(p => p.OwnerId == joiner!.Id)
                 .FirstOrDefault(p => p.Starter);
+
+            // Reset Powerpoints of all skills
+            foreach (var pokemon in creatorPokemon!)
+            {
+                foreach (var skill in pokemon.Skills)
+                {
+                    skill.ResetPowerPoints();
+                }
+            }
+
+            foreach (var pokemon in joinerPokemon!)
+            {
+                foreach (var skill in pokemon.Skills)
+                {
+                    skill.ResetPowerPoints();
+                }
+            }
+
+            // Reset Powerpoints of all skills
+            if (CreatorBattle != null)
+            {
+                foreach (var skill in CreatorBattle.Skills)
+                {
+                    skill.ResetPowerPoints();
+                }
+            }
+
+            if (JoinerBattle != null)
+            {
+                foreach (var skill in JoinerBattle.Skills)
+                {
+                    skill.ResetPowerPoints();
+                }
+            }
         }
 
         // Create stat backups
@@ -272,13 +311,15 @@ public class Arena
             {
                 creatorResponse = false;
                 joinerResponse = false;
-
+                using var cts = new CancellationTokenSource();
+                
                 // Creator Choices
                 var creatorTask = Task.Run(async () =>
                 {
                     await PrintMenu("creator");
                     var response = await Choice(CreatorSession);
                     creatorResponse = true;
+                    await CreatorSession.SendMessageAsync("\nPlease wait for your opponent to choose their next move.");
                     return response;
                 });
 
@@ -288,17 +329,23 @@ public class Arena
                     await PrintMenu("joiner");
                     var response = await Choice(JoinerSession);
                     joinerResponse = true;
+                    await JoinerSession.SendMessageAsync("\nPlease wait for your opponent to choose their next move.");
                     return response;
                 });
 
+                var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token);
+
                 // Thread Handling
-                var timeoutTask = Task.Delay(60000);
+                var timeoutTask = Task.Delay(60000, timeoutCts.Token);
                 var playersTask = Task.WhenAll(creatorTask, joinerTask);
 
                 var completedTask = await Task.WhenAny(timeoutTask, playersTask);
 
                 if (completedTask == playersTask)
                 {
+                    // Cancel the timeout task if both players responded
+                    timeoutCts.Cancel();
+
                     // Both players provided input in time
                     string[] responses = await playersTask;
                     string creatorChoice = responses[0];
@@ -310,6 +357,23 @@ public class Arena
 
                     string CreatorActionFollowUp = creatorChoice.Split('|')[1].Trim();
                     string JoinerActionFollowUp = joinerChoice.Split('|')[1].Trim();
+
+                    // if resign is used, end the battle
+                    if (CreatorAction == "resign" || JoinerAction == "resign")
+                    {
+                        if (CreatorAction == "resign")
+                        {
+                            await CreatorSession.SendMessageAsync("\nYou have resigned from the battle.");
+                            await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} has resigned from the battle.");
+                            return false;
+                        }
+                        else
+                        {
+                            await JoinerSession.SendMessageAsync("\nYou have resigned from the battle.");
+                            await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} has resigned from the battle.");
+                            return true;
+                        }
+                    }
 
                     // Calculate Speed
                     string FirstTurn = CalculateSpeed(CreatorAction, JoinerAction, CreatorActionFollowUp, JoinerActionFollowUp);
@@ -348,6 +412,7 @@ public class Arena
                 }
                 else if (completedTask == timeoutTask)
                 {
+                    
                     // If both players didnt respond in time
                     if (!creatorResponse && !joinerResponse)
                     {
@@ -1027,9 +1092,15 @@ public class Arena
             switch (choice.ToUpper())
             {
                 case "1":
-                    return await ChoiceAttack(session);
+                    Console.WriteLine($"Attack option selected by {session.Username}");
+                    var response = await ChoiceAttack(session);
+                    Console.WriteLine($"{response} option selected by {session.Username}");
+                    return response;
                 case "2":
-                    return await ChoiceSwitch(session);
+                    Console.WriteLine($"Attack option selected by {session.Username}");
+                    var responseAttack = await ChoiceSwitch(session);
+                    Console.WriteLine($"{responseAttack} option selected by {session.Username}");
+                    return responseAttack;
                 case "RESIGN":
                     return "Resign";
                 default:
@@ -1066,7 +1137,7 @@ public class Arena
                 i++;
             }
 
-            sb.Append(@$" [B] Back");
+            sb.AppendLine("\n [B] Back");
 
             await session.SendMessageAsync(sb.ToString());
 
@@ -1099,9 +1170,11 @@ public class Arena
             sb.Append("═════════════════ ATTACK ═════════════════");
 
             int i = 1;
-            var BattlePokemon = CreatorSession == session ? CreatorBattle : JoinerBattle;
-
-            var BattleSkills = BattlePokemon!.Skills;
+            var BattlePokemon = session == CreatorSession ? CreatorBattle : JoinerBattle;
+            
+            var BattleSkills = BattlePokemon!.Transform 
+                ? BattlePokemon.Skills.Where(s => s.Transform).ToList()
+                : BattlePokemon.Skills.Where(s => !s.Transform && !s.Metronome && !s.Mimic).ToList();
 
             if (BattlePokemon.Transform)
             {
@@ -1112,11 +1185,11 @@ public class Arena
 
             foreach (var skill in BattleSkills)
             {
-                sb.Append($"\n [{i}] {skill.Name} - Power: {skill.BasePower} - PP: {skill.PowerPoints}/{skill.MaxPowerPoints}");
+                sb.AppendLine($"[{i}] {skill.Name} - Power: {skill.BasePower} - PP: {skill.PowerPoints}/{skill.MaxPowerPoints}");
                 i++;
             }
 
-            sb.Append(@$" [B] Back");
+            sb.AppendLine("\n [B] Back");
 
             await session.SendMessageAsync(sb.ToString());
 
@@ -1230,6 +1303,7 @@ public class Arena
                     .FirstOrDefault(p => p.Name == FirstFollowUp);
 
                 creatorPokemon!.Add(CreatorBattle!);
+                creatorPokemon.Remove(SwitchTo!);
                 CreatorBattle = SwitchTo;
                 await CreatorSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle!.Name}!");
                 await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle.Name}!");
@@ -1242,6 +1316,7 @@ public class Arena
                     .FirstOrDefault(p => p.Name == FirstFollowUp);
 
                 joinerPokemon!.Add(JoinerBattle!);
+                joinerPokemon.Remove(SwitchTo!);
                 JoinerBattle = SwitchTo;
                 await JoinerSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle!.Name}!");
                 await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle.Name}!");
@@ -1475,6 +1550,7 @@ public class Arena
                         .FirstOrDefault(p => p.Name == SecondFollowUp);
 
                     creatorPokemon!.Add(CreatorBattle!);
+                    creatorPokemon.Remove(SwitchTo!);
                     CreatorBattle = SwitchTo;
                     await CreatorSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle!.Name}!");
                     await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} switched to {CreatorBattle.Name}!");
@@ -1487,6 +1563,7 @@ public class Arena
                         .FirstOrDefault(p => p.Name == SecondFollowUp);
 
                     joinerPokemon!.Add(JoinerBattle!);
+                    joinerPokemon.Remove(SwitchTo!);
                     JoinerBattle = SwitchTo;
                     await JoinerSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle!.Name}!");
                     await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} switched to {JoinerBattle.Name}!");
@@ -2212,8 +2289,6 @@ public class Arena
                         i++;
                     }
 
-                    sb.Append(@$" [B] Back");
-
                     await session.SendMessageAsync(sb.ToString());
 
                     string choice = await session.GetInputAsync("\nChoice:");
@@ -2229,6 +2304,7 @@ public class Arena
                             .FirstOrDefault(p => p.Name == selectedPokemon!.Name);
 
                         joinerPokemon!.Add(JoinerBattle!);
+                        joinerPokemon.Remove(SwitchTo!);
                         JoinerBattle = SwitchTo;
                         break;
                     }
@@ -2284,8 +2360,6 @@ public class Arena
                         i++;
                     }
 
-                    sb.Append(@$" [B] Back");
-
                     await session.SendMessageAsync(sb.ToString());
 
                     string choice = await session.GetInputAsync("\nChoice:");
@@ -2301,6 +2375,7 @@ public class Arena
                             .FirstOrDefault(p => p.Name == selectedPokemon!.Name);
 
                         creatorPokemon!.Add(CreatorBattle!);
+                        creatorPokemon.Remove(SwitchTo!);
                         CreatorBattle = SwitchTo;
                         break;
                     }

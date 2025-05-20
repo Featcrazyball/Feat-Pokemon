@@ -87,7 +87,7 @@ public class ShopInventory
             sendMessage.Append("\n╚══════════════════════════════════════════════════════════════════════════════╝");
 
             await session.SendMessageAsync(sendMessage.ToString());
-            await session.GetInputAsync("Input any key to continue...");
+            await session.GetInputAsync("\nInput any key to continue...");
             break;
         }
     }

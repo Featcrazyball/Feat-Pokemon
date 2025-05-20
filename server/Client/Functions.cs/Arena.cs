@@ -315,7 +315,19 @@ public class Game
             await Task.Delay(2000);
 
             Console.WriteLine("[Battle] Calling StartBattle()");
-            await arena.StartBattle();
+            try
+            {
+                await arena.StartBattle();
+            } catch (Exception ex)
+            {
+                Console.WriteLine($"[Battle] Error during StartBattle: {ex.Message}");
+                Console.WriteLine($"[Battle] Stack trace: {ex.StackTrace}");
+                throw; // Rethrow to ensure cleanup happens
+            }
+            finally {
+                _roomsInBattle.TryRemove(room.Id, out _);
+            }
+
 
             // Cleanup after battle
             room.Host!.InRoom = false;

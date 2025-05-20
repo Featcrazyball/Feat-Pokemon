@@ -88,6 +88,11 @@ namespace Server
         {
             try
             {
+                if (_client == null || !_client.Connected)
+                {
+                    Console.WriteLine("[Session] Client is not connected.");
+                    return;
+                }
                 var messageBytes = Encoding.UTF8.GetBytes(message);
                 await _client.SendAsync(messageBytes, SocketFlags.None);
             }
