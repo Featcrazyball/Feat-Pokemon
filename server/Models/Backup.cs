@@ -55,7 +55,7 @@ public class PokemonBackupService
             JoinerPokemonStats[joinerBattle.Id!] = CreateStatsFrom(joinerBattle);
         }
     }
-    
+
     public void RestorePokemonStats(
         IEnumerable<PokemonMaster> creatorPokemon,
         PokemonMaster creatorBattle,
@@ -72,13 +72,13 @@ public class PokemonBackupService
                 RestoreStatsTo(pokemon, stats);
             }
         }
-        
+
         // Also restore the creator's battle Pokemon if it exists
         if (creatorBattle != null && CreatorPokemonStats.TryGetValue(creatorBattle.Id!, out var creatorBattleStats))
         {
             RestoreStatsTo(creatorBattle, creatorBattleStats);
         }
-        
+
         // Restore joiner pokemon stats
         foreach (var pokemon in joinerPokemon)
         {
@@ -87,13 +87,13 @@ public class PokemonBackupService
                 RestoreStatsTo(pokemon, stats);
             }
         }
-        
+
         // Also restore the joiner's battle Pokemon if it exists
         if (joinerBattle != null && JoinerPokemonStats.TryGetValue(joinerBattle.Id!, out var joinerBattleStats))
         {
             RestoreStatsTo(joinerBattle, joinerBattleStats);
         }
-        
+
         // Restore fainted pokemon with half HP
         foreach (var pokemon in creatorFainted)
         {
@@ -102,7 +102,7 @@ public class PokemonBackupService
                 RestoreStatsTo(pokemon, stats);
             }
         }
-        
+
         foreach (var pokemon in joinerFainted)
         {
             if (JoinerPokemonStats.TryGetValue(pokemon.Id!, out var stats))
@@ -110,6 +110,8 @@ public class PokemonBackupService
                 RestoreStatsTo(pokemon, stats);
             }
         }
+        
+        Console.WriteLine("Restored stats for all Pokemon.");
     }
     
     public void ClearStatusConditions(

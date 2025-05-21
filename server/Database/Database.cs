@@ -30,6 +30,18 @@ namespace Database
                 modelBuilder.Entity<PokemonMaster>().HasDiscriminator()
                     .HasValue(pokemonType, pokemonType.Name);
             }
+
+            // Automatically register all types that inherit from Skill
+            var skillTypes = typeof(Skill).Assembly.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(Skill)));
+
+            foreach (var skillType in skillTypes)
+            {
+                modelBuilder.Entity(skillType).HasBaseType(typeof(Skill));
+                
+                modelBuilder.Entity<Skill>().HasDiscriminator()
+                    .HasValue(skillType, skillType.Name);
+            }
     
             modelBuilder.Entity<PokemonMaster>()
                 .HasMany(p => p.Skills)
@@ -50,8 +62,8 @@ namespace Database
         {
             optionsBuilder
                 .UseSqlite("Data Source=database.db")
-                .EnableSensitiveDataLogging()
-                .LogTo(Console.WriteLine)
+                // .EnableSensitiveDataLogging()
+                // .LogTo(Console.WriteLine)
                 ;
         }
 

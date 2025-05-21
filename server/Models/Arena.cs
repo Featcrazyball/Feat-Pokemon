@@ -75,6 +75,9 @@ public class Arena
     public bool creatorResponse { get; set; } = false;
     public bool joinerResponse { get; set; } = false;
 
+    // Winner
+    public bool? GameWinner { get; set; } = null;
+
     private PokemonBackupService _backupService = new PokemonBackupService();
 
     public Arena(User player1, User player2, ClientSession session1, ClientSession session2)
@@ -141,23 +144,14 @@ public class Arena
                     await joiner.SendMessageAsync("Please wait for your opponent to choose their next Pokémon.");
                 });
 
-                var timeout = Task.Delay(60000);
                 var tasks = Task.WhenAll(creatorTask, joinerTask);
-                var completedTask = await Task.WhenAny(timeout, tasks);
-
-                if (completedTask == timeout)
-                {
-                    await creator.SendMessageAsync("Time limit reached. Battle Abandoned.");
-                    await joiner.SendMessageAsync("Time limit reached. Battle Abandoned.");
-                    return null;
-                }
-
+                await Task.WhenAll(tasks);
                 await creator.SendMessageAsync($"You have switched to {CreatorBattle.Name}.");
                 await joiner.SendMessageAsync($"{creator.Username} has switched to {CreatorBattle.Name}.");
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
@@ -187,27 +181,19 @@ public class Arena
                     await creator.SendMessageAsync("Please wait for your opponent to choose their next Pokémon.");
                 });
 
-                var timeout = Task.Delay(60000);
                 var tasks = Task.WhenAll(joinerTask, creatorTask);
-
-                var completedTask = await Task.WhenAny(timeout, tasks);
-                if (completedTask == timeout)
-                {
-                    await creator.SendMessageAsync("Time limit reached. Battle Abandoned.");
-                    await joiner.SendMessageAsync("Time limit reached. Battle Abandoned.");
-                    return null;
-                }
+                await Task.WhenAll(tasks);
 
                 await joiner.SendMessageAsync($"You have switched to {JoinerBattle.Name}.");
                 await creator.SendMessageAsync($"{joiner.Username} has switched to {JoinerBattle.Name}.");
             }
             else
             {
-                return false;
+                return true;
             }
         }
 
-        return CheckWinner();
+        return null;
     }
 
     public async Task<bool?> StartBattle()
@@ -311,7 +297,6 @@ public class Arena
             {
                 creatorResponse = false;
                 joinerResponse = false;
-                using var cts = new CancellationTokenSource();
                 
                 // Creator Choices
                 var creatorTask = Task.Run(async () =>
@@ -333,121 +318,74 @@ public class Arena
                     return response;
                 });
 
-                var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token);
-
-                // Thread Handling
-                var timeoutTask = Task.Delay(60000, timeoutCts.Token);
                 var playersTask = Task.WhenAll(creatorTask, joinerTask);
 
-                var completedTask = await Task.WhenAny(timeoutTask, playersTask);
+                // Both players provided input in time
+                string[] responses = await playersTask;
+                string creatorChoice = responses[0];
+                string joinerChoice = responses[1];
 
-                if (completedTask == playersTask)
+                // Process the choices
+                string CreatorAction = creatorChoice.Split('|')[0].Trim();
+                string JoinerAction = joinerChoice.Split('|')[0].Trim();
+
+                string CreatorActionFollowUp = creatorChoice.Split('|')[1].Trim();
+                string JoinerActionFollowUp = joinerChoice.Split('|')[1].Trim();
+
+                // if resign is used, end the battle
+                if (CreatorAction.ToLower() == "resign" || JoinerAction.ToLower() == "resign")
                 {
-                    // Cancel the timeout task if both players responded
-                    timeoutCts.Cancel();
-
-                    // Both players provided input in time
-                    string[] responses = await playersTask;
-                    string creatorChoice = responses[0];
-                    string joinerChoice = responses[1];
-
-                    // Process the choices
-                    string CreatorAction = creatorChoice.Split('|')[0].Trim();
-                    string JoinerAction = joinerChoice.Split('|')[0].Trim();
-
-                    string CreatorActionFollowUp = creatorChoice.Split('|')[1].Trim();
-                    string JoinerActionFollowUp = joinerChoice.Split('|')[1].Trim();
-
-                    // if resign is used, end the battle
-                    if (CreatorAction == "resign" || JoinerAction == "resign")
+                    if (CreatorAction == "resign")
                     {
-                        if (CreatorAction == "resign")
-                        {
-                            await CreatorSession.SendMessageAsync("\nYou have resigned from the battle.");
-                            await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} has resigned from the battle.");
-                            return false;
-                        }
-                        else
-                        {
-                            await JoinerSession.SendMessageAsync("\nYou have resigned from the battle.");
-                            await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} has resigned from the battle.");
-                            return true;
-                        }
-                    }
-
-                    // Calculate Speed
-                    string FirstTurn = CalculateSpeed(CreatorAction, JoinerAction, CreatorActionFollowUp, JoinerActionFollowUp);
-
-                    ClientSession FirstTurnSession;
-                    ClientSession SecondTurnSession;
-                    string FirstChoice;
-                    string SecondChoice;
-
-                    if (FirstTurn == "creator")
-                    {
-                        FirstTurnSession = CreatorSession;
-                        SecondTurnSession = JoinerSession;
-
-                        FirstChoice = CreatorAction;
-                        SecondChoice = JoinerAction;
+                        await CreatorSession.SendMessageAsync("\nYou have resigned from the battle.");
+                        await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} has resigned from the battle.");
+                        return false;
                     }
                     else
                     {
-                        FirstTurnSession = JoinerSession;
-                        SecondTurnSession = CreatorSession;
-
-                        FirstChoice = JoinerAction;
-                        SecondChoice = CreatorAction;
-                    }
-
-                    // Turn
-                    winner = await AdministerBattle(FirstTurnSession, SecondTurnSession, FirstChoice, SecondChoice);
-                    if (winner != null)
-                    {
-                        break;
-                    }
-
-                    winner = CheckWinner();
-
-                }
-                else if (completedTask == timeoutTask)
-                {
-                    
-                    // If both players didnt respond in time
-                    if (!creatorResponse && !joinerResponse)
-                    {
-                        await CreatorSession.SendMessageAsync("\nTime Limit reached. Battle Abandoned.");
-                        await JoinerSession.SendMessageAsync("\nTime Limit reached. Battle Abandoned.");
-                        return null;
-                    }
-
-                    // if only creator did not respond
-                    if (!creatorResponse)
-                    {
-                        await CreatorSession.SendMessageAsync("\nTime limit reached. Battle Abandoned.");
-                        await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} has reached his time limit.");
-                        return false;
-                    }
-
-                    // if only joiner did not respond
-                    if (!joinerResponse)
-                    {
-                        await JoinerSession.SendMessageAsync("\nTime limit reached. Battle Abandoned.");
-                        await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} has reached his time limit.");
+                        await JoinerSession.SendMessageAsync("\nYou have resigned from the battle.");
+                        await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} has resigned from the battle.");
                         return true;
                     }
                 }
+
+                // Calculate Speed
+                string FirstTurn = CalculateSpeed(CreatorAction, JoinerAction, CreatorActionFollowUp, JoinerActionFollowUp);
+
+                ClientSession FirstTurnSession;
+                ClientSession SecondTurnSession;
+                string FirstChoice;
+                string SecondChoice;
+
+                if (FirstTurn == "creator")
+                {
+                    FirstTurnSession = CreatorSession;
+                    SecondTurnSession = JoinerSession;
+
+                    FirstChoice = creatorChoice;
+                    SecondChoice = joinerChoice;
+                }
                 else
                 {
-                    Console.WriteLine("[Battle] Unexpected task completion");
-                    return null;
+                    FirstTurnSession = JoinerSession;
+                    SecondTurnSession = CreatorSession;
+
+                    FirstChoice = joinerChoice;
+                    SecondChoice = creatorChoice;
                 }
 
+                Console.WriteLine($"[Battle] {FirstTurnSession.Username} will go first with {FirstChoice} and {SecondTurnSession.Username} will go second with {SecondChoice}");
+                Console.WriteLine($"[Battle] Creator: {CreatorAction} | Joiner: {JoinerAction}");
+
+                // Turn
+                await AdministerBattle(FirstTurnSession, SecondTurnSession, FirstChoice, SecondChoice);
+                winner = CheckWinner();
+
+
                 turn++;
-                break;
-            } while (winner == null);
+            } while (GameWinner == null);
 
-
+            Console.WriteLine($"[Battle] Winner: {winner}");
             RestorePokemonStats();
             RemoveTempSkills();
 
@@ -463,7 +401,7 @@ public class Arena
                 await JoinerSession.SendMessageAsync("\nYou have won the battle!");
                 return false;
             }
-            else
+            else if (winner == null)
             {
                 await CreatorSession.SendMessageAsync("\nBattle has been abandoned");
                 await JoinerSession.SendMessageAsync("\nBattle has been abandoned.");
@@ -641,6 +579,8 @@ public class Arena
                 pokemon.Metronome = false;
             }
         }
+
+        Console.WriteLine("[Battle] Removed temporary skills from all Pokemon.");
     }
 
     public void RestorePokemonStats()
@@ -679,6 +619,8 @@ public class Arena
 
         if (joinerFainted!.Count > 0 && joinerFainted != null)
             foreach (var pokemon in joinerFainted) { pokemon.ResetStats(); }
+
+        Console.WriteLine("[Battle] Restored stats for all Pokemon.");
     }
 
     public bool? CheckWinner()
@@ -686,11 +628,13 @@ public class Arena
         if (creatorFainted != null && creatorFainted.Count == 6)
         {
             // Creator has no Pokemon left
+            GameWinner = false;
             return false;
         }
         else if (joinerFainted != null && joinerFainted.Count == 6)
         {
             // Joiner has no Pokemon left
+            GameWinner = true;
             return true;
         }
         return null;
@@ -707,6 +651,14 @@ public class Arena
             sb.AppendLine("\nPlease choose a Pokémon to switch to:");
 
             int i = 1;
+
+            if (joinerPokemon == null || joinerPokemon.Count == 0)
+            {
+                await switcher.SendMessageAsync("\nYou have no Pokémon left to switch to.");
+                GameWinner = true;
+                return;
+            }
+
             foreach (var poke in joinerPokemon!)
             {
                 sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
@@ -737,6 +689,14 @@ public class Arena
             sb.AppendLine($"\nYour {CreatorBattle!.Name} has fainted!");
             sb.AppendLine("\nPlease choose a Pokémon to switch to:");
             int i = 1;
+
+            if (creatorPokemon == null || creatorPokemon.Count == 0)
+            {
+                await switcher.SendMessageAsync("\nYou have no Pokémon left to switch to.");
+                GameWinner = false;
+                return;
+            }
+
             foreach (var poke in creatorPokemon!)
             {
                 sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
@@ -1185,7 +1145,7 @@ public class Arena
 
             foreach (var skill in BattleSkills)
             {
-                sb.AppendLine($"[{i}] {skill.Name} - Power: {skill.BasePower} - PP: {skill.PowerPoints}/{skill.MaxPowerPoints}");
+                sb.AppendLine($"\n [{i}] {skill.Name} - Power: {skill.BasePower} - PP: {skill.PowerPoints}/{skill.MaxPowerPoints}");
                 i++;
             }
 
@@ -1289,8 +1249,20 @@ public class Arena
             OriginalSecondBattle = CreatorBattle!;
         }
 
+        // Debugging
+        Console.WriteLine($"[Battle] First Action: {FirstAction} - {FirstFollowUp}");
+        Console.WriteLine($"[Battle] Second Action: {SecondAction} - {SecondFollowUp}");
+
+        Console.WriteLine($"[Battle] First Session: {FirstSession.Username}");
+        Console.WriteLine($"[Battle] Second Session: {SecondSession.Username}");
+
+        Console.WriteLine($"{OriginalFirstBattle.Name} - {OriginalFirstBattle.Health}/{OriginalFirstBattle.MaxHealth}");
+        Console.WriteLine($"{OriginalSecondBattle.Name} - {OriginalSecondBattle.Health}/{OriginalSecondBattle.MaxHealth}");
+
         // Administer Status Effects
         bool SkipFirst = await StatusEffects(FirstSession);
+
+        Console.WriteLine($"[Battle] Skip First: {SkipFirst}");
 
         // First Action for switch for Joiner and Creator
         if (FirstAction == "Switch" && SkipFirst == false)
@@ -1425,7 +1397,15 @@ public class Arena
                     // Check if the target Pokémon fainted
                     if (JoinerBattle!.Health <= 0)
                     {
-                        await CheckStats();
+                        var winner = await CheckStats();
+                        if (winner == false)
+                        {
+                            return false;
+                        }
+                        else if (winner == true)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -1527,7 +1507,15 @@ public class Arena
 
                     if (CreatorBattle!.Health <= 0)
                     {
-                        await CheckStats();
+                        var winner = await CheckStats();
+                        if (winner == false)
+                        {
+                            return false;
+                        }
+                        else if (winner == true)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -1580,8 +1568,8 @@ public class Arena
                 {
                     var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
 
-                    await CreatorSession.SendMessageAsync($"You used {skill!.Name}!");
-                    await JoinerSession.SendMessageAsync($"{CreatorSession.Username} used {skill.Name}!");
+                    await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                    await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} used {skill.Name}!");
 
                     if (skill != null)
                     {
@@ -1672,10 +1660,17 @@ public class Arena
                             await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
                         }
 
-                        // Check if the target Pokémon fainted
                         if (JoinerBattle!.Health <= 0)
                         {
-                            await CheckStats();
+                            var winner = await CheckStats();
+                            if (winner == false)
+                            {
+                                return false;
+                            }
+                            else if (winner == true)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
@@ -1683,8 +1678,8 @@ public class Arena
                 {
                     var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
 
-                    await CreatorSession.SendMessageAsync($"You used {skill!.Name}!");
-                    await JoinerSession.SendMessageAsync($"{JoinerSession.Username} used {skill.Name}!");
+                    await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                    await JoinerSession.SendMessageAsync($"\n{JoinerSession.Username} used {skill.Name}!");
                     if (skill != null)
                     {
                         if (CreatorBattle!.Underground)
@@ -1774,9 +1769,17 @@ public class Arena
                             await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
                         }
 
-                        if (CreatorBattle!.Health <= 0)
+                        if (JoinerBattle!.Health <= 0)
                         {
-                            await CheckStats();
+                            var winner = await CheckStats();
+                            if (winner == false)
+                            {
+                                return false;
+                            }
+                            else if (winner == true)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
