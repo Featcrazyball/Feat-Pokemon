@@ -12,7 +12,7 @@ public static class SkillHelper
     public static async Task<bool> CheckAccuracy(double accuracy, PokemonMaster user, PokemonMaster target, 
                                                 ClientSession userSession, ClientSession targetSession, string skillName)
     {
-        if (Random.Shared.NextDouble() < (accuracy * (CalculateStage(user.AccuracyStage) / CalculateStage(target.EvasionStage))))
+        if (Random.Shared.NextDouble() >= (accuracy * (CalculateStage(user.AccuracyStage) / CalculateStage(target.EvasionStage))))
         {
             await userSession.SendMessageAsync($"Your {user.Name} used {skillName}, but it missed!");
             await targetSession.SendMessageAsync($"{userSession.Username}'s {user.Name} used {skillName}, but it missed!");
@@ -53,7 +53,7 @@ public static class SkillHelper
         float damage = user.DigDamage; 
         user.DigDamage = 0;
         
-        if (Random.Shared.NextDouble() > (1 * (CalculateStage(target.AccuracyStage) * CalculateStage(user.EvasionStage))))
+        if (Random.Shared.NextDouble() <= (1 * (CalculateStage(target.AccuracyStage) * CalculateStage(user.EvasionStage))))
         {
             await userSession.SendMessageAsync($"Your {user.Name} used Counter, but it missed!");
             await targetSession.SendMessageAsync($"{userSession.Username}'s {user.Name} used Counter, but it missed!");
@@ -102,7 +102,7 @@ public static class SkillHelper
             targetSession
             );
         
-        if (Random.Shared.NextDouble() > (1 * (CalculateStage(target.AccuracyStage) * CalculateStage(user.EvasionStage))))
+        if (Random.Shared.NextDouble() <= (1 * (CalculateStage(target.AccuracyStage) * CalculateStage(user.EvasionStage))))
         {
             await userSession.SendMessageAsync($"Your {user.Name} used Fly, but it missed!");
             await targetSession.SendMessageAsync($"{userSession.Username}'s {user.Name} used Fly, but it missed!");
@@ -190,8 +190,10 @@ public static class SkillHelper
     }
 
     public static async Task<float> FeatCalculateDamage(int basePower, PokemonMaster user, PokemonMaster target, float typeEffectiveness, ClientSession UserSession, ClientSession TargetSession) {
-        float damage = ((2 * user.Level / 5 + 2) * basePower * user.Attack / target.Defense / 50 + 2) * typeEffectiveness;
-        
+        float levelFactor = (2f * user.Level) / 5f + 2f;
+        float baseDamage = (levelFactor * basePower * user.Attack) / target.Defense;
+        float damage = ((baseDamage / 50f) + 2f) * typeEffectiveness;
+
         if (Random.Shared.NextDouble() <= user.CritRate)
         {
             await UserSession.SendMessageAsync("CRITICAL HIT!");
@@ -202,7 +204,10 @@ public static class SkillHelper
     }
 
     public static async Task<float> FeatCalculateSpecialDamage(int basePower, PokemonMaster user, PokemonMaster target, float typeEffectiveness, ClientSession UserSession, ClientSession TargetSession) {
-        float damage = ((2 * user.Level / 5 + 2) * basePower * user.SpecialAttack / target.SpecialDefense / 50 + 2) * typeEffectiveness;
+        float levelFactor = (2f * user.Level) / 5f + 2f;
+        float baseDamage = (levelFactor * basePower * user.SpecialAttack) / target.SpecialDefense;
+        float damage = ((baseDamage / 50f) + 2f) * typeEffectiveness;
+
         if (Random.Shared.NextDouble() <= user.CritRate)
         {
             await UserSession.SendMessageAsync("CRITICAL HIT!");
@@ -217,11 +222,11 @@ public static class SkillHelper
         switch (stage)
         {
             case -6: return 0.25;
-            case -5: return 2/7;
-            case -4: return 1/3;
+            case -5: return 2.0/7.0;
+            case -4: return 1.0/3.0;
             case -3: return 0.4;
             case -2: return 0.5;
-            case -1: return 2/3;
+            case -1: return 2.0/3.0;
             case 0: return 1;
             case 1: return 1.5;
             case 2: return 2;
@@ -248,7 +253,7 @@ public static class SkillHelper
     {
         if (Random.Shared.NextDouble() <= 0.5)
         {
-            if (Random.Shared.NextDouble() > (1 * (CalculateStage(user.AccuracyStage) / CalculateStage(user.EvasionStage))))
+            if (Random.Shared.NextDouble() <= (1 * (CalculateStage(user.AccuracyStage) / CalculateStage(user.EvasionStage))))
             {
                 await UserSession.SendMessageAsync($"Your {user.Name} hurt itself in confusion, but it missed!");
                 await TargetSession.SendMessageAsync($"{UserSession.Username}'s {user.Name} hurt itself in confusion, but it missed!");

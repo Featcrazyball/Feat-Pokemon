@@ -110,14 +110,14 @@ $"-----------------------------------------\n"
                         context.SaveChanges();
                     }
 
-                    await session.SendMessageAsync($"{selectedPokemon.Name} is now known as {newNickname}!");
+                    await session.SendMessageAsync($"\n{selectedPokemon.Name} is now known as {newNickname}!");
                 }
                 else
                 {
-                    await session.SendMessageAsync("Invalid Pokémon number.");
+                    await session.SendMessageAsync("\nInvalid Pokémon number.");
                 }
                 
-                await session.GetInputAsync("Input any key to continue...");
+                await session.GetInputAsync("\nInput any key to continue...");
 
                 // Return to view Pokémon after nickname change
                 await ViewPokemon(session, user);
@@ -128,7 +128,7 @@ $"-----------------------------------------\n"
                 if (int.TryParse(pokemonNumber, out index) && index > 0 && index <= pokemonList.Count)
                 {
                     var selectedPokemon = pokemonList[index-1];
-                    await session.SendMessageAsync($"You have selected {selectedPokemon.Name}.");
+                    await session.SendMessageAsync($"You have selected {selectedPokemon.Name}.\n");
                     await session.SendMessageAsync($"{selectedPokemon.Name} has {selectedPokemon.StatPoints} stat points to allocate.\n");
 
                     while (true)

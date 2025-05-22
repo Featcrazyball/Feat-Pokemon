@@ -4276,19 +4276,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\yangx\\.nuget\\packages\\": {}
+    "C:\\Users\\featc\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj",
+      "projectUniqueName": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj",
       "projectName": "server",
-      "projectPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj",
-      "packagesPath": "C:\\Users\\yangx\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\obj\\",
+      "projectPath": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj",
+      "packagesPath": "C:\\Users\\featc\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\yangx\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\featc\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"

@@ -441,22 +441,22 @@ namespace PokemonPocket
                     // Stat Upgrades
                     Level += 1;
                     Experience -= 1000;
-                    MaxHealth += (MaxHealth + HpIV) / 50 + Level + 10;
-                    MaxAttack += (MaxAttack + AttackIV) / 8 + 1;
-                    MaxSpecialAttack += (MaxSpecialAttack + SpecialAttackIV) / 8 + 1;
-                    MaxDefense += (MaxDefense + DefenseIV) / 8 + 1;
-                    MaxSpecialDefense += (MaxSpecialDefense + SpecialDefenseIV) / 8 + 1;
-                    MaxSpeed += (MaxSpeed + SpeedIV) / 8 + 1;
+                    MaxHealth += (MaxHealth + HpIV) / 50f + Level + 10;
+                    MaxAttack += (MaxAttack + AttackIV) / 8f + 1;
+                    MaxSpecialAttack += (MaxSpecialAttack + SpecialAttackIV) / 8f + 1;
+                    MaxDefense += (MaxDefense + DefenseIV) / 8f + 1;
+                    MaxSpecialDefense += (MaxSpecialDefense + SpecialDefenseIV) / 8f + 1;
+                    MaxSpeed += (MaxSpeed + SpeedIV) / 8f + 1;
 
                     // Make sure there is a max of 250 stat points earned
                     for (int j = 0; j < 3; j++)
                     {
                         if (StatsEarned < 251) { StatPoints += 1; StatsEarned += 1; }
                     }
-                    await session.SendMessageAsync($"Your {Name} has leveled up to level {Level}! You have {StatPoints} Stat Points left.");
+                    await session.SendMessageAsync($"\nYour {Name} has leveled up to level {Level}! You have {StatPoints} Stat Points left.");
 
                     // Max Level Check
-                    if (Level >= 100) { await session.SendMessageAsync($"Your {Name} has reached a max level of 100!"); break; }
+                    if (Level >= 100) { await session.SendMessageAsync($"\nYour {Name} has reached a max level of 100!"); break; }
                 }
             }
             Health = MaxHealth;
