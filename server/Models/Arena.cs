@@ -9,46 +9,6 @@ using System.Data.SQLite;
 
 namespace Arena;
 
-// Make it so that if Bide is still being used, lock it so cant use untill ends.
-// Check if bind if in effect, if in effect, cannot change pokemon
-// Check if flinch, cannopt move for THAT TURN (reset every turn)
-
-// When a Pokémon is paralyzed, it has a chance to be unable to act during its turn. Specifically, there is a 25% chance that a paralyzed Pokémon will be unable to move and will lose its turn.
-// When first turn, bind the skill used to pokemon for Conversion
-// Reminder for Dig, it will not hit if the opponent is underground, so check if the opponent is underground before applying damage
-// Reminder for Confusion, if the target is confused, it has a 50% chance to hit itself in confusion. If it does, it will take damage equal to 40% of its max health. The confusion lasts for 2-5 turns.
-// Reminder for disable, it will disable the last move used by the target for 2-5 turns. The target will not be able to use that move during that time. If the target tries to use the disabled
-// Reminder for dig to fix modifeier
-// Reminder for burn, it will reduce the attack of the target by 50% and will deal damage equal to 1/16 of its max health at the end of each turn. Switching out does not solve burning
-// Reminder for freozen, it will prevent the target from moving. The frozen status can be removed by using certain moves or items, or by switching out the Pokémon. The frozen status lasts until the target is thawed or switched out.
-// Reminder for Fly, for their priority next turn
-// Reminder to make a function to check attributes, cuz paralyze and burn reduce and stage attribute changes. this will occur after skill is used for both players
-// Reminder for Hyper Beam, it will require a recharge turn unless it defeats the target. If the target is knocked out, the user will not need to recharge. The recharge turn will be skipped if the target is knocked out.
-// Reminder for Sleep, it will prevent the target from moving. The sleep status can be removed by using certain moves or items, or by switching out the Pokémon. The sleep status lasts until the target is healed or switched out.
-// Reminder for light screen to reduce turns and check if it is active
-// Reminder for leech seed to check if it is active and reduce turns
-// Reminder to lower Mist turns every turn
-// Reminder for Mimic, can only be used once
-// Reminder to delete metronome skill after battle
-// Reminder to add coins from payday after battle
-// Reminder for Petal Dance, it will hit 2-5 times in a row. The user will become confused after the last hit. The confusion lasts for 2-5 turns. The confusion can be removed by using certain moves or items, or by switching out the Pokémon. The confusion lasts until the target is healed or switched out.
-// Reminder for Poison, it will reduce the health of the target by 1/16 of its max health at the end of each turn. Switching out does not solve poison
-// Reminder for Rage, turn it off
-// Reminder for sleep, confusion, paralysis, and freeze, they cure when swicthed out
-// Reminder for razor wind, it charge on first, and then can attk on 2nd or 3rd or wtv
-// Reminder for Rest, it will heal the user to full health and remove all status conditions. The user will fall asleep for 2 turns. The sleep status can be removed by using certain moves or items, or by switching out the Pokémon. The sleep status lasts until the target is healed or switched out.
-// Rest clears burn, paralysis, freeze, and poison. It does not clear confusion or sleep. The sleep status can be removed by using certain moves or items, or by switching out the Pokémon. The sleep status lasts until the target is healed or switched out.
-// Reminder sleep does not cure when switched out
-// Reminder for roar to switch out pokemon if lower level
-// Reminder for struggle to only be used if no pp left
-// Reminder for thrash, it will hit 2-3 times in a row. The user will become confused after the last hit. The confusion lasts for 2-5 turns. The confusion can be removed by using certain moves or items, or by switching out the Pokémon. The confusion lasts until the target is healed or switched out.
-// Reminder to undo conversion after battle to original type
-// reminder for badly poisoned, the turns increase by 1 every turn. The damage is calculated as 1/16 of the target's max health + 1/16 of the target's max health * turns. The damage is applied at the end of each turn. The badly poisoned status can be removed by using certain moves or items, or by switching out the Pokémon. The badly poisoned status lasts until the target is healed or switched out.
-// Reminder for transform to return everything to normal after battle
-// Reminder for transform that it returns to original form after battle
-// Reminder for transform to use skills of target
-// Reminder for whrilwind to switch out pokemon
-
 public class Arena
 {
     public User? creator { get; set; }
@@ -69,7 +29,7 @@ public class Arena
     public ClientSession JoinerSession { get; set; }
 
     // Battle Stats
-    public int turn { get; set; } = 0;
+    public int turn { get; set; } = 1;
 
     // Response
     public bool creatorResponse { get; set; } = false;
@@ -333,9 +293,9 @@ public class Arena
                 string JoinerActionFollowUp = joinerChoice.Split('|')[1].Trim();
 
                 // if resign is used, end the battle
-                if (CreatorAction.ToLower() == "resign" || JoinerAction.ToLower() == "resign")
+                if (creatorChoice.ToLower() == "resign" || joinerChoice.ToLower() == "resign")
                 {
-                    if (CreatorAction == "resign")
+                    if (creatorChoice == "resign")
                     {
                         await CreatorSession.SendMessageAsync("\nYou have resigned from the battle.");
                         await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} has resigned from the battle.");
@@ -378,9 +338,16 @@ public class Arena
                 Console.WriteLine($"[Battle] Creator: {CreatorAction} | Joiner: {JoinerAction}");
 
                 // Turn
-                await AdministerBattle(FirstTurnSession, SecondTurnSession, FirstChoice, SecondChoice);
-                winner = CheckWinner();
-
+                bool? battleResult = await AdministerBattle(FirstTurnSession, SecondTurnSession, FirstChoice, SecondChoice);
+                if (battleResult != null)
+                {
+                    winner = battleResult;
+                    GameWinner = battleResult;
+                }
+                else
+                {
+                    winner = CheckWinner();
+                }
 
                 turn++;
             } while (GameWinner == null);
@@ -389,19 +356,19 @@ public class Arena
             RestorePokemonStats();
             RemoveTempSkills();
 
-            if (winner == true)
+            if (GameWinner == true)
             {
                 await CreatorSession.SendMessageAsync("\nYou have won the battle!");
                 await JoinerSession.SendMessageAsync("\nYou have lost the battle!");
                 return true;
             }
-            else if (winner == false)
+            else if (GameWinner == false)
             {
                 await CreatorSession.SendMessageAsync("\nYou have lost the battle!");
                 await JoinerSession.SendMessageAsync("\nYou have won the battle!");
                 return false;
             }
-            else if (winner == null)
+            else if (GameWinner == null)
             {
                 await CreatorSession.SendMessageAsync("\nBattle has been abandoned");
                 await JoinerSession.SendMessageAsync("\nBattle has been abandoned.");
@@ -815,7 +782,7 @@ public class Arena
         StringBuilder sb = new StringBuilder();
         sb.Append(@$"
 ╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
-║{ExtraMethods.CenterAlign($"POKÉMON BATTLE {turn}", 115)}║
+║{ExtraMethods.CenterAlign($"POKÉMON BATTLE TURN {turn}", 115)}║
 ║{ExtraMethods.CenterAlign($"{creator.Username} VS {joiner.Username}", 115)}║
 ╠═════════════════════════════════════════════════════════╦═════════════════════════════════════════════════════════╣
 ║{ExtraMethods.CenterAlign($"{creator.Username}'s POKÉMON", 57)}║{ExtraMethods.CenterAlign($"{joiner.Username}'s POKÉMON", 57)}║
@@ -1149,11 +1116,21 @@ public class Arena
                 i++;
             }
 
+            sb.AppendLine("\n [P] Pass");
             sb.AppendLine("\n [B] Back");
 
             await session.SendMessageAsync(sb.ToString());
 
             string choice = await session.GetInputAsync("\nChoice:");
+
+            if (choice.ToUpper() == "P")
+            {
+                return "Pass | Pass";
+            }
+            else if (choice.ToUpper() == "B")
+            {
+                return await Choice(session);
+            }
 
             if (choice == "Mimic" && session == CreatorSession && CreatorBattle!.Mimic)
             {
@@ -1180,7 +1157,7 @@ public class Arena
                 // Check for Bide
                 if (session == CreatorSession)
                 {
-                    if (CreatorBattle!.BideActive)
+                    if (CreatorBattle!.BideActive && selectedSkill.Name == "Bide")
                     {
                         await session.SendMessageAsync("You cannot use Bide while it is active.");
                         continue;
@@ -1188,7 +1165,7 @@ public class Arena
                 }
                 else if (session == JoinerSession)
                 {
-                    if (JoinerBattle!.BideActive)
+                    if (JoinerBattle!.BideActive && selectedSkill.Name == "Bide")
                     {
                         await session.SendMessageAsync("You cannot use Bide while it is active.");
                         continue;
@@ -1235,6 +1212,17 @@ public class Arena
 
         string FirstFollowUp = FirstChoice.Split('|')[1].Trim();
         string SecondFollowUp = SecondChoice.Split('|')[1].Trim();
+
+        if (FirstChoice == "Pass")
+        {
+            await FirstSession.SendMessageAsync("You have passed your turn.");
+            await SecondSession.SendMessageAsync($"{FirstSession.Username} has passed their turn.");
+        }
+        if (SecondChoice == "Pass")
+        {
+            await SecondSession.SendMessageAsync("You have passed your turn.");
+            await FirstSession.SendMessageAsync($"{SecondSession.Username} has passed their turn.");
+        }
 
         PokemonMaster OriginalFirstBattle;
         PokemonMaster OriginalSecondBattle;
@@ -1302,7 +1290,7 @@ public class Arena
             {
                 var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == FirstFollowUp);
 
-                await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!\n");
                 await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} used {skill.Name}!");
 
                 if (skill != null)
@@ -1395,7 +1383,7 @@ public class Arena
                     }
 
                     // Check if the target Pokémon fainted
-                    if (JoinerBattle!.Health <= 0)
+                    if (JoinerBattle!.Health <= 0 || CreatorBattle!.Health <= 0)
                     {
                         var winner = await CheckStats();
                         if (winner == false)
@@ -1413,7 +1401,7 @@ public class Arena
             {
                 var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == FirstFollowUp);
 
-                await JoinerSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                await JoinerSession.SendMessageAsync($"\nYou used {skill!.Name}!\n");
                 await CreatorSession.SendMessageAsync($"\n{JoinerSession.Username} used {skill.Name}!");
 
                 if (skill != null)
@@ -1505,7 +1493,7 @@ public class Arena
                         await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
                     }
 
-                    if (CreatorBattle!.Health <= 0)
+                    if (JoinerBattle!.Health <= 0 || CreatorBattle!.Health <= 0)
                     {
                         var winner = await CheckStats();
                         if (winner == false)
@@ -1568,7 +1556,7 @@ public class Arena
                 {
                     var skill = CreatorBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
 
-                    await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                    await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!\n");
                     await JoinerSession.SendMessageAsync($"\n{CreatorSession.Username} used {skill.Name}!");
 
                     if (skill != null)
@@ -1660,7 +1648,7 @@ public class Arena
                             await skill.SkillEfect(JoinerBattle!, CreatorBattle, CreatorSession, JoinerSession);
                         }
 
-                        if (JoinerBattle!.Health <= 0)
+                        if (JoinerBattle!.Health <= 0 || CreatorBattle!.Health <= 0)
                         {
                             var winner = await CheckStats();
                             if (winner == false)
@@ -1678,7 +1666,7 @@ public class Arena
                 {
                     var skill = JoinerBattle!.Skills.FirstOrDefault(s => s.Name == SecondFollowUp);
 
-                    await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!");
+                    await CreatorSession.SendMessageAsync($"\nYou used {skill!.Name}!\n");
                     await JoinerSession.SendMessageAsync($"\n{JoinerSession.Username} used {skill.Name}!");
                     if (skill != null)
                     {
@@ -1769,7 +1757,7 @@ public class Arena
                             await skill.SkillEfect(CreatorBattle!, JoinerBattle, JoinerSession, CreatorSession);
                         }
 
-                        if (JoinerBattle!.Health <= 0)
+                        if (JoinerBattle!.Health <= 0 || CreatorBattle!.Health <= 0)
                         {
                             var winner = await CheckStats();
                             if (winner == false)
@@ -1783,6 +1771,19 @@ public class Arena
                         }
                     }
                 }
+            }
+        }
+
+        if (JoinerBattle!.Health <= 0 || CreatorBattle!.Health <= 0)
+        {
+            var winner = await CheckStats();
+            if (winner == false)
+            {
+                return false;
+            }
+            else if (winner == true)
+            {
+                return true;
             }
         }
 
@@ -1819,6 +1820,8 @@ public class Arena
                 JoinerBattle.DisabledSkill = string.Empty;
             }
         }
+
+        
 
         return null;
 
@@ -2321,7 +2324,7 @@ public class Arena
 
             var CreatorResponse = Task.Run(async () =>
             {
-                await CreatorSession.SendMessageAsync($"Please wait for {JoinerSession.Username} to switch Pokemon.");
+                await CreatorSession.SendMessageAsync($"\nPlease wait for {JoinerSession.Username} to switch Pokemon.");
             });
 
             var timeout = Task.Delay(60000); // 60 seconds timeout

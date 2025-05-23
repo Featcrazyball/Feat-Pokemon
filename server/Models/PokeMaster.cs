@@ -456,6 +456,7 @@ namespace PokemonPocket
                 {
                     // Level up
                     Level += 1;
+<<<<<<< HEAD
                     
                     // Apply official formula without EVs
                     MaxHealth = ((2 * BaseHealth + HpIV) * Level / 100) + Level + 10;
@@ -464,6 +465,15 @@ namespace PokemonPocket
                     MaxDefense = ((2 * BaseDefense + DefenseIV) * Level / 100) + 5;
                     MaxSpecialDefense = ((2 * BaseSpecialDefense + SpecialDefenseIV) * Level / 100) + 5;
                     MaxSpeed = ((2 * BaseSpeed + SpeedIV) * Level / 100) + 5;
+=======
+                    Experience -= 1000;
+                    MaxHealth += (MaxHealth + HpIV) / 50f + Level + 10;
+                    MaxAttack += (MaxAttack + AttackIV) / 8f + 1;
+                    MaxSpecialAttack += (MaxSpecialAttack + SpecialAttackIV) / 8f + 1;
+                    MaxDefense += (MaxDefense + DefenseIV) / 8f + 1;
+                    MaxSpecialDefense += (MaxSpecialDefense + SpecialDefenseIV) / 8f + 1;
+                    MaxSpeed += (MaxSpeed + SpeedIV) / 8f + 1;
+>>>>>>> 07fd0c18edad08af0d686f81a362d45a6824ee87
 
                     // Make sure there is a max of 250 stat points earned
                     for (int j = 0; j < 3; j++)

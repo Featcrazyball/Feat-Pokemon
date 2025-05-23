@@ -1,8 +1,14 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "exBk8kj8a1s=",
   "success": true,
   "projectFilePath": "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\client\\client.csproj",
+=======
+  "dgSpecHash": "x9+citoCc94=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj",
+>>>>>>> 07fd0c18edad08af0d686f81a362d45a6824ee87
   "expectedPackageFiles": [],
   "logs": []
 }
