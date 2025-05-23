@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj",
+      "projectUniqueName": "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\client\\client.csproj",
       "projectName": "client",
-      "projectPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\client.csproj",
+      "projectPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\client\\client.csproj",
       "packagesPath": "C:\\Users\\yangx\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\client\\obj\\",
+      "outputPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\client\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\yangx\\AppData\\Roaming\\NuGet\\NuGet.Config"

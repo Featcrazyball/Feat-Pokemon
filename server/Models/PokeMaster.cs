@@ -47,6 +47,13 @@ namespace PokemonPocket
         public float MaxSpecialDefense { get; set; }
         public float MaxSpeed { get; set; }
 
+        public float BaseHealth { get; set; }
+        public float BaseAttack { get; set; }
+        public float BaseSpecialAttack { get; set; }
+        public float BaseDefense { get; set; }
+        public float BaseSpecialDefense { get; set; }
+        public float BaseSpeed { get; set; }
+
         [NotMapped] public int AttackStage { get; set; } = 0;
         [NotMapped] public int SpecialAttackStage { get; set; } = 0;
         [NotMapped] public int DefenseStage { get; set; } = 0;
@@ -204,6 +211,13 @@ namespace PokemonPocket
             Defense = MaxDefense;
             SpecialDefense = MaxSpecialDefense;
             Speed = MaxSpeed;
+
+            BaseHealth = MaxHealth;
+            BaseAttack = MaxAttack;
+            BaseSpecialAttack = MaxSpecialAttack;
+            BaseDefense = MaxDefense;
+            BaseSpecialDefense = MaxSpecialDefense;
+            BaseSpeed = MaxSpeed;
 
             NoToEvolve = 0;
             EvolveTo = string.Empty;
@@ -406,14 +420,16 @@ namespace PokemonPocket
             {
                 if (Experience > Level * 1000 && Level < 101)
                 {
-                    // Stat Upgrades
+                    // Level up
                     Level += 1;
-                    MaxHealth += (MaxHealth + HpIV) / 50 + Level + 10;
-                    MaxAttack += (MaxAttack + AttackIV) / 8 + 1;
-                    MaxSpecialAttack += (MaxSpecialAttack + SpecialAttackIV) / 8 + 1;
-                    MaxDefense += (MaxDefense + DefenseIV) / 8 + 1;
-                    MaxSpecialDefense += (MaxSpecialDefense + SpecialDefenseIV) / 8 + 1;
-                    MaxSpeed += (MaxSpeed + SpeedIV) / 8 + 1;
+                    
+                    // Apply official formula without EVs
+                    MaxHealth = ((2 * BaseHealth + HpIV) * Level / 100) + Level + 10;
+                    MaxAttack = ((2 * BaseAttack + AttackIV) * Level / 100) + 5;
+                    MaxSpecialAttack = ((2 * BaseSpecialAttack + SpecialAttackIV) * Level / 100) + 5;
+                    MaxDefense = ((2 * BaseDefense + DefenseIV) * Level / 100) + 5;
+                    MaxSpecialDefense = ((2 * BaseSpecialDefense + SpecialDefenseIV) * Level / 100) + 5;
+                    MaxSpeed = ((2 * BaseSpeed + SpeedIV) * Level / 100) + 5;
 
                     // Make sure there is a max of 250 stat points earned
                     for (int j = 0; j < 3; j++)
@@ -438,25 +454,26 @@ namespace PokemonPocket
             {
                 if (Experience > Level * 1000 && Level < 101)
                 {
-                    // Stat Upgrades
+                    // Level up
                     Level += 1;
-                    Experience -= 1000;
-                    MaxHealth += (MaxHealth + HpIV) / 50 + Level + 10;
-                    MaxAttack += (MaxAttack + AttackIV) / 8 + 1;
-                    MaxSpecialAttack += (MaxSpecialAttack + SpecialAttackIV) / 8 + 1;
-                    MaxDefense += (MaxDefense + DefenseIV) / 8 + 1;
-                    MaxSpecialDefense += (MaxSpecialDefense + SpecialDefenseIV) / 8 + 1;
-                    MaxSpeed += (MaxSpeed + SpeedIV) / 8 + 1;
+                    
+                    // Apply official formula without EVs
+                    MaxHealth = ((2 * BaseHealth + HpIV) * Level / 100) + Level + 10;
+                    MaxAttack = ((2 * BaseAttack + AttackIV) * Level / 100) + 5;
+                    MaxSpecialAttack = ((2 * BaseSpecialAttack + SpecialAttackIV) * Level / 100) + 5;
+                    MaxDefense = ((2 * BaseDefense + DefenseIV) * Level / 100) + 5;
+                    MaxSpecialDefense = ((2 * BaseSpecialDefense + SpecialDefenseIV) * Level / 100) + 5;
+                    MaxSpeed = ((2 * BaseSpeed + SpeedIV) * Level / 100) + 5;
 
                     // Make sure there is a max of 250 stat points earned
                     for (int j = 0; j < 3; j++)
                     {
                         if (StatsEarned < 251) { StatPoints += 1; StatsEarned += 1; }
                     }
-                    await session.SendMessageAsync($"Your {Name} has leveled up to level {Level}! You have {StatPoints} Stat Points left.");
+                    await session.SendMessageAsync($"\nYour {Name} has leveled up to level {Level}! You have {StatPoints} Stat Points left.");
 
                     // Max Level Check
-                    if (Level >= 100) { await session.SendMessageAsync($"Your {Name} has reached a max level of 100!"); break; }
+                    if (Level >= 100) { await session.SendMessageAsync($"\nYour {Name} has reached a max level of 100!"); break; }
                 }
             }
             Health = MaxHealth;
