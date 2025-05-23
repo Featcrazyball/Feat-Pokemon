@@ -86,6 +86,8 @@ public class ShopInventory
             sendMessage.Append("\n║                                                                              ║");
             sendMessage.Append("\n╚══════════════════════════════════════════════════════════════════════════════╝");
 
+            Console.WriteLine(user.Coins + " coins");
+
             await session.SendMessageAsync(sendMessage.ToString());
             await session.GetInputAsync("\nInput any key to continue...");
             break;

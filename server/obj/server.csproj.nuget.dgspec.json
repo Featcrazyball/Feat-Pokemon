@@ -1,7 +1,6 @@
 {
   "format": 1,
   "restore": {
-<<<<<<< HEAD
     "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\server\\server.csproj": {}
   },
   "projects": {
@@ -13,22 +12,9 @@
         "projectPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\server\\server.csproj",
         "packagesPath": "C:\\Users\\yangx\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\server\\obj\\",
-=======
-    "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj": {}
-  },
-  "projects": {
-    "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj",
-        "projectName": "server",
-        "projectPath": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\server.csproj",
-        "packagesPath": "C:\\Users\\featc\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\featc\\OneDrive\\Desktop\\Pokemon\\Feat-Pokemon\\server\\obj\\",
->>>>>>> 07fd0c18edad08af0d686f81a362d45a6824ee87
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\featc\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\yangx\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"

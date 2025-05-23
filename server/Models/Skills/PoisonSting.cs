@@ -42,7 +42,7 @@ public class PoisonSting : Skill
                 target.Substitude = false;
                 target.SubstituteHealth = 0;
                 
-                if (Random.Shared.NextDouble() < 0.3 && !target.BadlyPoisoned && target.Poisoned && !target.Type!.Contains("Poison"))
+                if (Random.Shared.NextDouble() < 0.3 && !target.BadlyPoisoned && !target.Poisoned && !target.Type!.Contains("Poison"))
                 {
                     causedPoison = true;
                     target.Poisoned = true;
@@ -78,7 +78,7 @@ public class PoisonSting : Skill
         await SkillHelper.ProcessRage(target, TargetSession, UserSession);
         
         // 30% chance to poison if target doesn't already have a status and isn't Poison-type
-        if (Random.Shared.NextDouble() < 0.3 && target.Poisoned && !target.BadlyPoisoned && !target.Type!.Contains("Poison"))
+        if (Random.Shared.NextDouble() < 0.3 && !target.Poisoned && !target.BadlyPoisoned && !target.Type!.Contains("Poison"))
         {
             target.Poisoned = true;
             

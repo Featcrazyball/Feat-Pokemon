@@ -228,10 +228,19 @@ public class Arena
             joinerPokemon,
             JoinerBattle!);
 
-        foreach (var pokemon in creatorPokemon!) { pokemon.ResetStats(); }
-        foreach (var pokemon in joinerPokemon!) { pokemon.ResetStats(); }
-        if (CreatorBattle != null) CreatorBattle.ResetStats();
-        if (JoinerBattle != null) JoinerBattle.ResetStats();
+        foreach (var pokemon in creatorPokemon!) { pokemon.ResetStats(); pokemon.PayDay = 100; }
+        foreach (var pokemon in joinerPokemon!) { pokemon.ResetStats(); pokemon.PayDay = 100; }
+        if (CreatorBattle != null)
+        {
+            CreatorBattle.ResetStats();
+            CreatorBattle.PayDay = 100;
+        }
+        
+        if (JoinerBattle != null)
+        {
+            JoinerBattle.ResetStats();
+            JoinerBattle.PayDay = 100;
+        }
 
         bool? winner = null;
         try
@@ -373,6 +382,7 @@ public class Arena
                 await CreatorSession.SendMessageAsync("\nBattle has been abandoned");
                 await JoinerSession.SendMessageAsync("\nBattle has been abandoned.");
             }
+
             return null;
         }
         catch (Exception ex)
@@ -380,88 +390,6 @@ public class Arena
             Console.WriteLine($"[Battle] Error in StartBattle: {ex.Message}");
             return null;
         }
-    }
-
-    public async Task PayDay()
-    {
-        int creatorCoins = 100;
-        int joinerCoins = 100;
-
-        // Fainted Pokemon
-        if (creatorFainted != null && creatorFainted.Count > 0)
-        {
-            var paydayPokimon = creatorFainted.Where(s => s.PayDay > 0).ToList();
-            foreach (var poki in paydayPokimon)
-            {
-                creatorCoins += poki.PayDay;
-            }
-        }
-
-        if (joinerFainted != null && joinerFainted!.Count > 0)
-        {
-            var paydayPokimon = joinerFainted.Where(s => s.PayDay > 0).ToList();
-            foreach (var poki in paydayPokimon)
-            {
-                joinerCoins += poki.PayDay;
-            }
-        }
-
-
-        // Battle
-        if (CreatorBattle != null)
-        {
-            creatorCoins += CreatorBattle.PayDay;
-        }
-
-        if (JoinerBattle != null)
-        {
-            joinerCoins += JoinerBattle.PayDay;
-        }
-
-        // List of Pokemon
-        if (creatorPokemon != null && creatorPokemon.Count > 0)
-        {
-            var paydayPokimon = creatorPokemon.Where(s => s.PayDay > 0).ToList();
-            foreach (var poki in paydayPokimon)
-            {
-                creatorCoins += poki.PayDay;
-            }
-        }
-
-        if (joinerPokemon != null && joinerPokemon.Count > 0)
-        {
-            var paydayPokimon = joinerPokemon.Where(s => s.PayDay > 0).ToList();
-            foreach (var poki in paydayPokimon)
-            {
-                joinerCoins += poki.PayDay;
-            }
-        }
-
-        string creatorpay = creatorCoins == 100 ? "You have earned 100 coins" : $"You have earned {creatorCoins} coins with the addition of Pay Day!";
-        string joinerpay = joinerCoins == 100 ? "You have earned 100 coins" : $"You have earned {joinerCoins} coins with the addition of Pay Day!";
-
-        using (var context = new DatabaseContext())
-        {
-            var creatorUser = context.Users.FirstOrDefault(u => u.Username == creator!.Username);
-            var joinerUser = context.Users.FirstOrDefault(u => u.Username == joiner!.Username);
-
-            if (creatorUser != null)
-            {
-                creatorUser.Coins += creatorCoins;
-                context.Users.Update(creatorUser);
-                context.SaveChanges();
-            }
-
-            if (joinerUser != null)
-            {
-                joinerUser.Coins += joinerCoins;
-                context.Users.Update(joinerUser);
-                context.SaveChanges();
-            }
-        }
-
-        await CreatorSession.SendMessageAsync(creatorpay);
-        await JoinerSession.SendMessageAsync(joinerpay);
     }
 
     public void RemoveTempSkills()
@@ -799,6 +727,7 @@ public class Arena
 ║                                                         ║                                                         ║");
 
         string creatorStatus = "None";
+        bool creatorHasStatus = false;
 
         if (CreatorBattle.Paralyzed
         || CreatorBattle.Freezing
@@ -808,10 +737,12 @@ public class Arena
         || CreatorBattle.Sleeping)
         {
             creatorStatus = "";
+            creatorHasStatus = true;
         }
-        string CreatorStatusString = $"Status: {creatorStatus}";
+        string CreatorStatusString = $"    Status: {creatorStatus}";
 
         string joinerStatus = "None";
+        bool joinerHasStatus = false;
 
         if (JoinerBattle.Paralyzed
         || JoinerBattle.Freezing
@@ -821,13 +752,14 @@ public class Arena
         || JoinerBattle.Sleeping)
         {
             joinerStatus = "";
+            joinerHasStatus = true;
         }
-        string JoinerStatusString = $"Status: {joinerStatus}";
+        string JoinerStatusString = $"    Status: {joinerStatus}";
 
-        sb.Append($"\n║{ExtraMethods.CenterAlign($"{CreatorStatusString.Trim()}", 57)}║{ExtraMethods.CenterAlign($"{JoinerStatusString.Trim()}", 57)}║");
+        sb.Append($"\n║{$"{CreatorStatusString}", -57}║{$"{JoinerStatusString}", -57}║");
 
         // Total Status effects count
-        if (joinerStatus != "None" && creatorStatus != "None")
+        if (joinerHasStatus || creatorHasStatus)
         {
             int creatorStatusCount = 0;
             int joinerStatusCount = 0;
@@ -922,11 +854,12 @@ public class Arena
 
             for (int i = 0; i < StatusRows; i++)
             {
-                string creatorStatusEffect = i < CreatorStatusList.Count ? CreatorStatusList[i] : "";
-                string joinerStatusEffect = i < JoinerStatusList.Count ? JoinerStatusList[i] : "";
+                string creatorStatusEffect = i < CreatorStatusList.Count ? $"- {CreatorStatusList[i]}" : "";
+                string joinerStatusEffect = i < JoinerStatusList.Count ? $"- {JoinerStatusList[i]}" : "";
 
-                sb.Append($"\n║     - {creatorStatusEffect,50}║     - {joinerStatusEffect,50}║");
+                sb.Append($"\n║     {creatorStatusEffect,-52}║     {joinerStatusEffect,-52}║");
             }
+
         }
 
 

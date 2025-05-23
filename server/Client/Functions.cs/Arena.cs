@@ -315,9 +315,10 @@ public class Game
             await Task.Delay(2000);
 
             Console.WriteLine("[Battle] Calling StartBattle()");
+            bool? winner = null;
             try
             {
-                await arena.StartBattle();
+                winner = await arena.StartBattle();
             } catch (Exception ex)
             {
                 Console.WriteLine($"[Battle] Error during StartBattle: {ex.Message}");
@@ -328,16 +329,55 @@ public class Game
                 _roomsInBattle.TryRemove(room.Id, out _);
             }
 
-
-            // Cleanup after battle
-            room.Host!.InRoom = false;
-            room.Challenger!.InRoom = false;
-
             using (var context = new DatabaseContext())
             {
-                context.Users.Update(room.Host);
-                context.Users.Update(room.Challenger);
-                await context.SaveChangesAsync();
+                var dbHost = await context.Users.FindAsync(room.Host!.Id);
+                var dbChallenger = await context.Users.FindAsync(room.Challenger!.Id);
+                
+                if (dbHost != null && dbChallenger != null)
+                {
+                    dbHost.Coins += 100;
+                    dbChallenger.Coins += 100;
+                    dbHost.InRoom = false;
+                    dbChallenger.InRoom = false;
+                    
+                    if (winner == true)
+                    {
+                        dbHost.Wins += 1;
+                        dbChallenger.Losses += 1;
+                    }
+                    else if (winner == false)
+                    {
+                        dbHost.Losses += 1;
+                        dbChallenger.Wins += 1;
+                    }
+                    
+                    var hostPokemon = context.PokemonMaster
+                        .Where(p => p.OwnerId == room.Host.Id)
+                        .ToList();
+
+                    var challengerPokemon = context.PokemonMaster
+                        .Where(p => p.OwnerId == room.Challenger.Id)
+                        .ToList();
+
+                    int originalHostCoins = dbHost.Coins;
+                    int originalChallengerCoins = dbChallenger.Coins;
+
+                    foreach (var pokemon in hostPokemon)
+                    {
+                        dbHost.Coins += pokemon.PayDay;
+                        pokemon.PayDay = 0;
+                    }
+
+                    foreach (var pokemon in challengerPokemon)
+                    {
+                        dbChallenger.Coins += pokemon.PayDay;
+                        pokemon.PayDay = 0;
+                    }
+
+                    await context.SaveChangesAsync();
+                    
+                }
             }
 
             await Task.Delay(2000); // Give players time to read the results
@@ -347,7 +387,6 @@ public class Game
             Console.WriteLine($"[Battle] Critical error in Fight method: {ex.Message}");
             Console.WriteLine($"[Battle] Stack trace: {ex.StackTrace}");
 
-            // ...existing exception handling...
         }
         finally
         {

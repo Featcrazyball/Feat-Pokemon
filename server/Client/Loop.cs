@@ -18,11 +18,12 @@ public class Client
             await session.SendMessageAsync("2q30-8b6r7-vyq20974ryf-b09qw8r7bq9-28-3v");
             return;
         }
+
         user!.InRoom = false;
 
         while (!exit)
-        {
-            await session.SendMessageAsync(@"
+            {
+                await session.SendMessageAsync(@"
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                              ║
 ║      ✨✨✨✨✨✨✨✨✨    TRAINER MENU    ✨✨✨✨✨✨✨✨✨                ║
@@ -47,79 +48,80 @@ public class Client
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ");
-            string choice = await session.GetInputAsync("Choice:");
-            
-            switch (choice.ToLower())
-            {
-                case "1":
-                    await ServerPokemon.PokemonMenu(session);
-                    break;
-                case "2":
-                    await Shop.ShopMenu(session);
-                    break;
-                case "3":
-                    await Chat.ChatMenu(session);
-                    break;
-                case "4":
-                    await Lineup.LineupMenu(session);
-                    break;
-                case "5":
-                    // Battle Area (5 Pokemon per fight) + 1 Starter Pokemon
-                    // Battle with other players
-                    // require manual refresh. has one creator and one joiner. 
-                    // joiner will create the arena object
-                    // Cannot enter if Feat's Version is true
 
-                    using (var db = new DatabaseContext())
-                    {
-                        // Check for selected Pokémon
-                        var selectedPokemons = db.PokemonMaster
-                            .Where(p => p.OwnerId == user.Id && p.Selected)
-                            .ToList();
-                            
-                        if (selectedPokemons.Count != 6)
+                string choice = await session.GetInputAsync("Choice:");
+
+                switch (choice.ToLower())
+                {
+                    case "1":
+                        await ServerPokemon.PokemonMenu(session);
+                        break;
+                    case "2":
+                        await Shop.ShopMenu(session);
+                        break;
+                    case "3":
+                        await Chat.ChatMenu(session);
+                        break;
+                    case "4":
+                        await Lineup.LineupMenu(session);
+                        break;
+                    case "5":
+                        // Battle Area (5 Pokemon per fight) + 1 Starter Pokemon
+                        // Battle with other players
+                        // require manual refresh. has one creator and one joiner. 
+                        // joiner will create the arena object
+                        // Cannot enter if Feat's Version is true
+
+                        using (var db = new DatabaseContext())
                         {
-                            await session.SendMessageAsync($"You need exactly 6 Pokémon in your lineup. You currently have {selectedPokemons.Count}.");
-                            await session.SendMessageAsync("Please go to the Lineup menu to select your Pokémon.");
-                            await session.GetInputAsync("\nInput any key to continue...");
-                            break;
-                        }
+                            // Check for selected Pokémon
+                            var selectedPokemons = db.PokemonMaster
+                                .Where(p => p.OwnerId == user.Id && p.Selected)
+                                .ToList();
 
-                        // Check for starter Pokémon
-                        var starterPokemon = db.PokemonMaster
-                            .Where(p => p.OwnerId == user.Id && p.Starter)
-                            .ToList();
-                        
-                        if (starterPokemon.Count != 1)
+                            if (selectedPokemons.Count != 6)
+                            {
+                                await session.SendMessageAsync($"You need exactly 6 Pokémon in your lineup. You currently have {selectedPokemons.Count}.");
+                                await session.SendMessageAsync("Please go to the Lineup menu to select your Pokémon.");
+                                await session.GetInputAsync("\nInput any key to continue...");
+                                break;
+                            }
+
+                            // Check for starter Pokémon
+                            var starterPokemon = db.PokemonMaster
+                                .Where(p => p.OwnerId == user.Id && p.Starter)
+                                .ToList();
+
+                            if (starterPokemon.Count != 1)
+                            {
+                                await session.SendMessageAsync($"You need exactly 1 starter Pokémon. You currently have {starterPokemon.Count}.");
+                                await session.SendMessageAsync("Please go to the Lineup menu to set one Pokémon as your starter.");
+                                await session.GetInputAsync("Input any key to continue...");
+                                break;
+                            }
+
+                            await Game.Rooms(session);
+                        }
+                        break;
+
+                    case "6":
+                        await Settings.SettingsMenu(session);
+                        break;
+
+                    case "7":
+                        if (user.God)
                         {
-                            await session.SendMessageAsync($"You need exactly 1 starter Pokémon. You currently have {starterPokemon.Count}.");
-                            await session.SendMessageAsync("Please go to the Lineup menu to set one Pokémon as your starter.");
-                            await session.GetInputAsync("Input any key to continue...");
-                            break;
+                            await Assignment.AssignmentMenu(session);
                         }
-                        
-                        await Game.Rooms(session);
-                    }
-                    break;
-
-                case "6":
-                    await Settings.SettingsMenu(session);
-                    break;
-
-                case "7":
-                    if (user.God)
-                    {
-                        await Assignment.AssignmentMenu(session);
-                    }
-                    break;
-                case "8" or "q":
-                    await session.SendMessageAsync("Thank you for playing!");
-                    exit = true;
-                    break;
-                default:
-                    break;
+                        break;
+                    case "8" or "q":
+                        await session.SendMessageAsync("Thank you for playing!");
+                        exit = true;
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
     }
     
 }
