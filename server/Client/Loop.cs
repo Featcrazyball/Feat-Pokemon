@@ -109,10 +109,7 @@ public class Client
                         break;
 
                     case "7":
-                        if (user.God)
-                        {
-                            await Assignment.AssignmentMenu(session);
-                        }
+                        await Assignment.AssignmentMenu(session);
                         break;
                     case "8" or "q":
                         await session.SendMessageAsync("Thank you for playing!");

@@ -259,30 +259,30 @@ namespace Server
                                 List<PokemonMaster> createdPokemon = new List<PokemonMaster>();
 
                                 // Add abra
-                                // var abra = new Abra("None", newUser.Id!);
-                                // var abra1 = new Abra("None", newUser.Id!);
-                                // var nido = new Nidorina("None", newUser.Id!);
-                                // var nido1 = new Nidorina("None", newUser.Id!);
-                                // var nido2 = new Nidorina("None", newUser.Id!);
-                                // var grav = new Graveler("None", newUser.Id!);
-                                // var grav1 = new Graveler("None", newUser.Id!);
-                                // var grav2 = new Graveler("None", newUser.Id!);
-                                // var grav3 = new Graveler("None", newUser.Id!);
-                                // var grav4 = new Graveler("None", newUser.Id!);
-                                // var grav5 = new Graveler("None", newUser.Id!);
-                                // var eevee = new Eevee("None", newUser.Id!);
-                                // context.PokemonMaster.Add(abra);
-                                // context.PokemonMaster.Add(abra1);
-                                // context.PokemonMaster.Add(nido);
-                                // context.PokemonMaster.Add(nido1);
-                                // context.PokemonMaster.Add(nido2);
-                                // context.PokemonMaster.Add(grav1);
-                                // context.PokemonMaster.Add(grav2);
-                                // context.PokemonMaster.Add(grav3);
-                                // context.PokemonMaster.Add(grav4);
-                                // context.PokemonMaster.Add(grav5);
-                                // context.PokemonMaster.Add(eevee);
-                                // context.PokemonMaster.Add(grav);
+                                var abra = new Abra("None", newUser.Id!);
+                                var abra1 = new Abra("None", newUser.Id!);
+                                var nido = new Nidorina("None", newUser.Id!);
+                                var nido1 = new Nidorina("None", newUser.Id!);
+                                var nido2 = new Nidorina("None", newUser.Id!);
+                                var grav = new Graveler("None", newUser.Id!);
+                                var grav1 = new Graveler("None", newUser.Id!);
+                                var grav2 = new Graveler("None", newUser.Id!);
+                                var grav3 = new Graveler("None", newUser.Id!);
+                                var grav4 = new Graveler("None", newUser.Id!);
+                                var grav5 = new Graveler("None", newUser.Id!);
+                                var eevee = new Eevee("None", newUser.Id!);
+                                context.PokemonMaster.Add(abra);
+                                context.PokemonMaster.Add(abra1);
+                                context.PokemonMaster.Add(nido);
+                                context.PokemonMaster.Add(nido1);
+                                context.PokemonMaster.Add(nido2);
+                                context.PokemonMaster.Add(grav1);
+                                context.PokemonMaster.Add(grav2);
+                                context.PokemonMaster.Add(grav3);
+                                context.PokemonMaster.Add(grav4);
+                                context.PokemonMaster.Add(grav5);
+                                context.PokemonMaster.Add(eevee);
+                                context.PokemonMaster.Add(grav);
 
                                 while (tempCount < 5 && selectedIndices.Count < ListofStuff.AllPokemon.Count())
                                 {

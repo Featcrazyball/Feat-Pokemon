@@ -37,7 +37,7 @@ public class AssignmentAdd
 
                     if (addedPokemon == null)
                     {
-                        await session.SendMessageAsync("Error creating Pokemon.");
+                        await session.SendMessageAsync("Pokemon does not exist.");
                         return;
                     }
 

@@ -148,7 +148,6 @@ namespace Models
             };
             if (pokemon != null)
             {
-                pokemon.MaxHealth = pokemon.HealthOverride;
                 return pokemon;
             }
             return null;
