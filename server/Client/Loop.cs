@@ -60,7 +60,7 @@ public class Client
                         await Shop.ShopMenu(session);
                         break;
                     case "3":
-                        await Chat.ChatMenu(session);
+                        exit = await Chat.ChatMenu(session);
                         break;
                     case "4":
                         await Lineup.LineupMenu(session);

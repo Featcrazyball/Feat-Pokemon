@@ -4,7 +4,7 @@ namespace Server;
 
 public class Chat
 {
-    public static async Task ChatMenu(ClientSession session)
+    public static async Task<bool> ChatMenu(ClientSession session)
     {
         await session.SendMessageAsync(@"
 ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -24,7 +24,7 @@ public class Chat
             if (message.ToLower() == "exit")
             {
                 session.InChat = false;
-                return;
+                return true;
             }
 
             if (!NetworkMethods.IsUsernameActive(session.Username!))
@@ -45,5 +45,6 @@ public class Chat
                 }
             }
         }
+        return false;
     }
 }
