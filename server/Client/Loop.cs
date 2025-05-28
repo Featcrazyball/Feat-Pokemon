@@ -109,7 +109,14 @@ public class Client
                         break;
 
                     case "7":
-                        await Assignment.AssignmentMenu(session);
+                        if (user.God)
+                        {
+                            await Assignment.AssignmentMenu(session);
+                        } else
+                        {
+                            await session.SendMessageAsync("You do not have access to the assignment menu.");
+                            await session.GetInputAsync("Input any key to continue...");
+                        }
                         break;
                     case "8" or "q":
                         await session.SendMessageAsync("Thank you for playing!");
@@ -120,5 +127,4 @@ public class Client
                 }
             }
     }
-    
 }
