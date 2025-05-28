@@ -8,7 +8,7 @@ namespace Server;
 
 public class Assignment
 {
-    public static async Task AssignmentMenu(ClientSession session)
+    public static async Task<bool> AssignmentMenu(ClientSession session)
     {
         while (true)
         {
@@ -20,6 +20,7 @@ Welcome to Pokemon Pocket App
 (2). List Pokemon(s) in my Pocket
 (3). Check if I can evolve pokemon
 (4). Evolve Pokemon
+(5). Return to Main Menu
 Please only enter [1,2,3,4] or Q to quit:");
 
             string choice = await session.GetInputAsync("");
@@ -31,7 +32,7 @@ Please only enter [1,2,3,4] or Q to quit:");
 
             if (choice == "Q")
             {
-                break;
+                return true;
             }
 
             if (int.TryParse(choice, out int option))
@@ -50,16 +51,19 @@ Please only enter [1,2,3,4] or Q to quit:");
                     case 4:
                         await AssignmentEvolve.EvolvePokemon(session);
                         break;
+                    case 5:
+                        await session.SendMessageAsync("Returning to Main Menu...");
+                        return false;
                     default:
-                        await session.SendMessageAsync("Invalid option. Please try again.");
-                        break;
+                        continue;
                 }
             }
             else
             {
                 await session.SendMessageAsync("Invalid input. Please enter a number or Q to quit.");
+                continue;
             }
-
         }
+        return false;
     }
 }
