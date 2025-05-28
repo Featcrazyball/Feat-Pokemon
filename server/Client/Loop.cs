@@ -111,7 +111,7 @@ public class Client
                     case "7":
                         if (user.God)
                         {
-                            await Assignment.AssignmentMenu(session);
+                            exit = await Assignment.AssignmentMenu(session);
                         } else
                         {
                             await session.SendMessageAsync("You do not have access to the assignment menu.");
