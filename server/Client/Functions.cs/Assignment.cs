@@ -27,11 +27,6 @@ Please only enter [1,2,3,4] or Q to quit:");
 
             if (choice.ToLower() == "q")
             {
-                break;
-            }
-
-            if (choice == "Q")
-            {
                 return true;
             }
 
@@ -64,6 +59,5 @@ Please only enter [1,2,3,4] or Q to quit:");
                 continue;
             }
         }
-        return false;
     }
 }
