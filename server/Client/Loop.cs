@@ -60,7 +60,8 @@ public class Client
                         await Shop.ShopMenu(session);
                         break;
                     case "3":
-                        exit = await Chat.ChatMenu(session);
+                        await session.SendMessageAsync("\n Unfortunately, the chat feature is currently disabled. \n");
+                        // exit = await Chat.ChatMenu(session);
                         break;
                     case "4":
                         await Lineup.LineupMenu(session);
