@@ -4,6 +4,10 @@ A multiplayer, turn-based Pokémon battle game that runs in the terminal, built 
 
 All 151 original Pokémon and 165 of their moves are implemented, each as its own class, with type matchups, status conditions, stat stages, critical hits and evolution.
 
+<p align="center">
+  <img width="1917" height="980" alt="Screenshot 2026-11-18 115753" src="https://github.com/user-attachments/assets/a5988e92-4c0c-471e-a200-256f12a57d8e" />
+</p>
+
 > Fan project made for learning. Pokémon and all related names belong to Nintendo, Game Freak and The Pokémon Company. This project is not affiliated with them and is not sold or monetised in any way.
 
 ---
@@ -21,7 +25,7 @@ All 151 original Pokémon and 165 of their moves are implemented, each as its ow
 
 ## Architecture
 
-<img width="6234" height="8132" alt="diagram" src="https://github.com/user-attachments/assets/3cfc90a9-9e7e-47e7-ae87-1117784a051d" />
+<img width="6234" height="8132" alt="diagram" src="https://github.com/user-attachments/assets/c0a41de3-5fc0-4838-9d1a-eba23e0f76c4" />
 
 The system has four layers:
 
@@ -124,6 +128,7 @@ Open more client terminals, on the same machine or others on the network, to hav
 
 Things I'd improve next:
 
+- **Security:** hash and salt passwords (e.g. with BCrypt or PBKDF2) instead of storing them in plain text, and encrypt the connection with TLS.
 - **Configuration:** read the server address and port from a config file or command-line arguments instead of hard-coding them.
 - **Chat:** finish the trainer chat, which is in the code but currently turned off.
 - **Testing:** add unit tests for the damage formula and type chart.
@@ -132,8 +137,5 @@ Things I'd improve next:
 ---
 
 ## Author
-
-**Yang Xuanming, Xavier** ([@Featcrazyball](https://github.com/Featcrazyball))
-
 
 **Yang Xuanming, Xavier** ([@Featcrazyball](https://github.com/Featcrazyball))
