@@ -556,7 +556,7 @@ public class Arena
 
             foreach (var poke in joinerPokemon!)
             {
-                sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
+                sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health:F1}/{poke.MaxHealth:F1}");
                 i++;
             }
 
@@ -594,7 +594,7 @@ public class Arena
 
             foreach (var poke in creatorPokemon!)
             {
-                sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health}/{poke.MaxHealth}");
+                sb.Append($"\n [{i}] {poke.Name} - HP: {poke.Health:F1}/{poke.MaxHealth:F1}");
                 i++;
             }
             await switcher.SendMessageAsync(sb.ToString());
@@ -690,8 +690,8 @@ public class Arena
         string creatorTypes = CreatorBattle.Type!;
         string joinerTypes = JoinerBattle.Type!;
 
-        string creatorHealth = $"{CreatorBattle.Health}/{CreatorBattle.MaxHealth}";
-        string joinerHealth = $"{JoinerBattle.Health}/{JoinerBattle.MaxHealth}";
+        string creatorHealth = $"{CreatorBattle.Health:F1}/{CreatorBattle.MaxHealth:F1}";
+        string joinerHealth = $"{JoinerBattle.Health:F1}/{JoinerBattle.MaxHealth:F1}";
 
         string blank = "";
 
@@ -992,7 +992,7 @@ public class Arena
 
             foreach (var pokemon in pokemonCollection)
             {
-                sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health}/{pokemon.MaxHealth}");
+                sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health:F1}/{pokemon.MaxHealth:F1}");
                 pokedict.Add(i, pokemon.Name!);
                 i++;
             }
@@ -2223,7 +2223,7 @@ public class Arena
 
                     foreach (var pokemon in pokemonCollection!)
                     {
-                        sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health}/{pokemon.MaxHealth}");
+                        sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health:F1}/{pokemon.MaxHealth:F1}");
                         pokedict.Add(i, pokemon.Name!);
                         i++;
                     }
@@ -2294,7 +2294,7 @@ public class Arena
 
                     foreach (var pokemon in pokemonCollection!)
                     {
-                        sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health}/{pokemon.MaxHealth}");
+                        sb.Append($"\n [{i}] {pokemon.Name} - HP: {pokemon.Health:F1}/{pokemon.MaxHealth:F1}");
                         pokedict.Add(i, pokemon.Name!);
                         i++;
                     }
