@@ -41,16 +41,43 @@ namespace Server
             //     Console.WriteLine($"Database initialization error: {ex.Message}");
             // }
 
-            // Reset Arena Logins
+            // Reset Arena Logins + upgrade any plaintext passwords to hashes
             using (var context = new DatabaseContext())
             {
                 var users = context.Users.ToList();
+                int upgraded = 0;
                 foreach (var user in users)
                 {
                     user.InRoom = false;
+                    if (!string.IsNullOrEmpty(user.Password) && !PasswordHasher.IsHashed(user.Password))
+                    {
+                        user.Password = PasswordHasher.Hash(user.Password);
+                        upgraded++;
+                    }
                     context.Users.Update(user);
                 }
                 context.SaveChanges();
+                if (upgraded > 0)
+                    Console.WriteLine($"Hashed {upgraded} plaintext password(s).");
+            }
+
+            // Seed a default admin account if there are no users
+            using (var context = new DatabaseContext())
+            {
+                if (!context.Users.Any())
+                {
+                    const string defaultUsername = "admin";
+                    const string defaultPassword = "admin1234";
+                    var admin = new Models.User(defaultUsername, defaultPassword, "admin@localhost.com")
+                    {
+                        God = true,
+                        Coins = 1000000
+                    };
+                    context.Users.Add(admin);
+                    context.SaveChanges();
+                    Console.WriteLine($"No users found. Created default account -> username: {defaultUsername} | password: {defaultPassword}");
+                    Console.WriteLine("Change this password from Settings after logging in.");
+                }
             }
 
             // Server Setup

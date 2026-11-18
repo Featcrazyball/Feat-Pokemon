@@ -28,7 +28,7 @@ public class ChangePassword
                     return;
                 }
 
-                if (oldPassword != user.Password!)
+                if (!PasswordHasher.Verify(oldPassword, user.Password))
                 {
                     await session.SendMessageAsync("Incorrect password. Please try again.");
                     continue;
@@ -68,7 +68,7 @@ public class ChangePassword
                     continue;
                 }
 
-                user.Password = newPassword;
+                user.Password = PasswordHasher.Hash(newPassword);
 
                 context.Users.Update(user);
                 context.SaveChanges();

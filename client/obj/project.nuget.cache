@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "exBk8kj8a1s=",
+  "dgSpecHash": "THnv38qzW4Q=",
   "success": true,
-  "projectFilePath": "C:\\Users\\yangx\\OneDrive\\Desktop\\242473C_Yang Xuanming, Xavier_ASN1\\Feat-Pokemon\\client\\client.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\featc\\Downloads\\Feat-Pokemon-main\\Feat-Pokemon-main\\client\\client.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\featc\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.12\\microsoft.netcore.app.ref.9.0.12.nupkg.sha512",
+    "C:\\Users\\featc\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.12\\microsoft.windowsdesktop.app.ref.9.0.12.nupkg.sha512",
+    "C:\\Users\\featc\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.12\\microsoft.aspnetcore.app.ref.9.0.12.nupkg.sha512",
+    "C:\\Users\\featc\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.12\\microsoft.netcore.app.host.win-x64.9.0.12.nupkg.sha512"
+  ],
   "logs": []
 }

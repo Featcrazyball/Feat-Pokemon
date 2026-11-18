@@ -36,7 +36,7 @@ namespace Models
         {
             Id = Guid.NewGuid().ToString("N").Substring(0, 15);
             this.Username = Username;
-            this.Password = Password;
+            this.Password = PasswordHasher.Hash(Password);
             this.Email = Email;
             Wins = 0;
             Losses = 0;

@@ -126,8 +126,8 @@ namespace Server
                             // Check username and password against the database
                             using (var context = new DatabaseContext())
                             {
-                                var user = context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
-                                if (user == null)
+                                var user = context.Users.FirstOrDefault(u => u.Username == username);
+                                if (user == null || !PasswordHasher.Verify(password, user.Password))
                                 {
                                     await session.SendMessageAsync("Invalid username or password. Disconnecting...");
                                     continue;
