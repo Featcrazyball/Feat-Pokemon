@@ -15,7 +15,7 @@ namespace Client
             {
                 // Connect to server
                 Console.WriteLine("Connecting to server...");
-                IPAddress ip = IPAddress.Parse("192.168.86.250");
+                IPAddress ip = IPAddress.Parse("192.168.0.180");
                 IPEndPoint iPEndPoint = new(ip, 8000);
 
                 using Socket client = new(

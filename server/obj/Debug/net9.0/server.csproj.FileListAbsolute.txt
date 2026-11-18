@@ -1139,3 +1139,4 @@ C:\Users\featc\Downloads\Feat-Pokemon-main\Feat-Pokemon-main\server\obj\Debug\ne
 C:\Users\featc\Downloads\Feat-Pokemon-main\Feat-Pokemon-main\server\obj\Debug\net9.0\server.pdb
 C:\Users\featc\Downloads\Feat-Pokemon-main\Feat-Pokemon-main\server\obj\Debug\net9.0\server.genruntimeconfig.cache
 C:\Users\featc\Downloads\Feat-Pokemon-main\Feat-Pokemon-main\server\obj\Debug\net9.0\ref\server.dll
+C:\Users\featc\Downloads\Feat-Pokemon-main\Feat-Pokemon-main\server\obj\Debug\net9.0\server.sourcelink.json
