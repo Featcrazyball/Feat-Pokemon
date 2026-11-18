@@ -21,7 +21,7 @@ All 151 original Pokémon and 165 of their moves are implemented, each as its ow
 
 ## Architecture
 
-![Feat-Pokémon architecture diagram](docs/architecture.jpg)
+<img width="6234" height="8132" alt="diagram" src="https://github.com/user-attachments/assets/3cfc90a9-9e7e-47e7-ae87-1117784a051d" />
 
 The system has four layers:
 
